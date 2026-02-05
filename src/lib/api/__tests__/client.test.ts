@@ -7,7 +7,7 @@ describe('apiClient', () => {
 
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
-    expect(Array.isArray(response.data)).toBe(true);
+    expect(Array.isArray(response.data.table)).toBe(true);
   });
 
   it('should handle request with query params', async () => {
@@ -17,6 +17,7 @@ describe('apiClient', () => {
 
     expect(response.success).toBe(true);
     expect(response.data).toBeDefined();
+    expect(Array.isArray(response.data.items)).toBe(true);
   });
 
   it('should return error for non-existent endpoint', async () => {

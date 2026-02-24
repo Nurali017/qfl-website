@@ -59,7 +59,7 @@ export function LeagueTable({ seasonId: seasonIdProp }: LeagueTableProps = {}) {
   // Get position dot color (only for special positions)
   const getPositionDotColor = (position: number) => {
     if (position === 1) return 'bg-accent'; // Чемпион
-    if (position <= 4) return 'bg-primary'; // Еврокубки
+    if (position <= 3) return 'bg-primary'; // Еврокубки
     if (position === 16) return 'bg-red-500'; // Вылет
     return null; // No dot for regular positions
   };

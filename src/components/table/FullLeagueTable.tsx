@@ -22,7 +22,7 @@ export function FullLeagueTable({ standings }: FullLeagueTableProps) {
   // Get position indicator color
   const getPositionStyle = (position: number) => {
     if (position === 1) return { dot: 'bg-accent', border: 'border-l-accent' };
-    if (position <= 4) return { dot: 'bg-primary', border: 'border-l-primary' };
+    if (position <= 3) return { dot: 'bg-primary', border: 'border-l-primary' };
     if (position >= 13) return { dot: 'bg-red-500', border: 'border-l-red-500' };
     return { dot: null, border: 'border-l-transparent' };
   };

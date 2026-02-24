@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
-import Image from 'next/image';
+
 import { useTeams } from '@/hooks';
 import { useTournament } from '@/contexts/TournamentContext';
 import { HeroBackground } from '@/components/ui/HeroBackground';
@@ -46,12 +46,11 @@ function TeamCard({ id, name, logo_url, city, colors }: TeamCardProps) {
         {/* Team Logo */}
         <div className="relative w-16 h-16 md:w-20 md:h-20 mb-3 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
           {logo_url ? (
-            <Image
+            <img
               src={logo_url}
               alt={name}
-              width={80}
-              height={80}
-              className="object-contain drop-shadow-sm"
+              className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-sm"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
           ) : (
             <div className="w-14 h-14 bg-gray-100 dark:bg-dark-surface-soft rounded-xl" />

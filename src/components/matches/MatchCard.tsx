@@ -39,15 +39,14 @@ export function MatchCard({
   const isUpcoming = match.status === 'upcoming';
   const shouldShowScheduleDisclaimer = showScheduleDisclaimer && match.is_schedule_tentative === true;
   const displayTime = formatMatchTime(match.time);
-  const displayDateTime = match.date && displayTime ? `${match.date}, ${displayTime}` : match.date || displayTime;
+  const displayDateTime = match.is_schedule_tentative
+    ? displayTime || null
+    : match.date && displayTime ? `${match.date}, ${displayTime}` : match.date || displayTime;
 
-  return (
-    <motion.div
-      className={`bg-white dark:bg-dark-surface border-b border-gray-100 dark:border-dark-border last:border-b-0 hover:bg-gray-50 dark:hover:bg-dark-surface-soft transition-colors ${className}`}
-      transition={{ duration: 0.2 }}
-    >
-      <Link href={`/matches/${match.id}`} className="block">
-        <div className="px-3 py-3 md:px-4 md:py-4">
+  const isTentative = match.is_schedule_tentative === true;
+
+  const content = (
+    <div className="px-3 py-3 md:px-4 md:py-4">
           {/* Mobile layout */}
           <div className="md:hidden space-y-3">
             <div className="flex items-start justify-between gap-2">
@@ -57,9 +56,11 @@ export function MatchCard({
                     {t('tour')} {match.tour}
                   </span>
                 )}
-                <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
-                  {displayDateTime}
-                </p>
+                {displayDateTime && (
+                  <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
+                    {displayDateTime}
+                  </p>
+                )}
               </div>
               {isLive ? (
                 <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded whitespace-nowrap">
@@ -178,9 +179,11 @@ export function MatchCard({
                   {t('tour')} {match.tour}
                 </span>
               )}
-              <span className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
-                {displayDateTime}
-              </span>
+              {displayDateTime && (
+                <span className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                  {displayDateTime}
+                </span>
+              )}
             </div>
 
             {/* Center: Teams & Score */}
@@ -296,7 +299,18 @@ export function MatchCard({
             </p>
           )}
         </div>
-      </Link>
+  );
+
+  return (
+    <motion.div
+      className={`bg-white dark:bg-dark-surface border-b border-gray-100 dark:border-dark-border last:border-b-0 ${isTentative ? '' : 'hover:bg-gray-50 dark:hover:bg-dark-surface-soft'} transition-colors ${className}`}
+      transition={{ duration: 0.2 }}
+    >
+      {isTentative ? content : (
+        <Link href={`/matches/${match.id}`} className="block">
+          {content}
+        </Link>
+      )}
     </motion.div>
   );
 }

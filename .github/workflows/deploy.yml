@@ -64,5 +64,5 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d --no-deps frontend
 
             echo "=== Cleanup ==="
-            docker image prune -f
+            docker image prune -f &
             docker compose -f docker-compose.prod.yml ps frontend

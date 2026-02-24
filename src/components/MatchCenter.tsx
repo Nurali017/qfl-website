@@ -9,9 +9,47 @@ import { MatchCenterFilters } from '@/components/matches/MatchCenterFilters';
 import { MatchCard } from '@/components/matches/MatchCard';
 import { MatchCenterSkeleton } from '@/components/ui/Skeleton';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { formatMatchDate } from '@/lib/utils/dateFormat';
-import { MatchCenterFilters as FiltersType } from '@/types';
+import { formatMatchDate, formatDateRange } from '@/lib/utils/dateFormat';
+import { MatchCenterFilters as FiltersType, DateGroup } from '@/types';
 import { getMatchCenterFiltersFromUrl } from '@/lib/utils/urlState';
+
+/**
+ * Merge consecutive date groups that belong to the same tentative tour
+ * into a single group with a date range label (e.g., "Тур 4 · 4-5 сәуір").
+ */
+function mergeTentativeGroups(
+  groups: DateGroup[],
+  language: string,
+  tourLabel: string,
+): DateGroup[] {
+  const merged: DateGroup[] = [];
+  let i = 0;
+  while (i < groups.length) {
+    const group = groups[i];
+    const tour = group.games[0]?.tour;
+    const allTentative = group.games.length > 0 && group.games.every(g => g.is_schedule_tentative);
+
+    if (tour && allTentative) {
+      const dates = [group.date];
+      const allGames = [...group.games];
+      while (i + 1 < groups.length) {
+        const next = groups[i + 1];
+        if (next.games[0]?.tour === tour && next.games.every(g => g.is_schedule_tentative)) {
+          dates.push(next.date);
+          allGames.push(...next.games);
+          i++;
+        } else break;
+      }
+      const dateRange = formatDateRange(dates, language);
+      const label = `${tourLabel} ${tour} · ${dateRange}`;
+      merged.push({ date: group.date, date_label: label, games: allGames });
+    } else {
+      merged.push(group);
+    }
+    i++;
+  }
+  return merged;
+}
 
 export function MatchCenter() {
   const { t, i18n } = useTranslation('match');
@@ -38,6 +76,9 @@ export function MatchCenter() {
     fetchAll: true,
     ...filters,
   });
+  // Merge tentative tour groups into date ranges
+  const mergedGroups = mergeTentativeGroups(groups, i18n.language, t('tour'));
+
   const hasActiveFilters =
     filters.group !== undefined ||
     filters.final === true ||
@@ -96,11 +137,11 @@ export function MatchCenter() {
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <MatchCenterFilters
+      {/* Filters - hidden until schedule is confirmed */}
+      {/* <MatchCenterFilters
         filters={filters}
         onFilterChange={handleFilterChange}
-      />
+      /> */}
 
       {/* Total count */}
       {total > 0 && (
@@ -110,7 +151,7 @@ export function MatchCenter() {
       )}
 
       {/* Grouped matches */}
-      {groups.length === 0 ? (
+      {mergedGroups.length === 0 ? (
         <div className="text-center py-12 bg-white dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border">
           <p className="text-gray-500 dark:text-slate-400 text-lg">
             {hasActiveFilters
@@ -120,8 +161,8 @@ export function MatchCenter() {
         </div>
       ) : (
         <div className="space-y-8">
-          {groups.map((group) => (
-            <div key={group.date} className="space-y-4">
+          {mergedGroups.map((group, idx) => (
+            <div key={`${group.date}-${idx}`} className="space-y-4">
               {/* Date header */}
               <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-slate-100 capitalize">
                 {group.date_label || formatMatchDate(group.date, i18n.language)}

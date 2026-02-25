@@ -19,13 +19,16 @@ export function FullLeagueTable({ standings }: FullLeagueTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get position indicator color
-  const getPositionStyle = (position: number) => {
-    if (position === 1) return { dot: 'bg-accent', border: 'border-l-accent' };
-    if (position <= 3) return { dot: 'bg-primary', border: 'border-l-primary' };
-    if (position >= 13) return { dot: 'bg-red-500', border: 'border-l-red-500' };
+  const getPositionStyle = (zone?: TeamStanding['zone']) => {
+    if (zone === 'champion') return { dot: 'bg-accent', border: 'border-l-accent' };
+    if (zone === 'euro_cups') return { dot: 'bg-primary', border: 'border-l-primary' };
+    if (zone === 'relegation') return { dot: 'bg-red-500', border: 'border-l-red-500' };
     return { dot: null, border: 'border-l-transparent' };
   };
+  const hasChampionZone = standings.some((team) => team.zone === 'champion');
+  const hasEuroCupsZone = standings.some((team) => team.zone === 'euro_cups');
+  const hasRelegationZone = standings.some((team) => team.zone === 'relegation');
+  const showLegend = hasChampionZone || hasEuroCupsZone || hasRelegationZone;
 
   return (
     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden">
@@ -52,7 +55,7 @@ export function FullLeagueTable({ standings }: FullLeagueTableProps) {
             {standings.map((team) => {
               const logoUrl = team.team_logo || getTeamLogo(team.team_id);
               const teamColor = getTeamColor(team.team_id);
-              const positionStyle = getPositionStyle(team.position);
+              const positionStyle = getPositionStyle(team.zone);
               const teamHref = getTeamHref(team.team_id);
 
               return (
@@ -156,7 +159,7 @@ export function FullLeagueTable({ standings }: FullLeagueTableProps) {
           {standings.map((team) => {
             const logoUrl = team.team_logo || getTeamLogo(team.team_id);
             const teamColor = getTeamColor(team.team_id);
-            const positionStyle = getPositionStyle(team.position);
+            const positionStyle = getPositionStyle(team.zone);
 
             return (
               <Link
@@ -206,20 +209,28 @@ export function FullLeagueTable({ standings }: FullLeagueTableProps) {
       </div>
 
       {/* Legend */}
-      <div className="px-4 py-3 border-t border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-surface flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-accent" />
-          <span>{t('legend.champion')}</span>
+      {showLegend && (
+        <div className="px-4 py-3 border-t border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-surface flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+          {hasChampionZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent" />
+              <span>{t('legend.champion')}</span>
+            </div>
+          )}
+          {hasEuroCupsZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span>{t('legend.euroCups')}</span>
+            </div>
+          )}
+          {hasRelegationZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-red-500" />
+              <span>{t('legend.relegation')}</span>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-primary" />
-          <span>{t('legend.euroCups')}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-red-500" />
-          <span>{t('legend.relegation')}</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

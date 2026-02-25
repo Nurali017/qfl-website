@@ -56,13 +56,15 @@ export function LeagueTable({ seasonId: seasonIdProp }: LeagueTableProps = {}) {
     );
   }
 
-  // Get position dot color (only for special positions)
-  const getPositionDotColor = (position: number) => {
-    if (position === 1) return 'bg-accent'; // Чемпион
-    if (position <= 3) return 'bg-primary'; // Еврокубки
-    if (position === 16) return 'bg-red-500'; // Вылет
-    return null; // No dot for regular positions
+  const zoneDotColor: Record<'champion' | 'euro_cups' | 'relegation', string> = {
+    champion: 'bg-accent',
+    euro_cups: 'bg-primary',
+    relegation: 'bg-red-500',
   };
+  const hasChampionZone = standings.some((team) => team.zone === 'champion');
+  const hasEuroCupsZone = standings.some((team) => team.zone === 'euro_cups');
+  const hasRelegationZone = standings.some((team) => team.zone === 'relegation');
+  const showLegend = hasChampionZone || hasEuroCupsZone || hasRelegationZone;
 
   return (
     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden h-full flex flex-col">
@@ -100,6 +102,7 @@ export function LeagueTable({ seasonId: seasonIdProp }: LeagueTableProps = {}) {
         {standings.map((team) => {
           const logoUrl = team.team_logo || getTeamLogo(team.team_id);
           const teamColor = getTeamColor(team.team_id);
+          const positionDotColor = team.zone ? zoneDotColor[team.zone] : null;
 
           return (
             <motion.a
@@ -127,9 +130,9 @@ export function LeagueTable({ seasonId: seasonIdProp }: LeagueTableProps = {}) {
             >
               {/* Position */}
               <div className="flex items-center justify-center gap-1">
-                {getPositionDotColor(team.position) && (
+                {positionDotColor && (
                   <motion.span
-                    className={`w-1.5 h-1.5 rounded-full ${getPositionDotColor(team.position)}`}
+                    className={`w-1.5 h-1.5 rounded-full ${positionDotColor}`}
                     variants={scaleHoverLarge}
                   />
                 )}
@@ -213,20 +216,28 @@ export function LeagueTable({ seasonId: seasonIdProp }: LeagueTableProps = {}) {
       </div>
 
       {/* Legend */}
-      <div className="px-5 py-2.5 border-t border-gray-100 dark:border-dark-border flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-gray-400 dark:text-slate-400">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-          <span>{t('tableLegend.champion')}</span>
+      {showLegend && (
+        <div className="px-5 py-2.5 border-t border-gray-100 dark:border-dark-border flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-gray-400 dark:text-slate-400">
+          {hasChampionZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span>{t('tableLegend.champion')}</span>
+            </div>
+          )}
+          {hasEuroCupsZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span>{t('tableLegend.europeanCups')}</span>
+            </div>
+          )}
+          {hasRelegationZone && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span>{t('tableLegend.relegation')}</span>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-          <span>{t('tableLegend.europeanCups')}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-          <span>{t('tableLegend.relegation')}</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

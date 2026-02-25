@@ -14,6 +14,7 @@ export interface NextGame {
 }
 
 export interface TeamStanding {
+  zone?: 'champion' | 'euro_cups' | 'relegation' | null;
   position: number;
   team_id: number;
   team_name: string;

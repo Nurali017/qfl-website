@@ -3,6 +3,8 @@ import { SITE_URL } from '@/lib/seo/constants';
 const DEFAULT_NEWS_BASE_URL = SITE_URL;
 const EXTERNAL_LINK_REL = 'noopener noreferrer nofollow';
 const UNSAFE_SCHEMES = new Set(['javascript', 'vbscript', 'data', 'file']);
+const MINIO_BUCKET = 'qfl-files';
+const STORAGE_PATH_PREFIX = '/storage';
 const PLAYER_MARKERS = new Set(['player', 'players']);
 const TEAM_MARKERS = new Set(['team', 'teams', 'club', 'clubs']);
 
@@ -85,7 +87,12 @@ function normalizeHttpUrlForPublic(
     const parsed = new URL(url);
     const hostname = normalizeHostname(parsed.hostname);
     if (hostname && looksInternalHostname(hostname) && !options.internalHosts.has(hostname)) {
-      return new URL(`${parsed.pathname}${parsed.search}${parsed.hash}`, options.baseOrigin).toString();
+      let pathname = parsed.pathname;
+      const bucketPrefix = `/${MINIO_BUCKET}/`;
+      if (pathname.startsWith(bucketPrefix)) {
+        pathname = `${STORAGE_PATH_PREFIX}${pathname}`;
+      }
+      return new URL(`${pathname}${parsed.search}${parsed.hash}`, options.baseOrigin).toString();
     }
     return parsed.toString();
   } catch {

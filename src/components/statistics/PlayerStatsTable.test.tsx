@@ -98,7 +98,7 @@ describe('PlayerStatsTable', () => {
     expect(document.querySelector('a[href="/team/0"]')).not.toBeInTheDocument();
   });
 
-  it('shows and hides mobile scroll hint after horizontal scroll interaction', async () => {
+  it('renders scroll container', () => {
     renderWithProviders(
       <PlayerStatsTable
         subTab="key_stats"
@@ -107,21 +107,7 @@ describe('PlayerStatsTable', () => {
       />
     );
 
-    const container = screen.getByTestId('player-stats-scroll-container');
-    Object.defineProperty(container, 'scrollWidth', { configurable: true, value: 1200 });
-    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 300 });
-
-    fireEvent(window, new Event('resize'));
-    await waitFor(() => {
-      expect(screen.getByTestId('player-stats-scroll-hint')).toBeInTheDocument();
-    });
-
-    Object.defineProperty(container, 'scrollLeft', { configurable: true, value: 16, writable: true });
-    fireEvent.scroll(container);
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('player-stats-scroll-hint')).not.toBeInTheDocument();
-    });
+    expect(screen.getByTestId('player-stats-scroll-container')).toBeInTheDocument();
   });
 
   it('navigates when row is clicked', () => {

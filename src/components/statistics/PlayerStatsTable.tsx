@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ColumnDefinition, formatValue, getColumnsForSubTab, getMobileColumns, applyCustomColumns } from '@/lib/mock/statisticsHelpers';
 import { ColumnPicker } from './ColumnPicker';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { usePersistedColumns } from '@/hooks/usePersistedColumns';
 import { ExtendedPlayerStat, StatSubTab } from '@/types/statistics';
 import { PlayerStatsNationalityFilter } from '@/types';
 import { getPlayerHref, getTeamHref } from '@/lib/utils/entityRoutes';
@@ -66,7 +67,7 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
     // Get columns based on subTab
     const columns = useMemo(() => getColumnsForSubTab(subTab, 'players'), [subTab]);
     const [sortBy, setSortBy] = useState<string>(() => getDefaultSortBy(subTab, columns));
-    const [customColumns, setCustomColumns] = useState<Set<string> | null>(null);
+    const [customColumns, setCustomColumns] = usePersistedColumns('players', subTab);
     const visibleColumns = useMemo(
         () =>
             isMobile
@@ -77,9 +78,8 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
         [isMobile, columns, sortBy, customColumns],
     );
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    // Ensure sort column exists in current subTab; reset custom columns
+    // Ensure sort column exists in current subTab
     useEffect(() => {
-        setCustomColumns(null);
         const columnKeys = new Set(columns.map((c) => c.key));
         if (!columnKeys.has(sortBy)) {
             setSortBy(getDefaultSortBy(subTab, columns));

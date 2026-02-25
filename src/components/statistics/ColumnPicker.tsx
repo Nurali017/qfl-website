@@ -17,17 +17,23 @@ interface ColumnPickerProps {
 export function ColumnPicker({ columns, selected, onChange, sortBy, getLabel }: ColumnPickerProps) {
   const { t } = useTranslation('statistics');
   const [isOpen, setIsOpen] = useState(false);
-  const [position, setPosition] = useState({ top: 0, right: 0 });
+  const [position, setPosition] = useState<{ top?: number; bottom?: number; right: number }>({ right: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const updatePosition = useCallback(() => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPosition({
-        top: rect.bottom + 4,
-        right: window.innerWidth - rect.right,
-      });
+      const maxH = window.innerHeight * 0.6;
+      const spaceBelow = window.innerHeight - rect.bottom - 8;
+      const fitsBelow = spaceBelow >= Math.min(maxH, 300);
+      const right = window.innerWidth - rect.right;
+
+      if (fitsBelow) {
+        setPosition({ top: rect.bottom + 4, bottom: undefined, right });
+      } else {
+        setPosition({ top: undefined, bottom: window.innerHeight - rect.top + 4, right });
+      }
     }
   }, []);
 
@@ -73,19 +79,22 @@ export function ColumnPicker({ columns, selected, onChange, sortBy, getLabel }: 
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="p-1.5 rounded-md text-gray-400 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-dark-surface-soft transition-colors"
+        className="p-2 rounded-md text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-dark-surface-soft hover:bg-gray-200 dark:hover:bg-dark-border transition-colors"
         aria-label="Select columns"
       >
-        <SlidersHorizontal className="w-3.5 h-3.5" />
+        <SlidersHorizontal className="w-4 h-4" />
       </button>
 
       {isOpen && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-[9999] bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg min-w-[160px]"
-          style={{ top: position.top, right: position.right }}
+          className="fixed z-[9999] bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg min-w-[160px] max-h-[60vh] overflow-y-auto overscroll-contain"
+          style={{
+            ...(position.top !== undefined ? { top: position.top } : { bottom: position.bottom }),
+            right: position.right,
+          }}
         >
-          <div className="px-3 py-1.5 text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100 dark:border-dark-border">
+          <div className="px-3 py-1.5 text-[11px] text-gray-400 dark:text-slate-500 border-b border-gray-100 dark:border-dark-border sticky top-0 bg-white dark:bg-dark-surface">
             {t('table.maxColumns', { count: MAX_COLUMNS, defaultValue: `макс. ${MAX_COLUMNS} столбца` })}
           </div>
           {columns.map((col) => {

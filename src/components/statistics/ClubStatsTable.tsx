@@ -14,6 +14,7 @@ import {
 } from '@/lib/mock/statisticsHelpers';
 import { ColumnPicker } from './ColumnPicker';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { usePersistedColumns } from '@/hooks/usePersistedColumns';
 import { StatSubTab, TeamStatistics } from '@/types/statistics';
 import { getTeamHref } from '@/lib/utils/entityRoutes';
 import { navigatePrimary, shouldSkipPrimaryNavigation } from '@/lib/utils/interactiveNavigation';
@@ -64,7 +65,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
     getDefaultSortBy(subTab, columns)
   );
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [customColumns, setCustomColumns] = useState<Set<string> | null>(null);
+  const [customColumns, setCustomColumns] = usePersistedColumns('clubs', subTab);
   const visibleColumns = useMemo(
     () =>
       isMobile
@@ -75,9 +76,8 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
     [isMobile, columns, sortBy, customColumns],
   );
 
-  // Ensure sort column exists in current subTab; reset custom columns
+  // Ensure sort column exists in current subTab
   useEffect(() => {
-    setCustomColumns(null);
     const columnKeys = new Set(columns.map((c) => c.key));
     if (!columnKeys.has(sortBy)) {
       setSortBy(getDefaultSortBy(subTab, columns));

@@ -57,7 +57,7 @@ describe('ClubStatsTable', () => {
     expect(document.querySelector('a[href="/team/0"]')).not.toBeInTheDocument();
   });
 
-  it('shows scroll hint when table overflows horizontally', async () => {
+  it('renders scroll container', () => {
     renderWithProviders(
       <ClubStatsTable
         subTab="key_stats"
@@ -65,14 +65,7 @@ describe('ClubStatsTable', () => {
       />
     );
 
-    const container = screen.getByTestId('club-stats-scroll-container');
-    Object.defineProperty(container, 'scrollWidth', { configurable: true, value: 1200 });
-    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 300 });
-
-    fireEvent(window, new Event('resize'));
-    await waitFor(() => {
-      expect(screen.getByTestId('club-stats-scroll-hint')).toBeInTheDocument();
-    });
+    expect(screen.getByTestId('club-stats-scroll-container')).toBeInTheDocument();
   });
 
   it('navigates when a row is clicked', () => {

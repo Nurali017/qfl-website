@@ -112,6 +112,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: leagueColorScript }} />
       </head>
       <body className={`${montserrat.className} min-h-screen bg-[#F5F5F5] dark:bg-dark-bg`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:text-sm focus:font-bold"
+        >
+          Skip to content
+        </a>
         <GoogleAnalytics />
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         <Providers
@@ -120,7 +126,7 @@ export default function RootLayout({
         >
           <TournamentBar />
           <Header />
-          <main>{children}</main>
+          <main id="main-content">{children}</main>
           <SponsorsSection />
           <Footer />
           <BackToTop />

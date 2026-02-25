@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Youtube, Instagram, Send } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +12,7 @@ const TikTokIcon = () => (
   </svg>
 );
 
-export function Footer() {
+export const Footer = memo(function Footer() {
   const { t } = useTranslation('footer');
   const currentYear = new Date().getFullYear();
 
@@ -40,9 +42,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-16">
           <div className="lg:col-span-3">
             <Link href="/" className="block mb-4">
-              <img
+              <Image
                 src="/logo.png"
                 alt={t('brand.logoAlt', 'Премьер-лига Казахстана')}
+                width={144}
+                height={144}
                 className="h-24 md:h-36 w-auto brightness-0 invert"
               />
             </Link>
@@ -172,4 +176,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});

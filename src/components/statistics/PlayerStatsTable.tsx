@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { ColumnDefinition, formatValue, getColumnsForSubTab, getMobileColumns, applyCustomColumns } from '@/lib/mock/statisticsHelpers';
+import { formatValue } from '@/lib/mock/statisticsHelpers';
 import { ColumnPicker } from './ColumnPicker';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { usePersistedColumns } from '@/hooks/usePersistedColumns';
+import { useStatsTable } from '@/hooks/useStatsTable';
 import { ExtendedPlayerStat, StatSubTab } from '@/types/statistics';
 import { PlayerStatsNationalityFilter } from '@/types';
 import { getPlayerHref, getTeamHref } from '@/lib/utils/entityRoutes';
@@ -35,16 +34,6 @@ const DEFAULT_SORT_BY: Record<StatSubTab, string> = {
     disciplinary: 'yellow_cards',
 };
 
-function getDefaultSortBy(subTab: StatSubTab, columns: { key: string; sortable?: boolean }[]): string {
-    const preferred = DEFAULT_SORT_BY[subTab];
-    if (columns.some((c) => c.key === preferred)) return preferred;
-    return columns.find((c) => c.sortable)?.key || columns[0]?.key || 'goals';
-}
-
-function toFiniteNumber(value: unknown): number | null {
-    return typeof value === 'number' && Number.isFinite(value) ? value : null;
-}
-
 function toCompactPlayerName(firstName?: string | null, lastName?: string | null): string {
     const first = (firstName || '').trim();
     const last = (lastName || '').trim();
@@ -59,39 +48,29 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
   const { t } = useTranslation('statistics');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-    const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
-    const [hasInteractedWithXScroll, setHasInteractedWithXScroll] = useState(false);
-    const isMobile = useIsMobile();
 
-    // Get columns based on subTab
-    const columns = useMemo(() => getColumnsForSubTab(subTab, 'players'), [subTab]);
-    const [sortBy, setSortBy] = useState<string>(() => getDefaultSortBy(subTab, columns));
-    const [customColumns, setCustomColumns] = usePersistedColumns('players', subTab);
-    const visibleColumns = useMemo(
-        () =>
-            isMobile
-                ? customColumns
-                    ? applyCustomColumns(columns, customColumns, sortBy)
-                    : getMobileColumns(columns, sortBy)
-                : columns,
-        [isMobile, columns, sortBy, customColumns],
-    );
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-    // Ensure sort column exists in current subTab
-    useEffect(() => {
-        const columnKeys = new Set(columns.map((c) => c.key));
-        if (!columnKeys.has(sortBy)) {
-            setSortBy(getDefaultSortBy(subTab, columns));
-            setSortOrder('desc');
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [subTab]);
+  const {
+    isMobile,
+    columns,
+    visibleColumns,
+    setCustomColumns,
+    sortBy,
+    sortOrder,
+    handleSort,
+    scrollContainerRef,
+    showMobileScrollHint,
+    hasColumnPicker,
+    sortItems,
+  } = useStatsTable({
+    subTab,
+    mode: 'players',
+    defaultSortByMap: DEFAULT_SORT_BY,
+    itemCount: players.length,
+  });
 
     // Filter players
     const filteredPlayers = useMemo(() => {
         return players.filter(p => {
-            // Phase filter would go here if data supported it
             if (filters.club !== 'all' && p.team_id.toString() !== filters.club) return false;
             const countryCode = p.country?.code?.toUpperCase() ?? null;
             if (filters.nationality === 'kz' && countryCode !== 'KZ') return false;
@@ -101,61 +80,14 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
     }, [players, filters]);
 
     // Sort players
-    const sortedPlayers = useMemo(() => {
-        return [...filteredPlayers].sort((a, b) => {
-            const key = sortBy as keyof ExtendedPlayerStat;
-            const aNum = toFiniteNumber(a[key]);
-            const bNum = toFiniteNumber(b[key]);
-
-            // Keep null/undefined/NaN at the bottom
-            if (aNum === null && bNum === null) return 0;
-            if (aNum === null) return 1;
-            if (bNum === null) return -1;
-
-            return sortOrder === 'desc' ? bNum - aNum : aNum - bNum;
-        });
-    }, [filteredPlayers, sortBy, sortOrder]);
-
-    const handleSort = (key: string) => {
-        if (sortBy === key) {
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortBy(key);
-            setSortOrder('desc');
-        }
-    };
-
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const updateOverflow = () => {
-            const overflow = container.scrollWidth > container.clientWidth + 1;
-            setHasHorizontalOverflow(overflow);
-            if (!overflow) {
-                setHasInteractedWithXScroll(false);
-            }
-        };
-
-        const handleScroll = () => {
-            if (container.scrollLeft > 8) {
-                setHasInteractedWithXScroll(true);
-            }
-        };
-
-        updateOverflow();
-        container.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', updateOverflow);
-        return () => {
-            container.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', updateOverflow);
-        };
-    }, [players.length, columns.length]);
+    const sortedPlayers = useMemo(
+        () => sortItems(filteredPlayers),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [filteredPlayers, sortBy, sortOrder],
+    );
 
     const fixedColCount = isMobile ? 2 : 3; // # + Player [+ Club on desktop]
     if (loading) return <TableSkeleton rows={10} columns={visibleColumns.length + fixedColCount} />;
-
-    const showMobileScrollHint = hasHorizontalOverflow && !hasInteractedWithXScroll;
 
     return (
         <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden shadow-sm">
@@ -220,7 +152,7 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
                                     })()}
                                 </th>
                             ))}
-                            {isMobile && columns.length > visibleColumns.length && (
+                            {hasColumnPicker && (
                                 <th className="px-1 py-2.5 bg-gray-50 dark:bg-dark-surface-soft sticky right-0 z-10">
                                     <ColumnPicker
                                         columns={columns}
@@ -374,12 +306,12 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
                                         {formatValue((player as any)[col.key], col.format)}
                                     </td>
                                 ))}
-                                {isMobile && columns.length > visibleColumns.length && <td className="sticky right-0 bg-white dark:bg-dark-surface group-hover:bg-gray-50 dark:group-hover:bg-dark-surface-soft" />}
+                                {hasColumnPicker && <td className="sticky right-0 bg-white dark:bg-dark-surface group-hover:bg-gray-50 dark:group-hover:bg-dark-surface-soft" />}
                             </tr>
                         )})}
                         {sortedPlayers.length === 0 && (
                             <tr>
-                                <td colSpan={visibleColumns.length + fixedColCount + (isMobile && columns.length > visibleColumns.length ? 1 : 0)} className="px-4 py-12 text-center text-gray-500 dark:text-slate-400">
+                                <td colSpan={visibleColumns.length + fixedColCount + (hasColumnPicker ? 1 : 0)} className="px-4 py-12 text-center text-gray-500 dark:text-slate-400">
                                     {t('table.noPlayersFound', {
                                         defaultValue: 'No players found. Try adjusting filters.',
                                     })}

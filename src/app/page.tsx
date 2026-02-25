@@ -24,6 +24,7 @@ import { buildMetadata, getSeoLang, getDefaultDescription } from '@/lib/seo/meta
 import { SITE_NAME } from '@/lib/seo/constants';
 import { DEFAULT_TOURNAMENT_ID, getTournamentById, PRE_SEASON_CONFIG } from '@/config/tournaments';
 import { SUPER_CUP_HERO_ENABLED } from '@/config/featuredMatch';
+import { MEDIA_VIDEOS, ALL_VIDEOS_HREF } from '@/config/mediaVideos';
 import {
   MatchCenterFilters,
   CupOverviewResponse,
@@ -341,14 +342,8 @@ export default async function HomePage() {
     );
   }
 
-  // KFF League videos from kffleague.kz - показываем 4 видео в одну строку
-  const mediaVideos = [
-    { id: 1, title: 'Премьер-лиганың 26-турының үздік голдары', youtubeId: '-LxnCdR-pxI' },
-    { id: 2, title: 'Премьер-лиганың 22-турының үздік голдары', youtubeId: 'HcY3luVxyzo' },
-    { id: 3, title: 'Премьер-лиганың 21-турының үздік голдары', youtubeId: 'K_6ov7ERSuE' },
-    { id: 4, title: 'Премьер-лиганың 20-турының үздік голдары', youtubeId: 'hSb0s6kj_JA' },
-  ];
-  const allVideosHref = 'https://youtube.com/@qpl_kz';
+  const mediaVideos = MEDIA_VIDEOS;
+  const allVideosHref = ALL_VIDEOS_HREF;
   const showSuperCupHero = currentTournamentId === 'pl' && SUPER_CUP_HERO_ENABLED;
   const heroContainerClassName = showSuperCupHero
     ? 'lg:col-span-9 h-[520px] sm:h-[500px] lg:h-[580px]'

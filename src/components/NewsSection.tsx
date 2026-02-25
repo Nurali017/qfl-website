@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLatestNews } from '@/hooks';
@@ -39,11 +40,12 @@ function FeaturedCard({ news, className, language = 'ru' }: { news: NewsItem; cl
   return (
     <Link href={`/news/${news.id}`} className="group block h-full">
       <div className={`relative overflow-hidden rounded-2xl h-full bg-gray-100 transition-all duration-500 group-hover:shadow-xl group-hover:shadow-primary/10 ${className || 'min-h-[300px]'}`}>
-        <img
+        <Image
           src={news.image_url || '/images/news-placeholder.svg'}
           alt={news.title}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 66vw, 50vw"
+          className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 via-60% to-black/10" />
 
@@ -69,12 +71,13 @@ function HorizontalCard({ news, className, language = 'ru' }: { news: NewsItem; 
           </h3>
           <span className="text-gray-400 dark:text-slate-500 text-sm mt-auto pt-2 block transition-all duration-300 group-hover:translate-x-0.5">{formatDate(news.publish_date, 'long', language)}</span>
         </div>
-        <div className="w-20 rounded-lg overflow-hidden shrink-0 transition-shadow duration-300 group-hover:shadow-md">
-          <img
+        <div className="relative w-20 rounded-lg overflow-hidden shrink-0 transition-shadow duration-300 group-hover:shadow-md">
+          <Image
             src={news.image_url || '/images/news-placeholder.svg'}
             alt={news.title}
-            loading="lazy"
-            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-105"
+            fill
+            sizes="80px"
+            className="object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-105"
           />
         </div>
       </div>

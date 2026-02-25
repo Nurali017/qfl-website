@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Play, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -66,13 +67,15 @@ export function VideoGrid({ title, videos, allVideosHref }: VideoGridProps) {
               onClick={() => setActiveVideo(video)}
             >
               <div className="relative rounded-lg overflow-hidden mb-3 aspect-video bg-gray-900">
-                <motion.img
-                  src={getYoutubeThumbnail(video.youtubeId)}
-                  alt={video.title}
-                  loading="lazy"
-                  variants={imageZoom}
-                  className="w-full h-full object-cover"
-                />
+                <motion.div variants={imageZoom} className="absolute inset-0">
+                  <Image
+                    src={getYoutubeThumbnail(video.youtubeId)}
+                    alt={video.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover"
+                  />
+                </motion.div>
                 <motion.div
                   className="absolute inset-0 bg-black/20"
                   initial={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}

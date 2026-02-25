@@ -37,22 +37,17 @@ describe('MatchesPage schedule notice', () => {
     useTournamentMock.mockReset();
   });
 
-  it('shows global schedule notice for season 200', () => {
+  it('renders matches page shell', () => {
     useTournamentMock.mockReturnValue({ effectiveSeasonId: 200 });
 
     render(<MatchesPage />);
 
-    expect(
-      screen.getByText('Дата и время матчей могут корректироваться. Окончательное расписание публикуется за месяц до начала.')
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Календарь дат (PDF)' })).toHaveAttribute(
-      'href',
-      '/matches/calendar'
-    );
+    expect(screen.getByRole('heading', { name: 'Матчи' })).toBeInTheDocument();
+    expect(screen.getByTestId('season-year-selector')).toBeInTheDocument();
     expect(screen.getByTestId('match-center')).toBeInTheDocument();
   });
 
-  it('hides global schedule notice for non-2026 seasons', () => {
+  it('does not render schedule notice and calendar link', () => {
     useTournamentMock.mockReturnValue({ effectiveSeasonId: 61 });
 
     render(<MatchesPage />);

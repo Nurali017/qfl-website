@@ -10,7 +10,7 @@ describe('TeamPageTabs', () => {
 
     renderWithProviders(<TeamPageTabs activeTab="overview" onChange={onChange} />);
 
-    await user.click(screen.getByRole('button', { name: /Матчи/i }));
+    await user.click(screen.getByRole('button', { name: /Матчи|Матчтар/i }));
     expect(onChange).toHaveBeenCalledWith('matches');
   });
 

@@ -63,7 +63,7 @@ i18n
         statistics: statisticsKz,
       },
     },
-    fallbackLng: 'ru',
+    fallbackLng: ['kz', 'ru'],
     defaultNS: 'common',
     ns: ['common', 'navigation', 'footer', 'errors', 'table', 'league', 'news', 'match', 'team', 'player', 'statistics'],
     supportedLngs: SUPPORTED_LANGUAGES,

@@ -198,7 +198,7 @@ describe('TournamentContext', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'set-pl' }));
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith('/table?tournament=pl&season=61&round=26', { scroll: false });
+      expect(pushMock).toHaveBeenCalledWith('/table?tournament=pl&season=61', { scroll: false });
       expect(screen.getByTestId('season-id')).toHaveTextContent('61');
     });
   }, 15000);

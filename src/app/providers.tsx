@@ -7,49 +7,61 @@ import i18n from '@/i18n';
 import { swrConfig } from '@/lib/swr/config';
 import { TournamentProvider } from '@/contexts/TournamentContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { normalizeSupportedLanguage, resolvePreferredLanguage } from '@/lib/i18n/language';
 import {
   setLanguageCookie,
   getClientLanguageCookie,
 } from '@/lib/i18n/cookies.client';
+
 interface ProvidersProps {
   children: ReactNode;
   initialLang?: string;
   initialTournamentId?: string;
 }
 
-const clientLangSet = { current: false };
-
 export function Providers({
   children,
   initialLang,
   initialTournamentId,
 }: ProvidersProps) {
-  // Use server language for first render so SSR and client hydration match.
-  // On server: set every time (each request is fresh). On client: set only once.
-  if (initialLang) {
-    if (typeof window === 'undefined') {
-      i18n.language = initialLang;
-    } else if (!clientLangSet.current) {
-      i18n.language = initialLang;
-      clientLangSet.current = true;
-    }
+  const normalizedInitialLang = resolvePreferredLanguage({
+    initialLang,
+  });
+  const currentI18nLang = normalizeSupportedLanguage(i18n.language);
+
+  // Keep i18n in sync during render to avoid SSR/CSR language mismatch on first paint.
+  if (currentI18nLang !== normalizedInitialLang) {
+    void i18n.changeLanguage(normalizedInitialLang);
   }
 
-  // Sync localStorage and cookie on mount
+  // Sync localStorage/cookie/document language on mount with priority:
+  // cookie > localStorage > initialLang > kz
   useEffect(() => {
-    const storedLang = localStorage.getItem('i18nextLng');
-    const cookieLang = getClientLanguageCookie();
+    const storedLang = normalizeSupportedLanguage(localStorage.getItem('i18nextLng'));
+    const cookieLang = normalizeSupportedLanguage(getClientLanguageCookie());
+    const nextLang = resolvePreferredLanguage({
+      cookieLang,
+      storedLang,
+      initialLang: normalizedInitialLang,
+    });
+    const currentLang = normalizeSupportedLanguage(i18n.language);
 
-    // If localStorage has language but cookie doesn't, set cookie
-    if (storedLang && !cookieLang) {
-      setLanguageCookie(storedLang as 'ru' | 'kz');
+    if (cookieLang !== nextLang) {
+      setLanguageCookie(nextLang);
     }
 
-    // If cookie has language but localStorage doesn't, set localStorage
-    if (cookieLang && !storedLang) {
-      localStorage.setItem('i18nextLng', cookieLang);
+    if (storedLang !== nextLang) {
+      localStorage.setItem('i18nextLng', nextLang);
     }
-  }, []);
+
+    if (document.documentElement.lang !== nextLang) {
+      document.documentElement.lang = nextLang;
+    }
+
+    if (currentLang !== nextLang) {
+      void i18n.changeLanguage(nextLang);
+    }
+  }, [normalizedInitialLang]);
 
   return (
     <ThemeProvider>

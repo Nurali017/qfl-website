@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, screen } from '@testing-library/react';
 
+import i18n from '@/i18n';
 import { renderWithProviders } from '@/test/utils';
 import { MatchCenterFilters } from './MatchCenterFilters';
 
@@ -66,6 +67,7 @@ describe('MatchCenterFilters', () => {
 
   it('uses single-select controls for month and status and maps values to filters', () => {
     const onFilterChange = vi.fn();
+    const t = i18n.getFixedT(i18n.language, 'match');
 
     renderWithProviders(
       <MatchCenterFilters
@@ -74,8 +76,8 @@ describe('MatchCenterFilters', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Все месяцы' }));
-    const mayInput = screen.getByLabelText('Май');
+    fireEvent.click(screen.getByRole('button', { name: t('filters.allMonths') }));
+    const mayInput = screen.getByLabelText(t('months.5'));
     expect(mayInput).toHaveAttribute('type', 'radio');
     fireEvent.click(mayInput);
 
@@ -83,8 +85,8 @@ describe('MatchCenterFilters', () => {
       expect.objectContaining({ month: 5 })
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Все матчи' }));
-    const liveInput = screen.getByLabelText('В прямом эфире');
+    fireEvent.click(screen.getByRole('button', { name: t('statuses.all') }));
+    const liveInput = screen.getByLabelText(t('statuses.live'));
     expect(liveInput).toHaveAttribute('type', 'radio');
     fireEvent.click(liveInput);
 
@@ -95,6 +97,7 @@ describe('MatchCenterFilters', () => {
 
   it('builds tour options dynamically from stages and includes tour 30', () => {
     const onFilterChange = vi.fn();
+    const t = i18n.getFixedT(i18n.language, 'match');
 
     renderWithProviders(
       <MatchCenterFilters
@@ -103,12 +106,12 @@ describe('MatchCenterFilters', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Все туры' }));
+    fireEvent.click(screen.getByRole('button', { name: t('filters.allTours') }));
 
-    const tourThirty = screen.getByLabelText('Тур 30');
+    const tourThirty = screen.getByLabelText(`${t('tour')} 30`);
     expect(tourThirty).toHaveAttribute('type', 'checkbox');
-    expect(screen.getByLabelText('Тур 1')).toBeInTheDocument();
-    expect(screen.getAllByText('Тур 2')).toHaveLength(1);
+    expect(screen.getByLabelText(`${t('tour')} 1`)).toBeInTheDocument();
+    expect(screen.getAllByText(`${t('tour')} 2`)).toHaveLength(1);
 
     fireEvent.click(tourThirty);
 
@@ -118,6 +121,7 @@ describe('MatchCenterFilters', () => {
   });
 
   it('falls back to selected tours when stages and total rounds are unavailable', () => {
+    const t = i18n.getFixedT(i18n.language, 'match');
     tournamentContextMock.currentTournament.totalRounds = null;
     useSWRMock.mockImplementation((key: unknown) => {
       const requestKey = Array.isArray(key) ? key[0] : key;
@@ -137,11 +141,12 @@ describe('MatchCenterFilters', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Тур 27' }));
-    expect(screen.getByLabelText('Тур 27')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: `${t('tour')} 27` }));
+    expect(screen.getByLabelText(`${t('tour')} 27`)).toBeInTheDocument();
   });
 
   it('uses readable text classes on mobile show-filters button in dark mode', () => {
+    const t = i18n.getFixedT(i18n.language, 'match');
     renderWithProviders(
       <MatchCenterFilters
         filters={{}}
@@ -149,7 +154,7 @@ describe('MatchCenterFilters', () => {
       />
     );
 
-    const showFiltersButton = screen.getByRole('button', { name: 'Показать фильтры' });
+    const showFiltersButton = screen.getByRole('button', { name: t('filters.showFilters') });
     expect(showFiltersButton).toHaveClass('text-gray-900');
     expect(showFiltersButton).toHaveClass('dark:text-slate-100');
   });

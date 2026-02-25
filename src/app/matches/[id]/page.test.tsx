@@ -240,7 +240,7 @@ describe('MatchDetailPage protocol tabs integration', () => {
     renderWithProviders(<MatchDetailPage />);
 
     expect(
-      screen.getByText('Дата и время этого матча могут корректироваться. Окончательное время подтверждается за месяц до начала.')
+      screen.getByText(/Дата и время этого матча могут корректироваться|Бұл матчтың күні мен уақыты өзгеруі мүмкін/)
     ).toBeInTheDocument();
   });
 
@@ -254,7 +254,7 @@ describe('MatchDetailPage protocol tabs integration', () => {
     renderWithProviders(<MatchDetailPage />);
 
     expect(
-      screen.queryByText('Дата и время этого матча могут корректироваться. Окончательное время подтверждается за месяц до начала.')
+      screen.queryByText(/Дата и время этого матча могут корректироваться|Бұл матчтың күні мен уақыты өзгеруі мүмкін/)
     ).not.toBeInTheDocument();
   });
 

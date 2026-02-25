@@ -34,14 +34,14 @@ describe('MatchEventTimeline (mobile)', () => {
     const mobile = screen.getByTestId('match-timeline-mobile');
     fireEvent.click(within(mobile).getByTestId('timeline-event-101'));
 
-    expect(screen.getByRole('dialog', { name: /детали события/i })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: /детали события|оқиға мәліметтері/i })).toBeInTheDocument();
     expect(screen.getByText('Player One')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Player One' })).toHaveAttribute('href', '/player/1');
 
     fireEvent.click(screen.getByTestId('timeline-event-backdrop'));
 
     await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: /детали события/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog', { name: /детали события|оқиға мәліметтері/i })).not.toBeInTheDocument();
     });
   });
 });

@@ -64,22 +64,25 @@ function Harness({
 }
 
 describe('TournamentSwitcherView', () => {
+  const selectTournamentName = /Выбор турнира|Турнирді таңдау/i;
+  const dialogName = /Выбор турнира|Турнирді таңдау/i;
+
   it('opens and selects a tournament', async () => {
     const onSelect = vi.fn();
     render(<Harness onSelect={onSelect} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /выбрать турнир/i }));
-    expect(screen.getByRole('dialog', { name: /выбор турнира/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: selectTournamentName }));
+    expect(screen.getByRole('dialog', { name: dialogName })).toBeInTheDocument();
 
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');
     });
 
-    fireEvent.click(screen.getByRole('button', { name: /выбрать кубок/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Кубок Казахстана|Қазақстан Кубогы/ }));
     expect(onSelect).toHaveBeenCalledWith('cup');
 
     await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: /выбор турнира/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog', { name: dialogName })).not.toBeInTheDocument();
     });
     expect(document.body.style.overflow).toBe('');
   });
@@ -88,13 +91,13 @@ describe('TournamentSwitcherView', () => {
     const onSelect = vi.fn();
     render(<Harness onSelect={onSelect} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /выбрать турнир/i }));
-    expect(screen.getByRole('dialog', { name: /выбор турнира/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: selectTournamentName }));
+    expect(screen.getByRole('dialog', { name: dialogName })).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('tournament-switcher-backdrop'));
 
     await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: /выбор турнира/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog', { name: dialogName })).not.toBeInTheDocument();
     });
     expect(onSelect).not.toHaveBeenCalled();
   });
@@ -103,7 +106,7 @@ describe('TournamentSwitcherView', () => {
     const onSelect = vi.fn();
     render(<Harness onSelect={onSelect} lang="ru" />);
 
-    fireEvent.click(screen.getByRole('button', { name: /выбрать турнир/i }));
+    fireEvent.click(screen.getByRole('button', { name: selectTournamentName }));
 
     expect(screen.getByText('ВЫБРАН')).toBeInTheDocument();
     expect(screen.queryByText('ACTIVE')).not.toBeInTheDocument();
@@ -113,7 +116,7 @@ describe('TournamentSwitcherView', () => {
     const onSelect = vi.fn();
     render(<Harness onSelect={onSelect} lang="kz" />);
 
-    fireEvent.click(screen.getByRole('button', { name: /выбрать турнир/i }));
+    fireEvent.click(screen.getByRole('button', { name: selectTournamentName }));
 
     expect(screen.getByText('ТАҢДАЛҒАН')).toBeInTheDocument();
     expect(screen.queryByText('ACTIVE')).not.toBeInTheDocument();

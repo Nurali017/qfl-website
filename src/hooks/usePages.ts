@@ -5,10 +5,11 @@ import { LeadershipPage, ContactsPage, DocumentsPage } from '@/types';
 import { queryKeys } from '@/lib/api/queryKeys';
 import { prefetchKeys } from '@/lib/api/prefetchKeys';
 import { useRoutePrefetchValue } from '@/contexts/RoutePrefetchContext';
+import { normalizeSupportedLanguage } from '@/lib/i18n/language';
 
 export function useLeadershipPage() {
   const { i18n } = useTranslation();
-  const language = i18n.language || 'ru';
+  const language = normalizeSupportedLanguage(i18n.language) ?? 'kz';
   const prefetched = useRoutePrefetchValue<LeadershipPage | null>(
     prefetchKeys.pagesLeadership(language)
   );
@@ -33,7 +34,7 @@ export function useLeadershipPage() {
 
 export function useContactsPage() {
   const { i18n } = useTranslation();
-  const language = i18n.language || 'ru';
+  const language = normalizeSupportedLanguage(i18n.language) ?? 'kz';
   const prefetched = useRoutePrefetchValue<ContactsPage | null>(
     prefetchKeys.pagesContacts(language)
   );
@@ -59,7 +60,7 @@ export function useContactsPage() {
 
 export function useDocumentsPage() {
   const { i18n } = useTranslation();
-  const language = i18n.language || 'ru';
+  const language = normalizeSupportedLanguage(i18n.language) ?? 'kz';
   const prefetched = useRoutePrefetchValue<DocumentsPage | null>(
     prefetchKeys.pagesDocuments(language)
   );

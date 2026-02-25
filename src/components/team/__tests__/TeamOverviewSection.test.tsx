@@ -144,8 +144,8 @@ describe('TeamOverviewSection', () => {
       />
     );
 
-    expect(screen.getAllByText(/Нет сыгранных матчей/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Нет предстоящих матчей/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Нет сыгранных матчей|Ойналған матчтар жоқ/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Нет предстоящих матчей|Алдағы матчтар жоқ/i)).toBeInTheDocument();
   });
 
   it('navigates when standings row is clicked', () => {

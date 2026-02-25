@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import { ENDPOINTS, DEFAULT_SEASON_ID } from '../endpoints';
+import { ENDPOINTS, DEFAULT_LANGUAGE, DEFAULT_SEASON_ID } from '../endpoints';
 import { HeadToHeadResponse } from '@/types/h2h';
 import { getErrorMessage } from '@/lib/i18n/errorMessages';
 
@@ -8,7 +8,7 @@ export const h2hService = {
     team1Id: number,
     team2Id: number,
     seasonId: number = DEFAULT_SEASON_ID,
-    language: string = 'ru'
+    language: string = DEFAULT_LANGUAGE
   ): Promise<HeadToHeadResponse | null> {
     const response = await apiClient.get<HeadToHeadResponse>(
       ENDPOINTS.HEAD_TO_HEAD(team1Id, team2Id),

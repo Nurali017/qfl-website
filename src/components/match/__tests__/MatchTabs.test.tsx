@@ -72,6 +72,6 @@ describe('MatchTabs', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: 'Обзор' })).toHaveClass('min-h-[44px]');
+    expect(screen.getByRole('button', { name: /Обзор|Шолу/i })).toHaveClass('min-h-[44px]');
   });
 });

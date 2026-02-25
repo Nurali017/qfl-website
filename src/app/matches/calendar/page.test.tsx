@@ -29,20 +29,12 @@ describe('MatchesCalendarPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders open and download links with correct urls', () => {
+  it('renders back link to matches page', () => {
     render(<MatchesCalendarPage />);
 
-    const openLinks = screen.getAllByRole('link', { name: 'Открыть PDF' });
-    const downloadLinks = screen.getAllByRole('link', { name: 'Скачать PDF' });
-
-    expect(openLinks[0]).toHaveAttribute(
-      'href',
-      '/api/v1/files/view/documents/kpl-2026-calendar-dates.pdf'
-    );
-    expect(downloadLinks[0]).toHaveAttribute(
-      'href',
-      '/api/v1/files/download/documents/kpl-2026-calendar-dates.pdf'
-    );
+    expect(screen.getByRole('link', { name: '← Матчи' })).toHaveAttribute('href', '/matches');
+    expect(screen.queryByRole('link', { name: 'Открыть PDF' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Скачать PDF' })).not.toBeInTheDocument();
   });
 
   it('renders iframe with pdf view url', () => {
@@ -54,4 +46,3 @@ describe('MatchesCalendarPage', () => {
     );
   });
 });
-

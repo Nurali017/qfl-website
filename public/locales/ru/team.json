@@ -25,13 +25,6 @@
   "leaderboard": {
     "total": "Всего"
   },
-  "miniStats": {
-    "passes": "Пасы",
-    "appearances": "Матчи",
-    "saves": "Сейвы",
-    "cleanSheets": "Сухие матчи",
-    "redCards": "Красные карточки"
-  },
   "form": {
     "homeShort": "Д",
     "awayShort": "Г"

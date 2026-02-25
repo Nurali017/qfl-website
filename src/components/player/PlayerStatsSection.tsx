@@ -11,12 +11,13 @@ interface PlayerStatsSectionProps {
 
 export function PlayerStatsSection({ stats, variant = 'clarity' }: PlayerStatsSectionProps) {
   const { t } = useTranslation('player');
+  const { t: tStats } = useTranslation('statistics');
   const isStudio = variant === 'studio';
   const isData = variant === 'data';
 
   const statItems = [
-    { label: t('gamesPlayed', 'Матчи'), value: stats?.games_played ?? 0 },
-    { label: t('minutesPlayed', 'Минуты'), value: stats?.minutes_played ?? 0 },
+    { label: tStats('labels.matchesPlayed'), value: stats?.games_played ?? 0 },
+    { label: tStats('labels.minutes'), value: stats?.minutes_played ?? 0 },
     { label: t('startingLineup', 'В старте'), value: stats?.started ?? 0 },
     { label: t('substitutedIn', 'Выходы на замену'), value: stats?.subbed_in ?? 0 },
   ];

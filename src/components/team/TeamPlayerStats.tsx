@@ -257,31 +257,31 @@ export function TeamPlayerStats({ leaders }: TeamPlayerStatsProps) {
   const miniCards = [
     {
       key: 'passes',
-      label: tTeam('miniStats.passes', 'Пасы'),
+      label: tStats('labels.passes'),
       player: leaders.mini_leaders.passes,
       value: leaders.mini_leaders.passes?.passes ?? 0,
     },
     {
       key: 'appearances',
-      label: tTeam('miniStats.appearances', 'Матчи'),
+      label: tStats('labels.matchesPlayed'),
       player: leaders.mini_leaders.appearances,
       value: leaders.mini_leaders.appearances?.games_played ?? 0,
     },
     {
       key: 'saves',
-      label: tTeam('miniStats.saves', 'Сейвы'),
+      label: tStats('labels.saves'),
       player: leaders.mini_leaders.saves,
       value: leaders.mini_leaders.saves?.save_shot ?? 0,
     },
     {
       key: 'cleanSheets',
-      label: tTeam('miniStats.cleanSheets', 'Сухие матчи'),
+      label: tStats('labels.cleanSheets'),
       player: leaders.mini_leaders.clean_sheets,
       value: leaders.mini_leaders.clean_sheets?.dry_match ?? 0,
     },
     {
       key: 'redCards',
-      label: tTeam('miniStats.redCards', 'Красные карточки'),
+      label: tStats('labels.redCards'),
       player: leaders.mini_leaders.red_cards,
       value: leaders.mini_leaders.red_cards?.red_cards ?? 0,
     },

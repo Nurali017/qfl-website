@@ -148,10 +148,9 @@ function StatsSection({ title, children, defaultOpen = true }: { title: string; 
 
 function KeyStatsSection({ s, gp }: { s: TeamStats; gp: number }) {
     const { t: tStats } = useTranslation('statistics');
-    const { t: tCommon } = useTranslation('common');
 
     const avg = (v?: number) =>
-        v != null ? `${tCommon('seasonStatLabels.avgPerMatch', 'В среднем за матч')}: ${(v / gp).toFixed(2)}` : undefined;
+        v != null ? `${tStats('helpers.avgPerMatch')}: ${(v / gp).toFixed(2)}` : undefined;
 
     return (
         <StatsSection title={tStats('subTabs.keyStats', 'Ключевая статистика')}>
@@ -181,10 +180,9 @@ function KeyStatsSection({ s, gp }: { s: TeamStats; gp: number }) {
 
 function AttackingSection({ s, gp }: { s: TeamStats; gp: number }) {
     const { t: tStats } = useTranslation('statistics');
-    const { t: tCommon } = useTranslation('common');
 
     const avg = (v?: number) =>
-        v != null ? `${tCommon('seasonStatLabels.avgPerMatch', 'В среднем за матч')}: ${(v / gp).toFixed(2)}` : undefined;
+        v != null ? `${tStats('helpers.avgPerMatch')}: ${(v / gp).toFixed(2)}` : undefined;
     const shotsOnTarget = s.shots_on_goal ?? 0;
     const shotsOff = s.shots_off_goal ?? 0;
     const totalShots = shotsOnTarget + shotsOff;

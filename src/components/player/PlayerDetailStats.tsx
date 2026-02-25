@@ -118,6 +118,7 @@ function CircularChart({ value, label, variant }: CircularChartProps) {
 
 export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailStatsProps) {
   const { t } = useTranslation('player');
+  const { t: tStats } = useTranslation('statistics');
 
   if (!stats) return null;
 
@@ -127,18 +128,18 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
   const passAccuracy = stats.pass_accuracy ?? 0;
 
   const statTiles = [
-    { label: t('stats.goals', 'Голы'), value: stats.goals ?? 0, highlight: true },
-    { label: t('stats.assists', 'Ассисты'), value: stats.assists ?? 0, highlight: true },
-    { label: t('shotsOnTarget', 'Удары'), value: stats.shots ?? 0 },
-    { label: t('shotsOnTargetAccurate', 'В створ'), value: stats.shots_on_goal ?? 0 },
-    { label: t('totalPasses', 'Передачи'), value: stats.passes ?? 0 },
-    { label: t('keyPassesLabel', 'Ключевые передачи'), value: stats.key_passes ?? 0 },
-    { label: t('successfulDuels', 'Выигранные единоборства'), value: duelsWonPercentage },
-    { label: t('duelsLabel', 'Единоборства'), value: duels },
-    { label: t('duelsWonLabel', 'Выиграно'), value: duelsWon },
-    { label: t('stats.yellowCards', 'Желтые карточки'), value: stats.yellow_cards ?? 0 },
-    { label: t('stats.redCards', 'Красные карточки'), value: stats.red_cards ?? 0 },
-    { label: t('ballRecoveries', 'Перехваты'), value: stats.interception ?? 0 },
+    { label: tStats('labels.goals'), value: stats.goals ?? 0, highlight: true },
+    { label: tStats('labels.assists'), value: stats.assists ?? 0, highlight: true },
+    { label: tStats('labels.shots'), value: stats.shots ?? 0 },
+    { label: tStats('labels.shotsOnGoal'), value: stats.shots_on_goal ?? 0 },
+    { label: tStats('labels.passes'), value: stats.passes ?? 0 },
+    { label: tStats('labels.keyPasses'), value: stats.key_passes ?? 0 },
+    { label: tStats('labels.duelsWon'), value: duelsWonPercentage },
+    { label: tStats('labels.duels'), value: duels },
+    { label: tStats('labels.duelsWon'), value: duelsWon },
+    { label: tStats('labels.yellowCards'), value: stats.yellow_cards ?? 0 },
+    { label: tStats('labels.redCards'), value: stats.red_cards ?? 0 },
+    { label: tStats('labels.interceptions'), value: stats.interception ?? 0 },
   ];
 
   return (
@@ -177,7 +178,7 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
 
       <div className="grid gap-8 xl:grid-cols-[200px_1fr_200px] xl:items-center">
         <div className="mx-auto mb-2 xl:mb-0">
-          <CircularChart value={passAccuracy} label={t('passAccuracyLabel', 'Точность передач')} variant={variant} />
+          <CircularChart value={passAccuracy} label={tStats('labels.passAccuracy')} variant={variant} />
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -193,7 +194,7 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
         </div>
 
         <div className="mx-auto mt-2 xl:mt-0">
-          <CircularChart value={duelsWonPercentage} label={t('successfulDuels', 'Выигранные дуэли')} variant={variant} />
+          <CircularChart value={duelsWonPercentage} label={tStats('labels.duelsWon')} variant={variant} />
         </div>
       </div>
     </section>

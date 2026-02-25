@@ -44,14 +44,6 @@
     "topAssisters": "АССИСТЕНТЫ",
     "topKeepers": "ВРАТАРИ"
   },
-  "seasonStatLabels": {
-    "matchesPlayed": "Сыграно матчей",
-    "goalsScored": "Забито голов",
-    "avgPerMatch": "В среднем за матч",
-    "cleanSheets": "Сухие матчи",
-    "yellowCards": "Желтые карточки",
-    "redCards": "Красные карточки"
-  },
   "noData": {
     "noNews": "Нет новостей для отображения",
     "noMatches": "Нет предстоящих матчей"
@@ -65,18 +57,6 @@
   },
   "news": "Новости",
   "seasonStats": {
-    "matchesPlayed": "СЫГРАННЫЕ МАТЧИ",
-    "wins": "ПОБЕДЫ",
-    "draws": "НИЧЬИ",
-    "totalAttendance": "ОБЩАЯ ПОСЕЩАЕМОСТЬ",
-    "goals": "ГОЛЫ",
-    "goalsPerMatch": "ГОЛЫ (СРЕДНЕЕ ЗА МАТЧ)",
-    "penalties": "ПЕНАЛЬТИ",
-    "penaltiesScored": "ПЕНАЛЬТИ РЕАЛИЗОВАННЫЕ",
-    "foulsPerMatch": "ФОЛЫ (СРЕДНЕЕ ЗА МАТЧ)",
-    "yellowCards": "ЖЕЛТЫЕ КАРТОЧКИ",
-    "doubleYellowCards": "ДВОЙНЫЕ ЖЕЛТЫЕ КАРТОЧКИ",
-    "redCards": "КРАСНЫЕ КАРТОЧКИ",
     "title": "Статистика {{season}}",
     "titleDefault": "Статистика сезона",
     "moreData": "Больше данных",
@@ -112,9 +92,7 @@
   },
   "playerLeaderboard": {
     "title": "Лидеры сезона",
-    "viewAllStats": "Вся статистика",
-    "keyPasses": "Ключ. пасов",
-    "saves": "Сейвов"
+    "viewAllStats": "Вся статистика"
   },
   "newsSection": {
     "title": "Новости",

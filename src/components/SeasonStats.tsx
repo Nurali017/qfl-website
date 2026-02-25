@@ -111,6 +111,7 @@ interface SeasonStatsProps {
 
 export function SeasonStats({ seasonId: seasonIdProp }: SeasonStatsProps = {}) {
   const { t } = useTranslation('common');
+  const { t: tStats } = useTranslation('statistics');
   const { effectiveSeasonId } = useTournament();
   const resolvedSeasonId = seasonIdProp ?? effectiveSeasonId;
   const { stats, loading, error } = useSeasonStats({ seasonId: resolvedSeasonId });
@@ -131,24 +132,24 @@ export function SeasonStats({ seasonId: seasonIdProp }: SeasonStatsProps = {}) {
 
   const statsRows = [
     [
-      { label: t('seasonStats.matchesPlayed'), value: formatNumber(stats.matches_played), icon: <MatchesIcon /> },
-      { label: t('seasonStats.wins'), value: formatNumber(stats.wins) },
-      { label: t('seasonStats.draws'), value: formatNumber(stats.draws) },
+      { label: tStats('labels.matchesPlayed'), value: formatNumber(stats.matches_played), icon: <MatchesIcon /> },
+      { label: tStats('labels.wins'), value: formatNumber(stats.wins) },
+      { label: tStats('labels.draws'), value: formatNumber(stats.draws) },
     ],
     [
-      { label: t('seasonStats.totalAttendance'), value: formatNumber(stats.total_attendance) },
-      { label: t('seasonStats.goals'), value: formatNumber(stats.total_goals), icon: <BallIcon /> },
-      { label: t('seasonStats.goalsPerMatch'), value: stats.goals_per_match.toFixed(2) },
+      { label: tStats('labels.totalAttendance'), value: formatNumber(stats.total_attendance) },
+      { label: tStats('labels.goals'), value: formatNumber(stats.total_goals), icon: <BallIcon /> },
+      { label: tStats('labels.goalsPerMatch'), value: stats.goals_per_match.toFixed(2) },
     ],
     [
-      { label: t('seasonStats.penalties'), value: formatNumber(stats.penalties) },
-      { label: t('seasonStats.penaltiesScored'), value: formatNumber(stats.penalties_scored) },
-      { label: t('seasonStats.foulsPerMatch'), value: formatNumber(stats.fouls_per_match), icon: <WhistleIcon /> },
+      { label: tStats('labels.penalties'), value: formatNumber(stats.penalties) },
+      { label: tStats('labels.penaltiesScored'), value: formatNumber(stats.penalties_scored) },
+      { label: tStats('labels.foulsPerMatch'), value: formatNumber(stats.fouls_per_match), icon: <WhistleIcon /> },
     ],
     [
-      { label: t('seasonStats.yellowCards'), value: formatNumber(stats.yellow_cards), icon: <YellowCardIcon /> },
-      { label: t('seasonStats.doubleYellowCards'), value: formatNumber(stats.second_yellow_cards), icon: <DoubleYellowCardIcon /> },
-      { label: t('seasonStats.redCards'), value: formatNumber(stats.red_cards), icon: <RedCardIcon /> },
+      { label: tStats('labels.yellowCards'), value: formatNumber(stats.yellow_cards), icon: <YellowCardIcon /> },
+      { label: tStats('labels.secondYellowCards'), value: formatNumber(stats.second_yellow_cards), icon: <DoubleYellowCardIcon /> },
+      { label: tStats('labels.redCards'), value: formatNumber(stats.red_cards), icon: <RedCardIcon /> },
     ],
   ];
 

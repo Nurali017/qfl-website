@@ -269,7 +269,8 @@ interface PlayerLeaderboardProps {
 }
 
 export function PlayerLeaderboard({ seasonId: seasonIdProp }: PlayerLeaderboardProps = {}) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
+  const { t: tStats } = useTranslation('statistics');
   const { t: tErrors } = useTranslation('errors');
   const { effectiveSeasonId } = useTournament();
   const resolvedSeasonId = seasonIdProp ?? effectiveSeasonId;
@@ -329,7 +330,7 @@ export function PlayerLeaderboard({ seasonId: seasonIdProp }: PlayerLeaderboardP
             players={assisters}
             statKey="assists"
             secondaryStatKey="key_passes"
-            secondaryStatLabel={t('playerLeaderboard.keyPasses')}
+            secondaryStatLabel={tStats('labels.keyPasses')}
             bgColor="bg-primary"
             bottomColor="bg-[#153d6d]"
             textColor="text-white"
@@ -341,7 +342,7 @@ export function PlayerLeaderboard({ seasonId: seasonIdProp }: PlayerLeaderboardP
             players={cleanSheets}
             statKey="dry_match"
             secondaryStatKey="save_shot"
-            secondaryStatLabel={t('playerLeaderboard.saves')}
+            secondaryStatLabel={tStats('labels.saves')}
             bgColor="bg-[#0D847A]"
             bottomColor="bg-[#0a6b63]"
             textColor="text-white"

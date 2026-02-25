@@ -25,13 +25,6 @@
   "leaderboard": {
     "total": "Барлығы"
   },
-  "miniStats": {
-    "passes": "Пастар",
-    "appearances": "Ойындар",
-    "saves": "Сейвтер",
-    "cleanSheets": "Құрғақ матчтар",
-    "redCards": "Қызыл қағаздар"
-  },
   "form": {
     "homeShort": "Ү",
     "awayShort": "Қ"

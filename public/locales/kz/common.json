@@ -44,14 +44,6 @@
     "topAssisters": "АССИСТЕНТТЕР",
     "topKeepers": "ҚАҚПАШЫЛАР"
   },
-  "seasonStatLabels": {
-    "matchesPlayed": "Ойнаған матчтар",
-    "goalsScored": "Соғылған голдар",
-    "avgPerMatch": "Матчқа орташа есеппен",
-    "cleanSheets": "Құрғақ матчтар",
-    "yellowCards": "Сары қағаздар",
-    "redCards": "Қызыл қағаздар"
-  },
   "noData": {
     "noNews": "Көрсету үшін жаңалық жоқ",
     "noMatches": "Алдағы матчтар жоқ"
@@ -65,18 +57,6 @@
   },
   "news": "Жаңалықтар",
   "seasonStats": {
-    "matchesPlayed": "ОЙНАЛҒАН МАТЧТАР",
-    "wins": "ЖЕҢІСТЕР",
-    "draws": "ТЕҢ ОЙЫНДАР",
-    "totalAttendance": "Жалпы көрермен саны",
-    "goals": "ГОЛДАР",
-    "goalsPerMatch": "ГОЛДАР (ОРТАША ЕСЕППЕН)",
-    "penalties": "ПЕНАЛЬТИ",
-    "penaltiesScored": "Сәтті орындалған пенальтилер",
-    "foulsPerMatch": "ФОЛДАР (ОРТАША ЕСЕППЕН)",
-    "yellowCards": "САРЫ ҚАҒАЗДАР",
-    "doubleYellowCards": "ЕКІНШІ САРЫ ҚАҒАЗДАР",
-    "redCards": "ҚЫЗЫЛ ҚАҒАЗДАР",
     "title": "{{season}} статистика",
     "titleDefault": "Маусым статистикасы",
     "moreData": "Көбірек деректер",
@@ -112,9 +92,7 @@
   },
   "playerLeaderboard": {
     "title": "Маусым көшбасшылары",
-    "viewAllStats": "Барлық статистика",
-    "keyPasses": "Кілт. пастар",
-    "saves": "Сейвтер"
+    "viewAllStats": "Барлық статистика"
   },
   "newsSection": {
     "title": "Жаңалықтар",

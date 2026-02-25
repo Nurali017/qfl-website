@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MainNav } from './MainNav';
 import { MobileMenu } from './MobileMenu';
@@ -29,7 +29,7 @@ export function Header() {
   const teamsHref = `/teams?tournament=${currentTournament.id}&season=${effectiveSeasonId}`;
 
   // Navigation items with translations
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = useMemo(() => [
     {
       key: 'table',
       label: t('items.table', { defaultValue: lang === 'kz' ? 'Кесте' : 'Таблица' }),
@@ -114,7 +114,7 @@ export function Header() {
         },
       ],
     },
-  ];
+  ], [t, lang, teamsHref]);
 
   // Handle scroll - shrink header when scrolled
   useEffect(() => {

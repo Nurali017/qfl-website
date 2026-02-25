@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLatestNews, useSliderNews } from '@/hooks';
@@ -138,10 +139,13 @@ export function HeroSection() {
           className="absolute inset-0 transition-opacity duration-700"
           style={{ opacity: i === currentIndex ? 1 : 0 }}
         >
-          <img
+          <Image
             src={news.image_url || '/images/news-placeholder.svg'}
             alt={news.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="(max-width: 1024px) 100vw, 75vw"
+            className="object-cover"
+            priority={i === 0}
           />
         </div>
       ))}

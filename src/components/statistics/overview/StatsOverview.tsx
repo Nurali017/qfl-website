@@ -6,8 +6,21 @@ import { usePreSeasonEffectiveId } from '@/contexts/TournamentContext';
 import { useSeasonStats } from '@/hooks';
 import { FeaturedStatBlock } from './FeaturedStatBlock';
 import { MiniStatCard } from './MiniStatCard';
-import { LeaguePerformanceChart } from './LeaguePerformanceChart';
+import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/Skeleton';
+
+const LeaguePerformanceChart = dynamic(
+  () => import('./LeaguePerformanceChart').then(mod => ({ default: mod.LeaguePerformanceChart })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-6">
+        <Skeleton className="h-6 w-64 mb-6" />
+        <Skeleton className="h-[300px] w-full" />
+      </div>
+    ),
+  }
+);
 import { PlayerStat } from '@/types';
 import { getPlayerHref, getTeamHref } from '@/lib/utils/entityRoutes';
 

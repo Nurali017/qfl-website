@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -52,16 +53,18 @@ export function PlayerAvatar({
   return (
     <div
       className={cn(
-        'rounded-full overflow-hidden bg-slate-100 dark:bg-white/10 border border-gray-200 dark:border-white/15 shrink-0 flex items-center justify-center',
+        'relative rounded-full overflow-hidden bg-slate-100 dark:bg-white/10 border border-gray-200 dark:border-white/15 shrink-0 flex items-center justify-center',
         SIZE_CLASSES[size],
         className,
       )}
     >
       {showImage ? (
-        <img
+        <Image
           src={photoUrl}
           alt={alt}
-          className="w-full h-full object-cover object-top"
+          fill
+          sizes="80px"
+          className="object-cover object-top"
           onError={() => setBroken(true)}
         />
       ) : (

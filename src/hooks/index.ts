@@ -26,6 +26,7 @@ export {
 } from './usePlayerDetail';
 export { useSeasonStats } from './useSeasonStats';
 export { useSeasonGoalsByPeriod } from './useSeasonGoalsByPeriod';
+export { useStatsTable, toFiniteNumber } from './useStatsTable';
 export { useTeamStatsTable } from './useTeamStatsTable';
 export {
   useTeams,

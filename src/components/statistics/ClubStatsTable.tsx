@@ -1,20 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnDefinition,
-  formatValue,
-  getColumnsForSubTab,
-  getMobileColumns,
-  applyCustomColumns,
-} from '@/lib/mock/statisticsHelpers';
+import { formatValue } from '@/lib/mock/statisticsHelpers';
 import { ColumnPicker } from './ColumnPicker';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { usePersistedColumns } from '@/hooks/usePersistedColumns';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useStatsTable } from '@/hooks/useStatsTable';
 import { StatSubTab, TeamStatistics } from '@/types/statistics';
 import { getTeamHref } from '@/lib/utils/entityRoutes';
 import { navigatePrimary, shouldSkipPrimaryNavigation } from '@/lib/utils/interactiveNavigation';
@@ -39,54 +33,34 @@ const DEFAULT_SORT_BY: Record<StatSubTab, string> = {
 
 const TEAM_LOGO_PLACEHOLDER_SRC = '/images/placeholders/team.svg';
 
-function getDefaultSortBy(subTab: StatSubTab, columns: ColumnDefinition[]): string {
-  const preferred = DEFAULT_SORT_BY[subTab];
-  if (columns.some((c) => c.key === preferred)) return preferred;
-  return columns.find((c) => c.sortable)?.key || columns[0]?.key || 'points';
-}
-
-function toFiniteNumber(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) ? value : null;
-}
-
 export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) {
   const { t } = useTranslation('statistics');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
-  const [hasInteractedWithXScroll, setHasInteractedWithXScroll] = useState(false);
-  const isMobile = useIsMobile();
-
-  const columns = useMemo(() => getColumnsForSubTab(subTab, 'clubs'), [subTab]);
 
   const [query, setQuery] = useState('');
-  const [sortBy, setSortBy] = useState<string>(() =>
-    getDefaultSortBy(subTab, columns)
-  );
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [customColumns, setCustomColumns] = usePersistedColumns('clubs', subTab);
-  const visibleColumns = useMemo(
-    () =>
-      isMobile
-        ? customColumns
-          ? applyCustomColumns(columns, customColumns, sortBy)
-          : getMobileColumns(columns, sortBy)
-        : columns,
-    [isMobile, columns, sortBy, customColumns],
-  );
+  const debouncedQuery = useDebounce(query, 300);
 
-  // Ensure sort column exists in current subTab
-  useEffect(() => {
-    const columnKeys = new Set(columns.map((c) => c.key));
-    if (!columnKeys.has(sortBy)) {
-      setSortBy(getDefaultSortBy(subTab, columns));
-      setSortOrder('desc');
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subTab]);
+  const {
+    isMobile,
+    columns,
+    visibleColumns,
+    setCustomColumns,
+    sortBy,
+    sortOrder,
+    handleSort,
+    scrollContainerRef,
+    showMobileScrollHint,
+    hasColumnPicker,
+    sortItems,
+  } = useStatsTable({
+    subTab,
+    mode: 'clubs',
+    defaultSortByMap: DEFAULT_SORT_BY,
+    itemCount: teams.length,
+  });
 
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = debouncedQuery.trim().toLowerCase();
   const filteredTeams = useMemo(() => {
     if (!normalizedQuery) return teams;
     return teams.filter((team) =>
@@ -94,55 +68,13 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
     );
   }, [teams, normalizedQuery]);
 
-  const sortedTeams = useMemo(() => {
-    return [...filteredTeams].sort((a, b) => {
-      const aNum = toFiniteNumber(a[sortBy as keyof TeamStatistics]);
-      const bNum = toFiniteNumber(b[sortBy as keyof TeamStatistics]);
-
-      // Keep null/undefined/NaN at the bottom
-      if (aNum === null && bNum === null) return 0;
-      if (aNum === null) return 1;
-      if (bNum === null) return -1;
-
-      return sortOrder === 'desc' ? bNum - aNum : aNum - bNum;
-    });
-  }, [filteredTeams, sortBy, sortOrder]);
-
-  const handleSort = (key: string) => {
-    if (sortBy === key) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(key);
-      setSortOrder('desc');
-    }
-  };
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const updateOverflow = () => {
-      const overflow = container.scrollWidth > container.clientWidth + 1;
-      setHasHorizontalOverflow(overflow);
-      if (!overflow) setHasInteractedWithXScroll(false);
-    };
-
-    const handleScroll = () => {
-      if (container.scrollLeft > 8) setHasInteractedWithXScroll(true);
-    };
-
-    updateOverflow();
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', updateOverflow);
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateOverflow);
-    };
-  }, [teams.length, visibleColumns.length]);
+  const sortedTeams = useMemo(
+    () => sortItems(filteredTeams),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filteredTeams, sortBy, sortOrder],
+  );
 
   if (loading) return <TableSkeleton rows={10} columns={visibleColumns.length + 2} />;
-
-  const showMobileScrollHint = hasHorizontalOverflow && !hasInteractedWithXScroll;
 
   return (
     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden shadow-sm">
@@ -153,6 +85,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t('table.searchClub', { defaultValue: 'Поиск клуба…' })}
+            aria-label={t('table.searchClub', { defaultValue: 'Поиск клуба…' })}
             className="w-full pl-10 pr-9 py-2 text-sm text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 bg-white dark:bg-dark-surface border border-gray-300 dark:border-dark-border-soft rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-500 focus:border-transparent"
           />
           {query.trim().length > 0 && (
@@ -233,7 +166,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                   })()}
                 </th>
               ))}
-              {isMobile && columns.length > visibleColumns.length && (
+              {hasColumnPicker && (
                 <th className="px-1 py-2.5 bg-gray-50 dark:bg-dark-surface-soft sticky right-0 z-10">
                   <ColumnPicker
                     columns={columns}
@@ -319,14 +252,14 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                     {formatValue(team[col.key as keyof TeamStatistics], col.format)}
                   </td>
                 ))}
-                {isMobile && columns.length > visibleColumns.length && <td className="sticky right-0 bg-white dark:bg-dark-surface group-hover:bg-gray-50 dark:group-hover:bg-dark-surface-soft" />}
+                {hasColumnPicker && <td className="sticky right-0 bg-white dark:bg-dark-surface group-hover:bg-gray-50 dark:group-hover:bg-dark-surface-soft" />}
               </tr>
             )})}
 
             {sortedTeams.length === 0 && (
               <tr>
                 <td
-                  colSpan={visibleColumns.length + 2 + (isMobile && columns.length > visibleColumns.length ? 1 : 0)}
+                  colSpan={visibleColumns.length + 2 + (hasColumnPicker ? 1 : 0)}
                   className="px-4 py-12 text-center text-gray-500 dark:text-slate-400"
                 >
                   {t('table.noClubsFound')}

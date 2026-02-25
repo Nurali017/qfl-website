@@ -69,7 +69,7 @@ function HorizontalCard({ news, className, language = 'ru' }: { news: NewsItem; 
           </h3>
           <span className="text-gray-400 dark:text-slate-500 text-sm mt-auto pt-2 block transition-all duration-300 group-hover:translate-x-0.5">{formatDate(news.publish_date, 'long', language)}</span>
         </div>
-        <div className="w-20 rounded-lg overflow-hidden shrink-0 transition-shadow duration-300 group-hover:shadow-md">
+        <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 transition-shadow duration-300 group-hover:shadow-md">
           <img
             src={news.image_url || '/images/news-placeholder.svg'}
             alt={news.title}

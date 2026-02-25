@@ -210,22 +210,27 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                       : undefined
                   }
                 >
-                  {col.sortable ? (
-                    <button
-                      type="button"
-                      onClick={() => handleSort(col.key)}
-                      className="w-full flex items-center gap-1 text-left"
-                    >
-                      {col.label}
-                      {sortBy === col.key && (
-                        <span className="text-[10px]">
-                          {sortOrder === 'desc' ? '▼' : '▲'}
-                        </span>
-                      )}
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-1">{col.label}</div>
-                  )}
+                  {(() => {
+                    const headerLabel = isMobile
+                      ? col.label
+                      : col.labelKey ? t(col.labelKey, { defaultValue: col.label }) : (col.fullLabel || col.label);
+                    return col.sortable ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSort(col.key)}
+                        className="w-full flex items-center gap-1 text-left"
+                      >
+                        {headerLabel}
+                        {sortBy === col.key && (
+                          <span className="text-[10px]">
+                            {sortOrder === 'desc' ? '▼' : '▲'}
+                          </span>
+                        )}
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-1">{headerLabel}</div>
+                    );
+                  })()}
                 </th>
               ))}
               {isMobile && columns.length > visibleColumns.length && (
@@ -235,7 +240,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                     selected={new Set(visibleColumns.map(c => c.key))}
                     onChange={setCustomColumns}
                     sortBy={sortBy}
-                    getLabel={(col) => col.fullLabel || col.label}
+                    getLabel={(col) => col.labelKey ? t(col.labelKey, { defaultValue: col.label }) : (col.fullLabel || col.label)}
                   />
                 </th>
               )}

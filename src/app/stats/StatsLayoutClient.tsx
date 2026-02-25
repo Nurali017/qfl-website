@@ -47,14 +47,14 @@ function MainTabs() {
     return (
         <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border sticky top-14 md:top-16 z-40 shadow-sm -mt-3 md:-mt-6">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0">
-                    <div className="relative min-w-0">
+                <div className="flex items-center justify-between">
+                    <div className="relative min-w-0 flex-1">
                         <div className="flex gap-1 overflow-x-auto no-scrollbar -mx-1 px-1 md:mx-0 md:px-0">
                             {tabs.map((tab) => (
                                 <Link
                                     key={tab.href}
                                     href={tab.href}
-                                    className={`shrink-0 px-3 sm:px-4 md:px-8 py-3 md:py-5 text-sm md:text-lg font-bold transition-all relative ${
+                                    className={`shrink-0 px-3 sm:px-4 md:px-8 py-3.5 md:py-5 text-sm md:text-lg font-bold transition-all relative ${
                                         tab.active
                                             ? 'text-primary dark:text-accent-cyan'
                                             : 'text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
@@ -69,7 +69,7 @@ function MainTabs() {
                         </div>
                         <div className="md:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-dark-surface to-transparent" />
                     </div>
-                    <div className="flex justify-end md:block pb-3 md:pb-0 md:pr-1">
+                    <div className="shrink-0 pl-2 md:pr-1">
                         <SeasonYearSelector variant="inline" />
                     </div>
                 </div>

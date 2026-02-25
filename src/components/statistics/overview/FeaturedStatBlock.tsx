@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -96,49 +95,6 @@ export function FeaturedStatBlock({
   const { t } = useTranslation('statistics');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const mobileSliderRef = useRef<HTMLDivElement | null>(null);
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-
-  useEffect(() => {
-    setActiveSlideIndex(0);
-    const scroller = mobileSliderRef.current;
-    if (!scroller) return;
-    scroller.scrollLeft = 0;
-  }, [rankings.length]);
-
-  useEffect(() => {
-    const scroller = mobileSliderRef.current;
-    if (!scroller || rankings.length <= 1) return;
-
-    const maxIndex = Math.max(rankings.length - 1, 0);
-    const updateSlideIndex = () => {
-      const width = scroller.clientWidth || 1;
-      const nextIndex = Math.round(scroller.scrollLeft / width);
-      const bounded = Math.max(0, Math.min(nextIndex, maxIndex));
-      setActiveSlideIndex(bounded);
-    };
-
-    updateSlideIndex();
-    scroller.addEventListener('scroll', updateSlideIndex, { passive: true });
-    window.addEventListener('resize', updateSlideIndex);
-    return () => {
-      scroller.removeEventListener('scroll', updateSlideIndex);
-      window.removeEventListener('resize', updateSlideIndex);
-    };
-  }, [rankings.length]);
-
-  const handleDotClick = (index: number) => {
-    const scroller = mobileSliderRef.current;
-    if (!scroller) return;
-    const width = scroller.clientWidth || 1;
-    const targetLeft = width * index;
-    if (typeof scroller.scrollTo === 'function') {
-      scroller.scrollTo({ left: targetLeft, behavior: 'smooth' });
-    } else {
-      scroller.scrollLeft = targetLeft;
-    }
-    setActiveSlideIndex(index);
-  };
 
   return (
     <div>
@@ -332,97 +288,54 @@ export function FeaturedStatBlock({
 
           <div className="md:hidden">
             {rankings.length > 0 ? (
-              <>
-                <div className="px-3 pt-3 text-[11px] text-gray-500 dark:text-slate-400">
-                  {t('overview.swipeRankingsHint', { defaultValue: 'Свайпните карточку, чтобы посмотреть все позиции.' })}
-                </div>
-                <div
-                  ref={mobileSliderRef}
-                  data-testid="featured-mobile-rankings-slider"
-                  className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory gap-3 px-3 py-3"
-                >
-                  {rankings.map((entry, index) => {
-                    const card = (
-                      <div
-                        data-testid="featured-mobile-ranking-slide"
-                        className="w-full shrink-0 snap-start rounded-lg border border-gray-200 dark:border-dark-border bg-gray-50/70 dark:bg-dark-surface-soft p-3"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="relative shrink-0">
-                              {entry.imageUrl ? (
-                                <img
-                                  src={entry.imageUrl}
-                                  alt={entry.name}
-                                  className="w-11 h-11 rounded-full object-cover object-top border border-gray-200 dark:border-dark-border"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-11 h-11 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center text-sm font-bold text-gray-500 dark:text-slate-300">
-                                  {entry.name.charAt(0)}
-                                </div>
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-base font-bold text-gray-900 dark:text-slate-100 truncate">
-                                {entry.name}
-                              </div>
-                              {entry.teamName && (
-                                <div className="flex items-center gap-1.5 mt-0.5">
-                                  {entry.teamLogoUrl && (
-                                    <img
-                                      src={entry.teamLogoUrl}
-                                      alt=""
-                                      className="w-4 h-4 object-contain shrink-0"
-                                      onError={(e) => {
-                                        e.currentTarget.src = TEAM_PLACEHOLDER;
-                                      }}
-                                    />
-                                  )}
-                                  <span className="text-xs text-gray-500 dark:text-slate-400 truncate">
-                                    {entry.teamName}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
+              <div className="divide-y divide-gray-100 dark:divide-dark-border">
+                {rankings.map((entry, index) => {
+                  const row = (
+                    <div className="flex items-center gap-2.5 px-3 py-2">
+                      <span className="text-xs text-gray-400 dark:text-slate-500 w-5 text-center font-medium shrink-0">
+                        {entry.rank}
+                      </span>
+                      <div className="relative shrink-0">
+                        {entry.imageUrl ? (
+                          <img
+                            src={entry.imageUrl}
+                            alt={entry.name}
+                            className="w-8 h-8 rounded-full object-cover object-top border border-gray-200 dark:border-dark-border"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-dark-border flex items-center justify-center text-xs font-bold text-gray-500 dark:text-slate-300">
+                            {entry.name.charAt(0)}
                           </div>
-                          <span className="text-2xl font-black text-gray-900 dark:text-slate-100 shrink-0">
-                            {entry.value}
-                          </span>
-                        </div>
+                        )}
                       </div>
-                    );
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">
+                          {entry.name}
+                        </div>
+                        {entry.teamName && (
+                          <div className="flex items-center gap-1 mt-0.5">
+                            {entry.teamLogoUrl && (
+                              <img src={entry.teamLogoUrl} alt="" className="w-3.5 h-3.5 object-contain shrink-0" onError={(e) => { e.currentTarget.src = TEAM_PLACEHOLDER; }} />
+                            )}
+                            <span className="text-[11px] text-gray-500 dark:text-slate-400 truncate">{entry.teamName}</span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm font-bold text-gray-900 dark:text-slate-100 shrink-0">
+                        {entry.value}
+                      </span>
+                    </div>
+                  );
 
-                    if (!entry.href) return <div key={`${entry.rank}-${index}`} className="w-full shrink-0 snap-start">{card}</div>;
-
-                    return (
-                      <Link key={`${entry.rank}-${index}`} href={entry.href} className="w-full shrink-0 snap-start block">
-                        {card}
-                      </Link>
-                    );
-                  })}
-                </div>
-                {rankings.length > 1 && (
-                  <div data-testid="featured-mobile-ranking-dots" className="flex items-center justify-center gap-1.5 px-3 pb-3">
-                    {rankings.map((entry, index) => (
-                      <button
-                        key={`${entry.rank}-${index}`}
-                        type="button"
-                        data-testid={`featured-mobile-ranking-dot-${index}`}
-                        aria-label={`Go to ranking slide ${index + 1}`}
-                        onClick={() => handleDotClick(index)}
-                        className={`h-2 rounded-full transition-all ${
-                          activeSlideIndex === index
-                            ? 'w-5 bg-primary dark:bg-accent-cyan'
-                            : 'w-2 bg-gray-300 dark:bg-dark-border-soft'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
+                  if (!entry.href) return <div key={`${entry.rank}-${index}`}>{row}</div>;
+                  return (
+                    <Link key={`${entry.rank}-${index}`} href={entry.href} className="block hover:bg-gray-50 dark:hover:bg-dark-surface-soft transition-colors">
+                      {row}
+                    </Link>
+                  );
+                })}
+              </div>
             ) : (
               <div className="px-3 py-4 text-sm text-gray-500 dark:text-slate-400">
                 {t('overview.noRankingData', { defaultValue: 'Рейтинг пока недоступен.' })}

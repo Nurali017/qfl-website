@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, X } from 'lucide-react';
@@ -9,7 +9,11 @@ import {
   ColumnDefinition,
   formatValue,
   getColumnsForSubTab,
+  getMobileColumns,
+  applyCustomColumns,
 } from '@/lib/mock/statisticsHelpers';
+import { ColumnPicker } from './ColumnPicker';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { StatSubTab, TeamStatistics } from '@/types/statistics';
 import { getTeamHref } from '@/lib/utils/entityRoutes';
 import { navigatePrimary, shouldSkipPrimaryNavigation } from '@/lib/utils/interactiveNavigation';
@@ -48,6 +52,10 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
   const { t } = useTranslation('statistics');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
+  const [hasInteractedWithXScroll, setHasInteractedWithXScroll] = useState(false);
+  const isMobile = useIsMobile();
 
   const columns = useMemo(() => getColumnsForSubTab(subTab, 'clubs'), [subTab]);
 
@@ -56,15 +64,27 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
     getDefaultSortBy(subTab, columns)
   );
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [customColumns, setCustomColumns] = useState<Set<string> | null>(null);
+  const visibleColumns = useMemo(
+    () =>
+      isMobile
+        ? customColumns
+          ? applyCustomColumns(columns, customColumns, sortBy)
+          : getMobileColumns(columns, sortBy)
+        : columns,
+    [isMobile, columns, sortBy, customColumns],
+  );
 
-  // Ensure sort column exists in current subTab
+  // Ensure sort column exists in current subTab; reset custom columns
   useEffect(() => {
+    setCustomColumns(null);
     const columnKeys = new Set(columns.map((c) => c.key));
     if (!columnKeys.has(sortBy)) {
       setSortBy(getDefaultSortBy(subTab, columns));
       setSortOrder('desc');
     }
-  }, [columns, sortBy, subTab]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subTab]);
 
   const normalizedQuery = query.trim().toLowerCase();
   const filteredTeams = useMemo(() => {
@@ -97,7 +117,32 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
     }
   };
 
-  if (loading) return <TableSkeleton rows={10} columns={columns.length + 2} />;
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const updateOverflow = () => {
+      const overflow = container.scrollWidth > container.clientWidth + 1;
+      setHasHorizontalOverflow(overflow);
+      if (!overflow) setHasInteractedWithXScroll(false);
+    };
+
+    const handleScroll = () => {
+      if (container.scrollLeft > 8) setHasInteractedWithXScroll(true);
+    };
+
+    updateOverflow();
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', updateOverflow);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateOverflow);
+    };
+  }, [teams.length, visibleColumns.length]);
+
+  if (loading) return <TableSkeleton rows={10} columns={visibleColumns.length + 2} />;
+
+  const showMobileScrollHint = hasHorizontalOverflow && !hasInteractedWithXScroll;
 
   return (
     <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border overflow-hidden shadow-sm">
@@ -125,19 +170,16 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
         </div>
       </div>
 
-      <div
-        data-testid="club-stats-scroll-hint"
-        className="md:hidden px-3 py-2 text-[11px] text-gray-500 dark:text-slate-400 border-b border-gray-200 dark:border-dark-border"
-      >
-        {t('table.scrollHint', { defaultValue: 'Проведите влево, чтобы увидеть все столбцы.' })}
-      </div>
 
       <div className="relative">
-        <div className="md:hidden pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-dark-surface to-transparent z-20" />
-        <div className="md:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-dark-surface to-transparent z-20" />
-      </div>
-      <div className="overflow-x-auto no-scrollbar">
-        <table className="w-full min-w-[640px] md:min-w-[800px]">
+        {showMobileScrollHint && (
+          <div className="md:hidden pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-dark-surface to-transparent z-20" />
+        )}
+        {showMobileScrollHint && (
+          <div className="md:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-dark-surface to-transparent z-20" />
+        )}
+        <div ref={scrollContainerRef} data-testid="club-stats-scroll-container" className="overflow-x-auto no-scrollbar">
+          <table className="w-full md:min-w-[800px]">
           <thead className="bg-gray-50 dark:bg-dark-surface-soft border-b border-gray-200 dark:border-dark-border">
             <tr>
               <th className="px-2.5 md:px-4 py-2.5 md:py-3 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider w-12 md:w-16 sticky left-0 bg-gray-50 dark:bg-dark-surface-soft z-10">
@@ -146,7 +188,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
               <th className="px-2.5 md:px-4 py-2.5 md:py-3 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider sticky left-12 md:left-16 bg-gray-50 dark:bg-dark-surface-soft z-10 w-[170px] md:w-64 border-r border-gray-100 dark:border-dark-border">
                 {t('table.club')}
               </th>
-              {columns.map((col) => (
+              {visibleColumns.map((col) => (
                 <th
                   key={col.key}
                   className={`px-2.5 md:px-4 py-2.5 md:py-3 text-left text-xs font-bold uppercase tracking-wider transition-colors ${
@@ -186,6 +228,17 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                   )}
                 </th>
               ))}
+              {isMobile && columns.length > visibleColumns.length && (
+                <th className="px-1 py-2.5 bg-gray-50 dark:bg-dark-surface-soft sticky right-0 z-10">
+                  <ColumnPicker
+                    columns={columns}
+                    selected={new Set(visibleColumns.map(c => c.key))}
+                    onChange={setCustomColumns}
+                    sortBy={sortBy}
+                    getLabel={(col) => col.fullLabel || col.label}
+                  />
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -249,7 +302,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                     })()}
                   </div>
                 </td>
-                {columns.map((col) => (
+                {visibleColumns.map((col) => (
                   <td
                     key={col.key}
                     className={`px-2.5 md:px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-slate-100 ${
@@ -261,13 +314,14 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                     {formatValue(team[col.key as keyof TeamStatistics], col.format)}
                   </td>
                 ))}
+                {isMobile && columns.length > visibleColumns.length && <td className="sticky right-0 bg-white dark:bg-dark-surface group-hover:bg-gray-50 dark:group-hover:bg-dark-surface-soft" />}
               </tr>
             )})}
 
             {sortedTeams.length === 0 && (
               <tr>
                 <td
-                  colSpan={columns.length + 2}
+                  colSpan={visibleColumns.length + 2 + (isMobile && columns.length > visibleColumns.length ? 1 : 0)}
                   className="px-4 py-12 text-center text-gray-500 dark:text-slate-400"
                 >
                   {t('table.noClubsFound')}
@@ -275,7 +329,8 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
               </tr>
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -80,7 +80,6 @@ describe('LeaguePerformanceChart mobile UX', () => {
 
     expect(screen.getByTestId('league-team-selector-scroller')).toBeInTheDocument();
     expect(screen.getByTestId('league-legend-scroller')).toBeInTheDocument();
-    expect(screen.getByTestId('league-chart-scroll-hint')).toBeInTheDocument();
     expect(screen.getByTestId('line-chart')).toBeInTheDocument();
   });
 

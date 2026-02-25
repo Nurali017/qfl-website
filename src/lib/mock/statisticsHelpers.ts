@@ -4,8 +4,34 @@ export interface ColumnDefinition {
     key: string;
     label: string;
     labelKey?: string;
+    fullLabel?: string;
     format?: 'number' | 'percentage' | 'decimal';
     sortable?: boolean;
+    mobileVisible?: boolean;
+}
+
+export function getMobileColumns(columns: ColumnDefinition[], sortBy: string, maxColumns = 2): ColumnDefinition[] {
+    const mobileColumns = columns.filter(c => c.mobileVisible).slice(0, maxColumns);
+    if (mobileColumns.some(c => c.key === sortBy)) return mobileColumns;
+    const sortColumn = columns.find(c => c.key === sortBy);
+    if (!sortColumn) return mobileColumns;
+    if (mobileColumns.length >= maxColumns) {
+        return [...mobileColumns.slice(0, -1), sortColumn];
+    }
+    return [...mobileColumns, sortColumn];
+}
+
+export function applyCustomColumns(
+    columns: ColumnDefinition[],
+    selected: Set<string>,
+    sortBy: string,
+): ColumnDefinition[] {
+    const result = columns.filter(c => selected.has(c.key));
+    if (!result.some(c => c.key === sortBy)) {
+        const sortCol = columns.find(c => c.key === sortBy);
+        if (sortCol) result.push(sortCol);
+    }
+    return result;
 }
 
 export function formatValue(value: any, format?: string) {
@@ -20,59 +46,59 @@ export function getColumnsForSubTab(subTab: StatSubTab, mode: 'clubs' | 'players
         switch (subTab) {
             case 'key_stats':
                 return [
-                    { key: 'games_played', label: 'И', sortable: true },
-                    { key: 'wins', label: 'В', sortable: true },
-                    { key: 'draws', label: 'Н', sortable: true },
-                    { key: 'losses', label: 'П', sortable: true },
-                    { key: 'goals_scored', label: 'ЗГ', sortable: true },
-                    { key: 'goals_conceded', label: 'ПГ', sortable: true },
-                    { key: 'goal_difference', label: 'РГ', sortable: true },
-                    { key: 'points', label: 'О', sortable: true },
+                    { key: 'games_played', label: 'И', fullLabel: 'Игры', sortable: true, mobileVisible: true },
+                    { key: 'wins', label: 'В', fullLabel: 'Победы', sortable: true, mobileVisible: true },
+                    { key: 'draws', label: 'Н', fullLabel: 'Ничьи', sortable: true, mobileVisible: true },
+                    { key: 'losses', label: 'П', fullLabel: 'Поражения', sortable: true, mobileVisible: true },
+                    { key: 'goals_scored', label: 'ЗГ', fullLabel: 'Забитые голы', sortable: true, mobileVisible: true },
+                    { key: 'goals_conceded', label: 'ПГ', fullLabel: 'Пропущ. голы', sortable: true, mobileVisible: true },
+                    { key: 'goal_difference', label: 'РГ', fullLabel: 'Разница голов', sortable: true, mobileVisible: true },
+                    { key: 'points', label: 'О', fullLabel: 'Очки', sortable: true, mobileVisible: true },
                 ];
             case 'goals':
                 return [
-                    { key: 'goals_scored', label: 'Голы', sortable: true },
-                    { key: 'goals_per_match', label: 'Голы/М', format: 'decimal', sortable: true },
-                    { key: 'goals_conceded', label: 'Пропущено', sortable: true },
-                    { key: 'goals_conceded_per_match', label: 'Проп/М', format: 'decimal', sortable: true },
-                    { key: 'goal_difference', label: 'Разница', sortable: true },
-                    { key: 'xg', label: 'xG', format: 'decimal', sortable: true },
+                    { key: 'goals_scored', label: 'Голы', sortable: true, mobileVisible: true },
+                    { key: 'goals_per_match', label: 'Голы/М', fullLabel: 'Голы за матч', format: 'decimal', sortable: true, mobileVisible: true },
+                    { key: 'goals_conceded', label: 'Пропущено', sortable: true, mobileVisible: true },
+                    { key: 'goals_conceded_per_match', label: 'Проп/М', fullLabel: 'Пропущено за матч', format: 'decimal', sortable: true, mobileVisible: true },
+                    { key: 'goal_difference', label: 'Разница', sortable: true, mobileVisible: true },
+                    { key: 'xg', label: 'xG', format: 'decimal', sortable: true, mobileVisible: true },
                 ];
             case 'attempts':
                 return [
-                    { key: 'shots', label: 'Удары', sortable: true },
-                    { key: 'shots_on_goal', label: 'В створ', sortable: true },
-                    { key: 'shot_accuracy', label: 'Точность', format: 'percentage', sortable: true },
-                    { key: 'shots_per_match', label: 'Удары/М', format: 'decimal', sortable: true },
+                    { key: 'shots', label: 'Удары', sortable: true, mobileVisible: true },
+                    { key: 'shots_on_goal', label: 'В створ', fullLabel: 'В створ ворот', sortable: true, mobileVisible: true },
+                    { key: 'shot_accuracy', label: 'Точность', sortable: true, format: 'percentage' },
+                    { key: 'shots_per_match', label: 'Удары/М', fullLabel: 'Удары за матч', format: 'decimal', sortable: true, mobileVisible: true },
                 ];
             case 'distribution':
                 return [
-                    { key: 'passes', label: 'Передачи', sortable: true },
-                    { key: 'pass_accuracy', label: 'Точность', format: 'percentage', sortable: true },
-                    { key: 'key_passes', label: 'Ключевые', sortable: true },
-                    { key: 'crosses', label: 'Кроссы', sortable: true },
+                    { key: 'passes', label: 'Пас', fullLabel: 'Передачи', sortable: true, mobileVisible: true },
+                    { key: 'pass_accuracy', label: 'Точн%', fullLabel: 'Точность передач', format: 'percentage', sortable: true, mobileVisible: true },
+                    { key: 'key_passes', label: 'Ключ', fullLabel: 'Ключевые передачи', sortable: true, mobileVisible: true },
+                    { key: 'crosses', label: 'Крос', fullLabel: 'Кроссы', sortable: true, mobileVisible: true },
                 ];
             case 'attacking':
                 return [
-                    { key: 'possession', label: 'Владение', format: 'percentage', sortable: true },
-                    { key: 'dribbles', label: 'Дриблинг', sortable: true },
-                    { key: 'dribble_success', label: 'Дрибл %', format: 'percentage', sortable: true },
-                    { key: 'corners', label: 'Угловые', sortable: true },
+                    { key: 'possession', label: 'Влад', fullLabel: 'Владение', format: 'percentage', sortable: true, mobileVisible: true },
+                    { key: 'dribbles', label: 'Дрб', fullLabel: 'Дриблинг', sortable: true, mobileVisible: true },
+                    { key: 'dribble_success', label: 'Дрб%', fullLabel: 'Дриблинг %', format: 'percentage', sortable: true, mobileVisible: true },
+                    { key: 'corners', label: 'Угл', fullLabel: 'Угловые', sortable: true, mobileVisible: true },
                 ];
             case 'defending':
                 return [
-                    { key: 'tackles', label: 'Отборы', sortable: true },
-                    { key: 'interceptions', label: 'Перехваты', sortable: true },
-                    { key: 'recoveries', label: 'Возвраты', sortable: true },
-                    { key: 'offsides', label: 'Офсайды', sortable: true },
+                    { key: 'tackles', label: 'Отб', fullLabel: 'Отборы', sortable: true, mobileVisible: true },
+                    { key: 'interceptions', label: 'Пер', fullLabel: 'Перехваты', sortable: true, mobileVisible: true },
+                    { key: 'recoveries', label: 'Возв', fullLabel: 'Возвраты', sortable: true, mobileVisible: true },
+                    { key: 'offsides', label: 'Офс', fullLabel: 'Офсайды', sortable: true, mobileVisible: true },
                 ];
             case 'disciplinary':
                 return [
-                    { key: 'fouls', label: 'Фолы', sortable: true },
-                    { key: 'yellow_cards', label: 'ЖК', sortable: true },
-                    { key: 'second_yellow_cards', label: '2ЖК', sortable: true },
-                    { key: 'red_cards', label: 'КК', sortable: true },
-                    { key: 'fouls_per_match', label: 'Фолы/М', format: 'decimal', sortable: true },
+                    { key: 'fouls', label: 'Фолы', sortable: true, mobileVisible: true },
+                    { key: 'yellow_cards', label: 'ЖК', fullLabel: 'Жёлтые карточки', sortable: true, mobileVisible: true },
+                    { key: 'second_yellow_cards', label: '2ЖК', fullLabel: 'Вторые жёлтые', sortable: true, mobileVisible: true },
+                    { key: 'red_cards', label: 'КК', fullLabel: 'Красные карточки', sortable: true, mobileVisible: true },
+                    { key: 'fouls_per_match', label: 'Фолы/М', fullLabel: 'Фолы за матч', format: 'decimal', sortable: true, mobileVisible: true },
                 ];
             default:
                 return [];
@@ -83,43 +109,43 @@ export function getColumnsForSubTab(subTab: StatSubTab, mode: 'clubs' | 'players
             case 'key_stats':
             case 'goals':
                 return [
-                    { key: 'games_played', label: '', labelKey: 'playerColumns.games_played', sortable: true },
-                    { key: 'goals', label: '', labelKey: 'playerColumns.goals', sortable: true },
-                    { key: 'assists', label: '', labelKey: 'playerColumns.assists', sortable: true },
-                    { key: 'minutes_played', label: '', labelKey: 'playerColumns.minutes_played', sortable: true },
+                    { key: 'games_played', label: 'М', labelKey: 'playerColumns.games_played', sortable: true, mobileVisible: true },
+                    { key: 'goals', label: 'Г', labelKey: 'playerColumns.goals', sortable: true, mobileVisible: true },
+                    { key: 'assists', label: 'А', labelKey: 'playerColumns.assists', sortable: true, mobileVisible: true },
+                    { key: 'minutes_played', label: 'Мин', labelKey: 'playerColumns.minutes_played', sortable: true, mobileVisible: true },
                 ];
             case 'attempts':
                 return [
-                    { key: 'shots', label: '', labelKey: 'playerColumns.shots', sortable: true },
-                    { key: 'shots_on_goal', label: '', labelKey: 'playerColumns.shots_on_goal', sortable: true },
+                    { key: 'shots', label: 'Уд', labelKey: 'playerColumns.shots', sortable: true, mobileVisible: true },
+                    { key: 'shots_on_goal', label: 'Дл', labelKey: 'playerColumns.shots_on_goal', sortable: true, mobileVisible: true },
                 ];
             case 'distribution':
                 return [
-                    { key: 'passes', label: '', labelKey: 'playerColumns.passes', sortable: true },
-                    { key: 'pass_accuracy', label: '', labelKey: 'playerColumns.pass_accuracy', format: 'percentage', sortable: true },
-                    { key: 'key_passes', label: '', labelKey: 'playerColumns.key_passes', sortable: true },
+                    { key: 'passes', label: 'Пас', labelKey: 'playerColumns.passes', sortable: true, mobileVisible: true },
+                    { key: 'pass_accuracy', label: 'Точн', labelKey: 'playerColumns.pass_accuracy', format: 'percentage', sortable: true, mobileVisible: true },
+                    { key: 'key_passes', label: 'Ключ', labelKey: 'playerColumns.key_passes', sortable: true, mobileVisible: true },
                 ];
             case 'attacking':
                 return [
-                    { key: 'dribble', label: '', labelKey: 'playerColumns.dribble', sortable: true },
-                    { key: 'dribble_success', label: '', labelKey: 'playerColumns.dribble_success', sortable: true },
-                    { key: 'xg', label: '', labelKey: 'playerColumns.xg', format: 'decimal', sortable: true },
+                    { key: 'dribble', label: 'Дрб', labelKey: 'playerColumns.dribble', sortable: true, mobileVisible: true },
+                    { key: 'dribble_success', label: 'Усп%', labelKey: 'playerColumns.dribble_success', sortable: true, mobileVisible: true },
+                    { key: 'xg', label: 'xG', labelKey: 'playerColumns.xg', format: 'decimal', sortable: true, mobileVisible: true },
                 ];
             case 'defending':
                 return [
-                    { key: 'tackle', label: '', labelKey: 'playerColumns.tackle', sortable: true },
-                    { key: 'interception', label: '', labelKey: 'playerColumns.interception', sortable: true },
-                    { key: 'recovery', label: '', labelKey: 'playerColumns.recovery', sortable: true },
+                    { key: 'tackle', label: 'Отб', labelKey: 'playerColumns.tackle', sortable: true, mobileVisible: true },
+                    { key: 'interception', label: 'Пер', labelKey: 'playerColumns.interception', sortable: true, mobileVisible: true },
+                    { key: 'recovery', label: 'Возв', labelKey: 'playerColumns.recovery', sortable: true, mobileVisible: true },
                 ];
             case 'goalkeeping':
                 return [
-                    { key: 'save_shot', label: '', labelKey: 'playerColumns.save_shot', sortable: true },
-                    { key: 'dry_match', label: '', labelKey: 'playerColumns.dry_match', sortable: true },
+                    { key: 'save_shot', label: 'Сейв', labelKey: 'playerColumns.save_shot', sortable: true, mobileVisible: true },
+                    { key: 'dry_match', label: 'Сух', labelKey: 'playerColumns.dry_match', sortable: true, mobileVisible: true },
                 ];
             case 'disciplinary':
                 return [
-                    { key: 'yellow_cards', label: '', labelKey: 'playerColumns.yellow_cards', sortable: true },
-                    { key: 'red_cards', label: '', labelKey: 'playerColumns.red_cards', sortable: true },
+                    { key: 'yellow_cards', label: 'ЖК', labelKey: 'playerColumns.yellow_cards', sortable: true, mobileVisible: true },
+                    { key: 'red_cards', label: 'КК', labelKey: 'playerColumns.red_cards', sortable: true, mobileVisible: true },
                 ];
             default:
                 return [];

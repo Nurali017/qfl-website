@@ -1,11 +1,15 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
+
 interface StatisticsMainTabsProps {
     activeTab: 'clubs' | 'players';
     onTabChange: (tab: 'clubs' | 'players') => void;
 }
 
 export function StatisticsMainTabs({ activeTab, onTabChange }: StatisticsMainTabsProps) {
+    const { t } = useTranslation('statistics');
+
     return (
         <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
@@ -17,7 +21,7 @@ export function StatisticsMainTabs({ activeTab, onTabChange }: StatisticsMainTab
                                 : 'text-gray-500 hover:text-gray-900'
                             }`}
                     >
-                        Club stats
+                        {t('mainTabs.clubs')}
                         {activeTab === 'clubs' && (
                             <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-sm" />
                         )}
@@ -29,7 +33,7 @@ export function StatisticsMainTabs({ activeTab, onTabChange }: StatisticsMainTab
                                 : 'text-gray-500 hover:text-gray-900'
                             }`}
                     >
-                        Player stats
+                        {t('mainTabs.players')}
                         {activeTab === 'players' && (
                             <div className="absolute bottom-0 left-0 w-full h-1 bg-primary rounded-t-sm" />
                         )}

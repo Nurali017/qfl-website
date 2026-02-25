@@ -10,7 +10,7 @@ interface StatisticsSubTabsProps {
     hideGoalkeeping?: boolean;
 }
 
-const SUB_TAB_IDS: StatSubTab[] = [
+export const SUB_TAB_IDS: StatSubTab[] = [
     'key_stats',
     'goals',
     'attempts',
@@ -21,7 +21,7 @@ const SUB_TAB_IDS: StatSubTab[] = [
     'disciplinary',
 ];
 
-const SUB_TAB_KEYS: Record<StatSubTab, string> = {
+export const SUB_TAB_KEYS: Record<StatSubTab, string> = {
     'key_stats': 'subTabs.keyStats',
     'goals': 'subTabs.goals',
     'attempts': 'subTabs.attempts',

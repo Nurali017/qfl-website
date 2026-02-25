@@ -20,8 +20,8 @@
   },
   "mainTabs": {
     "overview": "Обзор",
-    "clubs": "Статистика клубов",
-    "players": "Статистика игроков"
+    "clubs": "Клубы",
+    "players": "Игроки"
   },
   "filters": {
     "phase": "Этап",
@@ -54,7 +54,8 @@
     "clearSearch": "Очистить поиск",
     "noImage": "Нет фото",
     "noPlayersFound": "Игроки не найдены. Попробуйте изменить фильтры.",
-    "noClubsFound": "Клубы не найдены."
+    "noClubsFound": "Клубы не найдены.",
+    "maxColumns": "макс. {{count}} столбца"
   },
   "emptyState": {
     "title": "Командная статистика недоступна",

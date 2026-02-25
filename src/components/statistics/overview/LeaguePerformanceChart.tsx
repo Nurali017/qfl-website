@@ -110,41 +110,37 @@ export function LeaguePerformanceChart() {
           <div className="text-xs font-medium text-gray-500 dark:text-slate-400 mb-2">
             {t('overview.teams', { defaultValue: 'Команды' })}:
           </div>
-          <div className="relative">
-            <div
-              data-testid="league-team-selector-scroller"
-              className="flex md:flex-wrap gap-1.5 overflow-x-auto md:overflow-visible no-scrollbar"
-            >
-              {selectableTeams.map((team) => {
-                const isActive = displayTeamIds.includes(team.team_id);
-                return (
-                  <button
-                    key={team.team_id}
-                    type="button"
-                    onClick={() => toggleTeam(team.team_id)}
-                    className={`inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                      isActive
-                        ? 'bg-primary/10 dark:bg-accent-cyan/10 border-primary/30 dark:border-accent-cyan/30 text-primary dark:text-accent-cyan'
-                        : 'bg-gray-50 dark:bg-dark-surface-soft border-gray-200 dark:border-dark-border text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-dark-border'
-                    }`}
-                  >
-                    {team.team_logo && (
-                      <img
-                        src={team.team_logo}
-                        alt=""
-                        className="w-4 h-4 object-contain"
-                        onError={(e) => {
-                          e.currentTarget.src = TEAM_PLACEHOLDER;
-                        }}
-                      />
-                    )}
-                    <span className="truncate max-w-[110px]">{team.team_name}</span>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="md:hidden pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-dark-surface to-transparent" />
-            <div className="md:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-dark-surface to-transparent" />
+          <div
+            data-testid="league-team-selector-scroller"
+            className="flex flex-wrap gap-1.5"
+          >
+            {selectableTeams.map((team) => {
+              const isActive = displayTeamIds.includes(team.team_id);
+              return (
+                <button
+                  key={team.team_id}
+                  type="button"
+                  onClick={() => toggleTeam(team.team_id)}
+                  className={`inline-flex items-center gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 rounded-full text-[11px] md:text-xs font-medium transition-all border ${
+                    isActive
+                      ? 'bg-primary/10 dark:bg-accent-cyan/10 border-primary/30 dark:border-accent-cyan/30 text-primary dark:text-accent-cyan'
+                      : 'bg-gray-50 dark:bg-dark-surface-soft border-gray-200 dark:border-dark-border text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-dark-border'
+                  }`}
+                >
+                  {team.team_logo && (
+                    <img
+                      src={team.team_logo}
+                      alt=""
+                      className="w-3.5 h-3.5 md:w-4 md:h-4 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = TEAM_PLACEHOLDER;
+                      }}
+                    />
+                  )}
+                  <span className="truncate max-w-[72px] md:max-w-[110px]">{team.team_name}</span>
+                </button>
+              );
+            })}
           </div>
 
           {selectedTeamIds.length > 0 && (
@@ -162,7 +158,7 @@ export function LeaguePerformanceChart() {
         </div>
 
         {/* Legend */}
-        <div data-testid="league-legend-scroller" className="flex md:flex-wrap gap-3 mb-4 overflow-x-auto md:overflow-visible no-scrollbar">
+        <div data-testid="league-legend-scroller" className="flex flex-wrap gap-2 md:gap-3 mb-4">
           {visibleTeams.map((team) => (
             <div key={team.team_id} className="flex items-center gap-1.5 shrink-0">
               <span
@@ -177,20 +173,18 @@ export function LeaguePerformanceChart() {
         </div>
 
         {/* Chart */}
-        <div data-testid="league-chart-scroll-hint" className="md:hidden mb-2 text-[11px] text-gray-500 dark:text-slate-400">
-          {t('overview.chartScrollHint', { defaultValue: 'Проведите влево, чтобы просмотреть график целиком.' })}
-        </div>
-        <div className="overflow-x-auto no-scrollbar">
-          <div className="h-[300px] md:h-[380px] min-w-[620px] md:min-w-0">
+        <div>
+          <div className="h-[260px] md:h-[380px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(156,163,175,0.2)" />
                 <XAxis
                   dataKey="tour"
-                  tick={{ fontSize: 11, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fill: '#9CA3AF' }}
                   axisLine={{ stroke: '#E5E7EB' }}
                   tickLine={false}
-                  label={{ value: t('overview.matchweek', { defaultValue: 'Тур' }), position: 'insideBottom', offset: -5, fontSize: 11, fill: '#9CA3AF' }}
+                  interval="preserveStartEnd"
+                  label={{ value: t('overview.matchweek', { defaultValue: 'Тур' }), position: 'insideBottom', offset: -5, fontSize: 10, fill: '#9CA3AF' }}
                 />
                 <YAxis
                   reversed
@@ -226,7 +220,7 @@ export function LeaguePerformanceChart() {
                     dataKey={`team_${team.team_id}`}
                     stroke={teamColorMap[team.team_id]}
                     strokeWidth={2.5}
-                    dot={{ r: 3, fill: teamColorMap[team.team_id] }}
+                    dot={{ r: 2, fill: teamColorMap[team.team_id] }}
                     activeDot={{ r: 5 }}
                     connectNulls
                   />

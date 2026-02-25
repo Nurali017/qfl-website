@@ -14,6 +14,7 @@ export { useNewsPagination } from './useNewsPagination';
 export { useNewsReactions } from './useNewsReactions';
 export { useNewsNavigation } from './useNewsNavigation';
 export { useDebounce } from './useDebounce';
+export { useIsMobile } from './useIsMobile';
 export { usePlayerStats } from './usePlayerStats';
 export { usePlayerLeaderboard } from './usePlayerLeaderboard';
 export {

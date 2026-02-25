@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useTeamStatsTable } from '@/hooks';
-import { StatisticsSubTabs } from '@/components/statistics/StatisticsSubTabs';
+import { StatisticsSubTabs, SUB_TAB_IDS, SUB_TAB_KEYS } from '@/components/statistics/StatisticsSubTabs';
 import { StatisticsFilters } from '@/components/statistics/StatisticsFilters';
 import { ClubStatsTable } from '@/components/statistics/ClubStatsTable';
 import { StatSubTab } from '@/types/statistics';
@@ -28,12 +28,30 @@ export default function TeamsStatsPage() {
 
     return (
         <>
-            <StatisticsSubTabs
-                activeSubTab={subTab}
-                onSubTabChange={setSubTab}
-                hideGoalkeeping={true}
-            />
-            <StatisticsFilters mode="clubs" />
+            {/* Mobile: compact SubTab dropdown */}
+            <div className="md:hidden bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border py-3">
+                <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+                    <select
+                        value={subTab}
+                        onChange={(e) => setSubTab(e.target.value as StatSubTab)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-dark-border-soft rounded-lg text-sm font-bold bg-white dark:bg-dark-surface text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-500 focus:border-transparent"
+                    >
+                        {SUB_TAB_IDS.filter((id) => id !== 'goalkeeping').map((id) => (
+                            <option key={id} value={id}>{t(SUB_TAB_KEYS[id])}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            {/* Desktop: scrollable tabs */}
+            <div className="hidden md:block">
+                <StatisticsSubTabs
+                    activeSubTab={subTab}
+                    onSubTabChange={setSubTab}
+                    hideGoalkeeping={true}
+                />
+                <StatisticsFilters mode="clubs" />
+            </div>
 
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-6 md:py-8">
                 {error ? (

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, waitFor, within } from '@testing-library/react';
+import { fireEvent, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { renderWithProviders, screen } from '@/test/utils';
 import { FeaturedStatBlock } from './FeaturedStatBlock';
@@ -50,59 +50,33 @@ const baseProps = {
   viewFullTableHref: '/stats/players',
 };
 
-describe('FeaturedStatBlock mobile ranking slider', () => {
+describe('FeaturedStatBlock mobile compact list', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     routerPushMock.mockReset();
   });
 
-  it('renders one mobile slide and one dot per ranking entry', () => {
+  it('renders all ranking entries in compact list', () => {
     renderWithProviders(<FeaturedStatBlock {...baseProps} rankings={buildRankings(4)} />);
 
-    expect(screen.getAllByTestId('featured-mobile-ranking-slide')).toHaveLength(4);
-    expect(screen.getAllByRole('button', { name: /Go to ranking slide/i })).toHaveLength(4);
+    // Each player name appears twice (mobile compact list + desktop table)
+    expect(screen.getAllByText('Player 2')).toHaveLength(2);
+    expect(screen.getAllByText('Player 5')).toHaveLength(2);
+    // 4 rankings x 2 (mobile + desktop) = 8
+    expect(screen.getAllByText(/Player \d+/)).toHaveLength(8);
   });
 
-  it('updates active dot on slider scroll', async () => {
-    renderWithProviders(<FeaturedStatBlock {...baseProps} rankings={buildRankings(3)} />);
+  it('shows no ranking message for empty rankings', () => {
+    renderWithProviders(<FeaturedStatBlock {...baseProps} rankings={[]} />);
 
-    const slider = screen.getByTestId('featured-mobile-rankings-slider');
-    Object.defineProperty(slider, 'clientWidth', { configurable: true, value: 200 });
-    Object.defineProperty(slider, 'scrollLeft', { configurable: true, writable: true, value: 0 });
-
-    slider.scrollLeft = 400;
-    fireEvent.scroll(slider);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('featured-mobile-ranking-dot-2')).toHaveClass('w-5');
-    });
-  });
-
-  it('updates active dot on dot click', () => {
-    renderWithProviders(<FeaturedStatBlock {...baseProps} rankings={buildRankings(3)} />);
-
-    const slider = screen.getByTestId('featured-mobile-rankings-slider');
-    const scrollToMock = vi.fn();
-    Object.defineProperty(slider, 'clientWidth', { configurable: true, value: 240 });
-    Object.defineProperty(slider, 'scrollTo', { configurable: true, value: scrollToMock });
-
-    fireEvent.click(screen.getByTestId('featured-mobile-ranking-dot-1'));
-
-    expect(scrollToMock).toHaveBeenCalledWith({ left: 240, behavior: 'smooth' });
-    expect(screen.getByTestId('featured-mobile-ranking-dot-1')).toHaveClass('w-5');
-  });
-
-  it('handles 0 and 1 rankings without rendering dots', () => {
-    const { rerender } = renderWithProviders(
-      <FeaturedStatBlock {...baseProps} rankings={[]} />
-    );
-
-    expect(screen.queryByTestId('featured-mobile-ranking-dots')).not.toBeInTheDocument();
     expect(screen.getByText('Рейтинг пока недоступен.')).toBeInTheDocument();
+  });
 
-    rerender(<FeaturedStatBlock {...baseProps} rankings={buildRankings(1)} />);
-    expect(screen.queryByTestId('featured-mobile-ranking-dots')).not.toBeInTheDocument();
-    expect(screen.getAllByTestId('featured-mobile-ranking-slide')).toHaveLength(1);
+  it('renders single ranking entry without issues', () => {
+    renderWithProviders(<FeaturedStatBlock {...baseProps} rankings={buildRankings(1)} />);
+
+    // "Player 2" appears in both mobile compact list and desktop table
+    expect(screen.getAllByText('Player 2')).toHaveLength(2);
   });
 
   it('navigates on desktop row click', () => {

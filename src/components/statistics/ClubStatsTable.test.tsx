@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '@/test/utils';
 import { ClubStatsTable } from './ClubStatsTable';
 import { TeamStatistics } from '@/types/statistics';
@@ -57,7 +57,7 @@ describe('ClubStatsTable', () => {
     expect(document.querySelector('a[href="/team/0"]')).not.toBeInTheDocument();
   });
 
-  it('renders mobile scroll hint container', () => {
+  it('shows scroll hint when table overflows horizontally', async () => {
     renderWithProviders(
       <ClubStatsTable
         subTab="key_stats"
@@ -65,7 +65,14 @@ describe('ClubStatsTable', () => {
       />
     );
 
-    expect(screen.getByTestId('club-stats-scroll-hint')).toBeInTheDocument();
+    const container = screen.getByTestId('club-stats-scroll-container');
+    Object.defineProperty(container, 'scrollWidth', { configurable: true, value: 1200 });
+    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 300 });
+
+    fireEvent(window, new Event('resize'));
+    await waitFor(() => {
+      expect(screen.getByTestId('club-stats-scroll-hint')).toBeInTheDocument();
+    });
   });
 
   it('navigates when a row is clicked', () => {

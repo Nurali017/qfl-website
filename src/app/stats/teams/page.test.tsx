@@ -34,6 +34,17 @@ vi.mock('@/config/tournaments', () => ({
 
 vi.mock('@/components/statistics/StatisticsSubTabs', () => ({
   StatisticsSubTabs: () => <div data-testid="stats-subtabs" />,
+  SUB_TAB_IDS: ['key_stats', 'goals', 'attempts', 'distribution', 'attacking', 'defending', 'goalkeeping', 'disciplinary'],
+  SUB_TAB_KEYS: {
+    key_stats: 'subTabs.keyStats',
+    goals: 'subTabs.goals',
+    attempts: 'subTabs.attempts',
+    distribution: 'subTabs.distribution',
+    attacking: 'subTabs.attacking',
+    defending: 'subTabs.defending',
+    goalkeeping: 'subTabs.goalkeeping',
+    disciplinary: 'subTabs.disciplinary',
+  },
 }));
 
 vi.mock('@/components/statistics/StatisticsFilters', () => ({

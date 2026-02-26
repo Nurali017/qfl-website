@@ -211,12 +211,18 @@ export function TournamentProvider({
   const seasonFromUrl = getNumericSearchParam(searchParams, 'season');
   const fallbackSeasonId = getSeasonIdFromFrontMap(resolvedTournamentId, frontMap);
 
+  // Check if the season from URL is valid for the current tournament
+  const isSeasonFromUrlValid =
+    seasonFromUrl !== null &&
+    (!frontMap?.[resolvedTournamentId]?.seasons?.length ||
+      frontMap[resolvedTournamentId].seasons!.some((s) => s.season_id === seasonFromUrl));
+
   const isAutoManagedSeason =
     seasonFromUrl !== null &&
     autoManagedSeasonRef.current !== null &&
     seasonFromUrl === autoManagedSeasonRef.current;
   const effectiveSeasonId =
-    seasonFromUrl === null || isAutoManagedSeason
+    seasonFromUrl === null || isAutoManagedSeason || !isSeasonFromUrlValid
       ? fallbackSeasonId
       : seasonFromUrl;
 
@@ -391,8 +397,16 @@ export function TournamentProvider({
     const rawTournament = searchParams.get('tournament');
     const seasonValue = getNumericSearchParam(searchParams, 'season');
     const needsTournamentUpdate = rawTournament !== resolvedTournamentId;
+
+    // Check if season in URL is valid for the current tournament
+    const isSeasonInvalid =
+      seasonValue !== null &&
+      frontMap?.[resolvedTournamentId]?.seasons?.length &&
+      !frontMap[resolvedTournamentId].seasons!.some((s) => s.season_id === seasonValue);
+
     const needsSeasonUpdate =
       seasonValue === null ||
+      isSeasonInvalid ||
       (
         autoManagedSeasonRef.current !== null &&
         seasonValue === autoManagedSeasonRef.current &&

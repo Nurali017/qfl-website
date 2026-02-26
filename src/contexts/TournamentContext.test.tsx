@@ -63,11 +63,11 @@ describe('TournamentContext', () => {
 
     getFrontMapMock.mockReset();
     getFrontMapMock.mockResolvedValue({
-      pl: { season_id: 61, has_table: true, has_bracket: false, sort_order: 1 },
-      '1l': { season_id: 85, has_table: true, has_bracket: false, sort_order: 2 },
-      cup: { season_id: 71, has_table: false, has_bracket: true, sort_order: 3 },
-      '2l': { season_id: 80, has_table: true, has_bracket: false, sort_order: 4 },
-      el: { season_id: 84, has_table: true, has_bracket: false, sort_order: 5 },
+      pl: { season_id: 61, has_table: true, has_bracket: false, sort_order: 1, seasons: [{ season_id: 61, year: 2025 }] },
+      '1l': { season_id: 85, has_table: true, has_bracket: false, sort_order: 2, seasons: [{ season_id: 85, year: 2025 }] },
+      cup: { season_id: 71, has_table: false, has_bracket: true, sort_order: 3, seasons: [{ season_id: 71, year: 2025 }] },
+      '2l': { season_id: 80, has_table: true, has_bracket: false, sort_order: 4, seasons: [{ season_id: 80, year: 2025 }] },
+      el: { season_id: 84, has_table: true, has_bracket: false, sort_order: 5, seasons: [{ season_id: 84, year: 2025 }] },
     });
 
     pathnameMock = '/table';
@@ -306,6 +306,24 @@ describe('TournamentContext', () => {
     await waitFor(() => {
       expect(pushCalls).toEqual(['/?tournament=2l&season=80']);
       expect(screen.getByTestId('is-switching')).toHaveTextContent('true');
+    });
+  });
+
+  it('corrects invalid season id in URL to front-map default', async () => {
+    pathnameMock = '/teams';
+    searchParamsMock = new URLSearchParams('tournament=cup&season=100');
+    window.history.replaceState({}, '', '/teams?tournament=cup&season=100');
+
+    render(
+      <TournamentProvider>
+        <Harness />
+      </TournamentProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('season-id')).toHaveTextContent('71');
+      expect(screen.getByTestId('tournament-id')).toHaveTextContent('cup');
+      expect(replaceMock).toHaveBeenCalledWith('/teams?tournament=cup&season=71', { scroll: false });
     });
   });
 

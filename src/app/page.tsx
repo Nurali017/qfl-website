@@ -16,6 +16,7 @@ import {
   playerStatsService,
   seasonStatsService,
   cupService,
+  tournamentMetaService,
 } from '@/lib/api/services';
 import { getServerPrefetchContext, safePrefetch } from '@/lib/api/server/prefetch';
 import { prefetchKeys } from '@/lib/api/prefetchKeys';
@@ -56,11 +57,45 @@ function buildMatchCenterFiltersHash(
   });
 }
 
-export default async function HomePage() {
-  const { language, seasonId, tournamentId } = getServerPrefetchContext();
-  const tournament = getTournamentById(tournamentId);
+type HomePageProps = {
+  searchParams?: Record<string, string | string[] | undefined>;
+};
+
+function pickFirstSearchParam(raw: string | string[] | undefined): string | null {
+  if (Array.isArray(raw)) {
+    return raw[0] ?? null;
+  }
+  if (typeof raw === 'string') {
+    return raw;
+  }
+  return null;
+}
+
+function parsePositiveInt(raw: string | null): number | null {
+  if (!raw || !/^\d+$/.test(raw.trim())) {
+    return null;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    return null;
+  }
+  return parsed;
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { language, tournamentId: cookieTournamentId } = getServerPrefetchContext();
+  const queryTournament = pickFirstSearchParam(searchParams?.tournament);
+  const resolvedTournamentId = getTournamentById(queryTournament ?? '') ? (queryTournament as string) : cookieTournamentId;
+  const tournament = getTournamentById(resolvedTournamentId);
   const currentTournamentId = tournament?.id ?? DEFAULT_TOURNAMENT_ID;
-  const effectiveSeasonId = seasonId || tournament?.seasonId || DEFAULT_SEASON_ID;
+
+  const [frontMap, querySeasonId] = await Promise.all([
+    safePrefetch(() => tournamentMetaService.getFrontMap(language)),
+    Promise.resolve(parsePositiveInt(pickFirstSearchParam(searchParams?.season))),
+  ]);
+
+  const mappedSeasonId = frontMap?.[currentTournamentId]?.season_id ?? null;
+  const effectiveSeasonId = querySeasonId || mappedSeasonId || tournament?.seasonId || DEFAULT_SEASON_ID;
 
   const isSecondLeague = currentTournamentId === '2l';
   const isCup = currentTournamentId === 'cup';
@@ -282,7 +317,6 @@ export default async function HomePage() {
   if (isCup && cupScheduleResponse !== undefined) {
     prefetch[prefetchKeys.cupSchedule(effectiveSeasonId, language, null)] = cupScheduleResponse;
   }
-
   if (!isSecondLeague && !isCup) {
     if (matches !== undefined) {
       if (homeMatchesQueryPlan.source === 'tour') {

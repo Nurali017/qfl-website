@@ -10,4 +10,5 @@ export const config = {
   i18n: {
     defaultLanguage: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'kz',
   },
+  features: {},
 } as const;

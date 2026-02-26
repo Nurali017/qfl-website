@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { CupOverviewResponse, CupScheduleResponse } from '@/types';
 import { HeroSection } from '@/components/HeroSection';
 import { NewsFeatured, NewsSideCards } from '@/components/NewsSection';
-import { CupSchedule } from '@/components/cup';
+import { CupBracket, CupSchedule } from '@/components/cup';
 
 interface CupHomeProps {
   overview?: CupOverviewResponse | null;
@@ -32,28 +32,21 @@ export function CupHome({ overview, schedule }: CupHomeProps) {
         </section>
       ) : (
         <>
-          <section
-            className="rounded-xl border border-gray-100 bg-white p-4 dark:border-dark-border dark:bg-dark-surface"
-            data-testid="cup-home-playoff-rounds"
-          >
-            <h3 className="mb-2 text-base font-bold text-gray-900 dark:text-slate-100">
-              {tTable('cup.homePlayoffRoundsTitle', { defaultValue: 'Раунды плей-офф' })}
-            </h3>
-            <p className="mb-3 text-sm text-gray-500 dark:text-slate-400">
-              {tTable('cup.homeRoundFilterLabel', { defaultValue: 'Выбор раунда' })}
-            </p>
-            {schedule && schedule.rounds.length > 0 ? (
+          {overview?.bracket && overview.bracket.rounds.length > 0 && (
+            <section data-testid="cup-home-bracket">
+              <CupBracket bracket={overview.bracket} />
+            </section>
+          )}
+
+          {schedule && schedule.rounds.length > 0 && (
+            <section data-testid="cup-home-playoff-rounds">
               <CupSchedule
                 schedule={schedule}
                 selectedRoundKey={selectedRoundKey}
                 onRoundChange={setSelectedRoundKey}
               />
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-slate-400">
-                {tTable('cup.homeNoPlayoffRounds', { defaultValue: 'Раунды плей-офф пока не определены' })}
-              </p>
-            )}
-          </section>
+            </section>
+          )}
         </>
       )}
 

@@ -91,7 +91,7 @@ describe('CupHome', () => {
     expect(screen.getByTestId('cup-schedule-component')).toBeInTheDocument();
   });
 
-  it('shows empty playoff rounds state when rounds are missing', () => {
+  it('hides playoff rounds section when rounds are missing', () => {
     render(
       <CupHome
         overview={createOverview(false)}
@@ -99,7 +99,7 @@ describe('CupHome', () => {
       />
     );
 
-    expect(screen.getByTestId('cup-home-playoff-rounds')).toBeInTheDocument();
+    expect(screen.queryByTestId('cup-home-playoff-rounds')).not.toBeInTheDocument();
     expect(screen.queryByTestId('cup-schedule-component')).not.toBeInTheDocument();
   });
 

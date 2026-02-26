@@ -35,7 +35,7 @@ export function MatchEventTimeline({
   const timelineEvents = useMemo(() => {
     return events
       .filter((e) =>
-        ['goal', 'own_goal', 'penalty', 'yellow_card', 'red_card', 'substitution'].includes(e.event_type) && e.event_type !== 'assist' && e.minute <= 130
+        ['goal', 'own_goal', 'penalty', 'yellow_card', 'red_card', 'substitution'].includes(e.event_type) && e.minute <= 130
       )
       .slice()
       .sort((a, b) => (a.minute - b.minute) || ((a.team_id ?? 0) - (b.team_id ?? 0)) || (a.id - b.id));

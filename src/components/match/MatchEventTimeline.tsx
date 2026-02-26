@@ -35,7 +35,7 @@ export function MatchEventTimeline({
   const timelineEvents = useMemo(() => {
     return events
       .filter((e) =>
-        ['goal', 'yellow_card', 'red_card', 'substitution', 'penalty'].includes(e.event_type) && e.minute <= 130
+        ['goal', 'own_goal', 'penalty', 'yellow_card', 'red_card', 'substitution'].includes(e.event_type) && e.event_type !== 'assist' && e.minute <= 130
       )
       .slice()
       .sort((a, b) => (a.minute - b.minute) || ((a.team_id ?? 0) - (b.team_id ?? 0)) || (a.id - b.id));
@@ -208,35 +208,53 @@ export function MatchEventTimeline({
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3">
-                      <JerseyIcon
-                        number={activeEvent.player_number || 0}
-                        color={activeEvent.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR}
-                        className="w-12 h-12 flex-shrink-0"
-                      />
-                      {activeEvent.player_id && playerCountryMap[activeEvent.player_id]?.flag_url && (
-                        <img
-                          src={playerCountryMap[activeEvent.player_id].flag_url}
-                          alt={playerCountryMap[activeEvent.player_id].code}
-                          className="w-5 h-4 object-cover rounded-[1px]"
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <JerseyIcon
+                          number={activeEvent.player_number || 0}
+                          color={activeEvent.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR}
+                          className="w-12 h-12 flex-shrink-0"
                         />
-                      )}
-                      {(() => {
-                        const playerHref = getPlayerHref(activeEvent.player_id);
-                        if (!playerHref) {
-                          return (
-                            <span className="text-white text-lg font-extrabold whitespace-nowrap truncate">
-                              {activeEvent.player_name}
-                            </span>
-                          );
-                        }
+                        {activeEvent.player_id && playerCountryMap[activeEvent.player_id]?.flag_url && (
+                          <img
+                            src={playerCountryMap[activeEvent.player_id].flag_url}
+                            alt={playerCountryMap[activeEvent.player_id].code}
+                            className="w-5 h-4 object-cover rounded-[1px]"
+                          />
+                        )}
+                        {(() => {
+                          const playerHref = getPlayerHref(activeEvent.player_id);
+                          if (!playerHref) {
+                            return (
+                              <span className="text-white text-lg font-extrabold whitespace-nowrap truncate">
+                                {activeEvent.player_name}
+                              </span>
+                            );
+                          }
 
-                        return (
-                          <Link href={playerHref} className="text-white text-lg font-extrabold whitespace-nowrap truncate hover:text-cyan-300 transition-colors">
-                            {activeEvent.player_name}
-                          </Link>
-                        );
-                      })()}
+                          return (
+                            <Link href={playerHref} className="text-white text-lg font-extrabold whitespace-nowrap truncate hover:text-cyan-300 transition-colors">
+                              {activeEvent.player_name}
+                            </Link>
+                          );
+                        })()}
+                      </div>
+                      {activeEvent.assist_player_name && (
+                        <div className="flex items-center gap-1.5 mt-3 ml-[60px] text-gray-400 text-sm">
+                          <span className="font-semibold uppercase">{t('assist', 'Ассист')}:</span>
+                          {(() => {
+                            const assistHref = getPlayerHref(activeEvent.assist_player_id ?? null);
+                            if (!assistHref) {
+                              return <span>{activeEvent.assist_player_name}</span>;
+                            }
+                            return (
+                              <Link href={assistHref} className="hover:text-cyan-300 transition-colors">
+                                {activeEvent.assist_player_name}
+                              </Link>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -365,27 +383,45 @@ export function MatchEventTimeline({
                       </div>
                     ) : (
                       /* Other events - single player */
-                      <div className="flex items-center gap-3">
-                        <JerseyIcon number={event.player_number || 0} color={event.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR} className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0" />
-                        {event.player_id && playerCountryMap[event.player_id]?.flag_url && (
-                          <img
-                            src={playerCountryMap[event.player_id].flag_url}
-                            alt={playerCountryMap[event.player_id].code}
-                            className="w-4 h-3 object-cover rounded-[1px]"
-                          />
-                        )}
-                        {(() => {
-                          const playerHref = getPlayerHref(event.player_id);
-                          if (!playerHref) {
-                            return <span className="text-white font-bold whitespace-nowrap">{event.player_name}</span>;
-                          }
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <JerseyIcon number={event.player_number || 0} color={event.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR} className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0" />
+                          {event.player_id && playerCountryMap[event.player_id]?.flag_url && (
+                            <img
+                              src={playerCountryMap[event.player_id].flag_url}
+                              alt={playerCountryMap[event.player_id].code}
+                              className="w-4 h-3 object-cover rounded-[1px]"
+                            />
+                          )}
+                          {(() => {
+                            const playerHref = getPlayerHref(event.player_id);
+                            if (!playerHref) {
+                              return <span className="text-white font-bold whitespace-nowrap">{event.player_name}</span>;
+                            }
 
-                          return (
-                            <Link href={playerHref} className="text-white font-bold whitespace-nowrap hover:text-cyan-300 transition-colors">
-                              {event.player_name}
-                            </Link>
-                          );
-                        })()}
+                            return (
+                              <Link href={playerHref} className="text-white font-bold whitespace-nowrap hover:text-cyan-300 transition-colors">
+                                {event.player_name}
+                              </Link>
+                            );
+                          })()}
+                        </div>
+                        {event.assist_player_name && (
+                          <div className="flex items-center gap-1.5 mt-2 ml-[52px] text-gray-400 text-xs">
+                            <span className="font-semibold uppercase">{t('assist', 'Ассист')}:</span>
+                            {(() => {
+                              const assistHref = getPlayerHref(event.assist_player_id ?? null);
+                              if (!assistHref) {
+                                return <span>{event.assist_player_name}</span>;
+                              }
+                              return (
+                                <Link href={assistHref} className="hover:text-cyan-300 transition-colors">
+                                  {event.assist_player_name}
+                                </Link>
+                              );
+                            })()}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -550,10 +586,16 @@ function EventMarker({ type, isHovered }: { type: string; isHovered: boolean }) 
           <GoalIcon className="w-5 h-5 md:w-6 md:h-6" color="white" />
         </div>
       );
+    case 'own_goal':
+      return (
+        <div className={`transition-transform ${isHovered ? 'scale-110' : ''}`}>
+          <GoalIcon className="w-5 h-5 md:w-6 md:h-6" color="#EF4444" />
+        </div>
+      );
     case 'penalty':
       return (
         <div className={`transition-transform ${isHovered ? 'scale-110' : ''}`}>
-          <GoalIcon className="w-5 h-5 md:w-6 md:h-6" color="#F97316" />
+          <GoalIcon className="w-5 h-5 md:w-6 md:h-6" color="white" />
         </div>
       );
     case 'yellow_card':
@@ -582,6 +624,7 @@ function EventMarker({ type, isHovered }: { type: string; isHovered: boolean }) 
 
 const EVENT_LABEL_KEYS: Record<string, string> = {
   goal: 'events.goal',
+  own_goal: 'events.ownGoal',
   penalty: 'events.penalty',
   yellow_card: 'yellowCard',
   red_card: 'redCard',
@@ -592,6 +635,7 @@ function getEventLabel(type: string) {
   // Fallback labels used when called outside translation context
   switch (type) {
     case 'goal': return 'Goal';
+    case 'own_goal': return 'Own Goal';
     case 'penalty': return 'Penalty';
     case 'yellow_card': return 'Yellow Card';
     case 'red_card': return 'Red Card';

@@ -18,7 +18,7 @@ export function useMatchLineup(matchId: number | null, isLive: boolean = false) 
     {
       fallbackData: prefetched,
       revalidateOnFocus: isLive,
-      refreshInterval: isLive ? 30000 : 0,
+      refreshInterval: isLive ? 5000 : 0,
       dedupingInterval: isLive ? 5000 : 300000,
     }
   );

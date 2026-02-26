@@ -215,6 +215,14 @@ export function LineupField({
             <span className="font-bold text-gray-900">{homeTeam.name}</span>
           </div>
           {homeStartersOrdered.map(p => <PlayerRow key={p.player_id} player={p} />)}
+          {(lineups.home_team.substitutes?.length ?? 0) > 0 && (
+            <>
+              <div className="px-4 py-2 bg-gray-50 border-y border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                {substitutesTitle}
+              </div>
+              {lineups.home_team.substitutes.map(p => <PlayerRow key={p.player_id} player={p} />)}
+            </>
+          )}
         </div>
 
         {/* Field Visualization - The Star */}
@@ -238,6 +246,14 @@ export function LineupField({
             <span className="font-bold text-gray-900">{awayTeam.name}</span>
           </div>
           {awayStartersOrdered.map(p => <PlayerRow key={p.player_id} player={p} />)}
+          {(lineups.away_team.substitutes?.length ?? 0) > 0 && (
+            <>
+              <div className="px-4 py-2 bg-gray-50 border-y border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                {substitutesTitle}
+              </div>
+              {lineups.away_team.substitutes.map(p => <PlayerRow key={p.player_id} player={p} />)}
+            </>
+          )}
         </div>
 
       </div>
@@ -293,15 +309,17 @@ function FieldVisualization({
   const homeTeamHref = getTeamHref(homeTeam.id);
   const awayTeamHref = getTeamHref(awayTeam.id);
 
+  // SOTA field_position uses TV orientation:
+  // home (top, facing down) needs X mirroring, away (bottom, facing up) does not.
   const homePlacedPlayers = buildPlacedPlayers({
     starters: homeStarters,
     invertY: false,
-    mirrorX: false,
+    mirrorX: true,
   });
   const awayPlacedPlayers = buildPlacedPlayers({
     starters: awayStarters,
     invertY: true,
-    mirrorX: true,
+    mirrorX: false,
   });
 
   // Home -> GK(y=5)=8%, attackers(y=76)=~44%

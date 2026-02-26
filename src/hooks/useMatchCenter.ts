@@ -40,6 +40,7 @@ export function useMatchCenter(options: UseMatchCenterOptions = {}) {
   return {
     groups: data?.groups ?? [],
     total: data?.total ?? 0,
+    tentativeTourDates: data?.tentative_tour_dates,
     loading: isLoading,
     error,
     refetch: mutate,

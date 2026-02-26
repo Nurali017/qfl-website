@@ -57,7 +57,7 @@ export interface EnhancedMatchEvent {
   id: number;
   half: 1 | 2; // Разделение по таймам
   minute: number;
-  event_type: 'goal' | 'yellow_card' | 'red_card' | 'substitution' | 'penalty';
+  event_type: 'goal' | 'own_goal' | 'penalty' | 'yellow_card' | 'red_card' | 'substitution';
   team_id: number | null;
   team_name: string;
   player_id: number | null;
@@ -259,6 +259,8 @@ export interface DateGroup {
 export interface GroupedMatchesResponse {
   groups: DateGroup[];
   total: number;
+  /** Full date ranges for tentative tours (unaffected by filters like team_ids). */
+  tentative_tour_dates?: Record<number, [string, string]>;
 }
 
 export interface StandardMatchesResponse {

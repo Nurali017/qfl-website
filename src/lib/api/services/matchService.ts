@@ -58,9 +58,11 @@ function mergeGroupedMatchCenterPages(
     }
   }
 
+  // tentative_tour_dates is the same on every page — take from first
   return {
     groups: Array.from(groupedByDate.values()),
     total: pages[0]?.total ?? 0,
+    tentative_tour_dates: pages[0]?.tentative_tour_dates,
   };
 }
 

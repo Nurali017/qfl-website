@@ -147,6 +147,105 @@ const lineups: MatchLineups = {
   },
 };
 
+const orientationLineups: MatchLineups = {
+  home_team: {
+    team_id: 1,
+    team_name: 'Home',
+    formation: '4-4-2',
+    starters: [
+      {
+        player_id: 301,
+        first_name: 'Home',
+        last_name: 'Keeper',
+        number: 1,
+        position: 'GK',
+        amplua: 'Gk',
+        field_position: 'C',
+        is_captain: false,
+      },
+      {
+        player_id: 302,
+        first_name: 'Home',
+        last_name: 'LeftCenter',
+        number: 4,
+        position: 'DEF',
+        amplua: 'D',
+        field_position: 'LC',
+        is_captain: false,
+      },
+      {
+        player_id: 303,
+        first_name: 'Home',
+        last_name: 'RightCenter',
+        number: 3,
+        position: 'DEF',
+        amplua: 'D',
+        field_position: 'RC',
+        is_captain: false,
+      },
+      {
+        player_id: 304,
+        first_name: 'Home',
+        last_name: 'Forward',
+        number: 9,
+        position: 'FWD',
+        amplua: 'F',
+        field_position: 'C',
+        is_captain: false,
+      },
+    ],
+    substitutes: [],
+  },
+  away_team: {
+    team_id: 2,
+    team_name: 'Away',
+    formation: '4-4-2',
+    starters: [
+      {
+        player_id: 401,
+        first_name: 'Away',
+        last_name: 'Keeper',
+        number: 12,
+        position: 'GK',
+        amplua: 'Gk',
+        field_position: 'C',
+        is_captain: false,
+      },
+      {
+        player_id: 402,
+        first_name: 'Away',
+        last_name: 'LeftCenter',
+        number: 5,
+        position: 'DEF',
+        amplua: 'D',
+        field_position: 'LC',
+        is_captain: false,
+      },
+      {
+        player_id: 403,
+        first_name: 'Away',
+        last_name: 'RightCenter',
+        number: 3,
+        position: 'DEF',
+        amplua: 'D',
+        field_position: 'RC',
+        is_captain: false,
+      },
+      {
+        player_id: 404,
+        first_name: 'Away',
+        last_name: 'Forward',
+        number: 10,
+        position: 'FWD',
+        amplua: 'F',
+        field_position: 'C',
+        is_captain: false,
+      },
+    ],
+    substitutes: [],
+  },
+};
+
 function collectMarkerPositions(container: HTMLElement): Record<string, string> {
   const markers = container.querySelectorAll<HTMLElement>('[data-testid^="lineup-marker-"]');
   const entries: Array<[string, string]> = [];
@@ -160,6 +259,14 @@ function collectMarkerPositions(container: HTMLElement): Record<string, string> 
   });
 
   return Object.fromEntries(entries);
+}
+
+function getMarkerLeftPercent(container: HTMLElement, playerId: number): number {
+  const marker = container.querySelector<HTMLElement>(`[data-testid="lineup-marker-${playerId}"]`);
+  if (!marker) {
+    throw new Error(`Missing lineup marker for player ${playerId}`);
+  }
+  return Number.parseFloat(marker.style.left);
 }
 
 describe('Lineup field placement parity', () => {
@@ -178,5 +285,23 @@ describe('Lineup field placement parity', () => {
     const miniPositions = collectMarkerPositions(mini.container);
 
     expect(miniPositions).toEqual(fullPositions);
+  });
+
+  it('matches SOTA left/right semantics for RC and LC positions', () => {
+    const { container } = renderWithProviders(
+      <LineupField
+        lineups={orientationLineups}
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+      />
+    );
+
+    const homeLcLeft = getMarkerLeftPercent(container, 302);
+    const homeRcLeft = getMarkerLeftPercent(container, 303);
+    const awayLcLeft = getMarkerLeftPercent(container, 402);
+    const awayRcLeft = getMarkerLeftPercent(container, 403);
+
+    expect(homeRcLeft).toBeLessThan(homeLcLeft);
+    expect(awayRcLeft).toBeGreaterThan(awayLcLeft);
   });
 });

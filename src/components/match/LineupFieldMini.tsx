@@ -161,15 +161,17 @@ export function LineupFieldMini({
     );
   }
 
+  // SOTA field_position uses TV orientation:
+  // home (top, facing down) needs X mirroring, away (bottom, facing up) does not.
   const homePlacedPlayers = buildPlacedPlayers({
     starters: homeStartersOrdered,
     invertY: false,
-    mirrorX: false,
+    mirrorX: true,
   });
   const awayPlacedPlayers = buildPlacedPlayers({
     starters: awayStartersOrdered,
     invertY: true,
-    mirrorX: true,
+    mirrorX: false,
   });
 
   // Map to field halves to match full-size lineup placement

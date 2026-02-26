@@ -7,7 +7,7 @@ import { useRoutePrefetchValue } from '@/contexts/RoutePrefetchContext';
 import { prefetchKeys } from '@/lib/api/prefetchKeys';
 
 
-export function useMatchDetail(matchId: number | null) {
+export function useMatchDetail(matchId: number | null, isLive = false) {
   const { i18n } = useTranslation();
   const prefetched = useRoutePrefetchValue<MatchDetail | null>(
     matchId ? prefetchKeys.matchDetail(matchId, i18n.language) : null
@@ -18,8 +18,9 @@ export function useMatchDetail(matchId: number | null) {
     () => matchService.getMatchById(matchId!, i18n.language),
     {
       fallbackData: prefetched,
-      revalidateOnFocus: false,
-      dedupingInterval: 60000,
+      revalidateOnFocus: isLive,
+      refreshInterval: isLive ? 5000 : 0,
+      dedupingInterval: isLive ? 10000 : 60000,
     }
   );
 

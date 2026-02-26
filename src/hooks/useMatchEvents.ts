@@ -18,7 +18,7 @@ export function useMatchEvents(matchId: number | null, isLive: boolean = false) 
     {
       fallbackData: prefetched,
       revalidateOnFocus: isLive, // Обновлять для live матчей
-      refreshInterval: isLive ? 30000 : 0, // Каждые 30 сек для live
+      refreshInterval: isLive ? 5000 : 0, // Каждые 5 сек для live
       dedupingInterval: isLive ? 10000 : 60000,
     }
   );

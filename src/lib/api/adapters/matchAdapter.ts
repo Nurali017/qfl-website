@@ -8,6 +8,7 @@ import {
 
 export interface BackendTeamStatsEntry {
   team_id: number;
+  possession?: number | null;
   possession_percent?: number | null;
   shots?: number | null;
   shots_on_goal?: number | null;
@@ -84,7 +85,7 @@ export interface BackendLiveEvent {
   id: number;
   half?: 1 | 2 | null;
   minute: number;
-  event_type: 'goal' | 'yellow_card' | 'red_card' | 'substitution' | 'penalty';
+  event_type: 'goal' | 'own_goal' | 'penalty' | 'yellow_card' | 'red_card' | 'substitution';
   team_id?: number | null;
   team_name?: string | null;
   player_id?: number | null;
@@ -255,8 +256,8 @@ export function transformTeamStats(
 
   return {
     possession: {
-      home: homeStats.possession_percent || 0,
-      away: awayStats.possession_percent || 0,
+      home: homeStats.possession_percent || homeStats.possession || 0,
+      away: awayStats.possession_percent || awayStats.possession || 0,
     },
     shots: {
       home: homeStats.shots || 0,

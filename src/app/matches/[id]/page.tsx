@@ -51,10 +51,11 @@ export default function MatchDetailPage() {
   const { t, i18n } = useTranslation('match');
 
   // Data fetching
-  const { match, loading: matchLoading, error: matchError } = useMatchDetail(matchId);
-  const { events, loading: eventsLoading } = useMatchEvents(matchId, match?.is_live || false);
-  const { lineup, loading: lineupLoading } = useMatchLineup(matchId, match?.is_live || false);
-  const { stats, loading: statsLoading } = useMatchStats(matchId);
+  const { match, loading: matchLoading, error: matchError } = useMatchDetail(matchId, true);
+  const isLive = match?.is_live || false;
+  const { events, loading: eventsLoading } = useMatchEvents(matchId, isLive);
+  const { lineup, loading: lineupLoading } = useMatchLineup(matchId, isLive);
+  const { stats, loading: statsLoading } = useMatchStats(matchId, isLive);
 
   const lineupMode: LineupRenderingMode = useMemo(() => {
     if (lineup?.rendering?.mode) {

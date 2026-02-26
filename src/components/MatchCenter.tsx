@@ -10,44 +10,75 @@ import { MatchCard } from '@/components/matches/MatchCard';
 import { MatchCenterSkeleton } from '@/components/ui/Skeleton';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { formatMatchDate, formatDateRange } from '@/lib/utils/dateFormat';
-import { MatchCenterFilters as FiltersType, DateGroup } from '@/types';
+import { MatchCenterFilters as FiltersType, DateGroup, Game } from '@/types';
 import { getMatchCenterFiltersFromUrl } from '@/lib/utils/urlState';
 
 /**
- * Merge consecutive date groups that belong to the same tentative tour
- * into a single group with a date range label (e.g., "Тур 4 · 4-5 сәуір").
+ * Merge tentative games of the same tour into a single group with a date
+ * range label (e.g., "Тур 4 · 4-5 сәуір").
+ *
+ * Uses `tourDateRanges` from the backend (full date ranges unaffected by
+ * filters) so that filtering by team still shows the full tour date range.
  */
 function mergeTentativeGroups(
   groups: DateGroup[],
   language: string,
   tourLabel: string,
+  tourDateRanges?: Record<number, [string, string]>,
 ): DateGroup[] {
-  const merged: DateGroup[] = [];
-  let i = 0;
-  while (i < groups.length) {
-    const group = groups[i];
-    const tour = group.games[0]?.tour;
-    const allTentative = group.games.length > 0 && group.games.every(g => g.is_schedule_tentative);
+  // Pass 1: collect every tentative game by its tour number
+  const tentativeTours = new Map<number, { dates: Set<string>; games: Game[] }>();
 
-    if (tour && allTentative) {
-      const dates = [group.date];
-      const allGames = [...group.games];
-      while (i + 1 < groups.length) {
-        const next = groups[i + 1];
-        if (next.games[0]?.tour === tour && next.games.every(g => g.is_schedule_tentative)) {
-          dates.push(next.date);
-          allGames.push(...next.games);
-          i++;
-        } else break;
+  for (const group of groups) {
+    for (const game of group.games) {
+      if (!game.is_schedule_tentative || !game.tour) continue;
+      if (!tentativeTours.has(game.tour)) {
+        tentativeTours.set(game.tour, { dates: new Set(), games: [] });
       }
-      const dateRange = formatDateRange(dates, language);
-      const label = `${tourLabel} ${tour} · ${dateRange}`;
-      merged.push({ date: group.date, date_label: label, games: allGames });
-    } else {
-      merged.push(group);
+      tentativeTours.get(game.tour)!.dates.add(group.date);
+      tentativeTours.get(game.tour)!.games.push(game);
     }
-    i++;
   }
+
+  // Pass 2: build result — emit merged tour group on first encounter,
+  // keep non-tentative (or no-tour) games in their original date group.
+  const merged: DateGroup[] = [];
+  const emittedTours = new Set<number>();
+
+  for (const group of groups) {
+    // Emit merged groups for tours first appearing in this date group
+    for (const game of group.games) {
+      if (
+        game.is_schedule_tentative &&
+        game.tour &&
+        tentativeTours.has(game.tour) &&
+        !emittedTours.has(game.tour)
+      ) {
+        emittedTours.add(game.tour);
+        const entry = tentativeTours.get(game.tour)!;
+
+        // Prefer backend-provided full date range (ignores team/status filters)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[merge] tour=${game.tour}, tourDateRanges keys=`, tourDateRanges ? Object.keys(tourDateRanges) : 'undefined', 'value=', tourDateRanges?.[game.tour]);
+        }
+        const backendRange = tourDateRanges?.[game.tour];
+        const dates = backendRange ?? [...entry.dates].sort();
+        const dateRange = formatDateRange(
+          Array.isArray(dates) ? dates : [dates],
+          language,
+        );
+        const label = `${tourLabel} ${game.tour} · ${dateRange}`;
+        merged.push({ date: (backendRange?.[0] ?? [...entry.dates].sort()[0]), date_label: label, games: entry.games });
+      }
+    }
+
+    // Keep non-tentative / no-tour games in their original group
+    const remaining = group.games.filter(g => !g.is_schedule_tentative || !g.tour);
+    if (remaining.length > 0) {
+      merged.push({ ...group, games: remaining });
+    }
+  }
+
   return merged;
 }
 
@@ -71,13 +102,13 @@ export function MatchCenter() {
   }, [searchParams]);
 
   // Fetch data with current filters
-  const { groups, total, loading, error, refetch } = useMatchCenter({
+  const { groups, total, tentativeTourDates, loading, error, refetch } = useMatchCenter({
     season_id: filters.season_id || effectiveSeasonId,
     fetchAll: true,
     ...filters,
   });
   // Merge tentative tour groups into date ranges
-  const mergedGroups = mergeTentativeGroups(groups, i18n.language, t('tour'));
+  const mergedGroups = mergeTentativeGroups(groups, i18n.language, t('tour'), tentativeTourDates);
 
   const hasActiveFilters =
     filters.group !== undefined ||
@@ -137,11 +168,10 @@ export function MatchCenter() {
 
   return (
     <div className="space-y-6">
-      {/* Filters - hidden until schedule is confirmed */}
-      {/* <MatchCenterFilters
+      <MatchCenterFilters
         filters={filters}
         onFilterChange={handleFilterChange}
-      /> */}
+      />
 
       {/* Total count */}
       {total > 0 && (

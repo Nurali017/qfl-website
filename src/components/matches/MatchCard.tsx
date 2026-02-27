@@ -40,8 +40,12 @@ export function MatchCard({
   const shouldShowScheduleDisclaimer = showScheduleDisclaimer && match.is_schedule_tentative === true;
   const displayTime = formatMatchTime(match.time);
   const displayDateTime = match.is_schedule_tentative
-    ? displayTime || null
-    : match.date && displayTime ? `${match.date}, ${displayTime}` : match.date || displayTime;
+    ? null
+    : isUpcoming
+      ? match.date || null
+      : match.date && displayTime
+        ? `${match.date}, ${displayTime}`
+        : match.date || displayTime;
 
   const isTentative = match.is_schedule_tentative === true;
 
@@ -109,8 +113,8 @@ export function MatchCard({
                     {match.home_score ?? 0} - {match.away_score ?? 0}
                   </div>
                 ) : (
-                  <div className="text-base font-semibold text-gray-400 dark:text-slate-500 whitespace-nowrap">
-                    -
+                  <div className="text-sm font-semibold text-gray-500 dark:text-slate-400 whitespace-nowrap">
+                    {displayTime || '-'}
                   </div>
                 )}
               </div>
@@ -227,8 +231,8 @@ export function MatchCard({
                     {match.home_score ?? 0} - {match.away_score ?? 0}
                   </div>
                 ) : (
-                  <div className="text-base font-medium text-gray-400 dark:text-slate-500 whitespace-nowrap">
-                    -
+                  <div className="text-sm font-medium text-gray-500 dark:text-slate-400 whitespace-nowrap">
+                    {displayTime || '-'}
                   </div>
                 )}
               </div>

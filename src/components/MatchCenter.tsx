@@ -168,12 +168,10 @@ export function MatchCenter() {
 
   return (
     <div className="space-y-6">
-      {/* Filters temporarily hidden
       <MatchCenterFilters
         filters={filters}
         onFilterChange={handleFilterChange}
       />
-      */}
 
       {/* Total count */}
       {total > 0 && (

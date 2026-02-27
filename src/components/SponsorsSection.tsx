@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 const sponsors = [
   { name: 'Alatau City Bank', logo: '/sponsors/alatau-city-bank.webp', url: '#' },
@@ -22,11 +21,9 @@ export const SponsorsSection = React.memo(function SponsorsSection() {
               className="transition-transform duration-300 hover:scale-105 px-3 py-2 rounded-lg dark:bg-white/10"
               title={sponsor.name}
             >
-              <Image
+              <img
                 src={sponsor.logo}
                 alt={sponsor.name}
-                width={128}
-                height={48}
                 className="h-8 md:h-10 lg:h-12 w-auto object-contain"
               />
             </a>

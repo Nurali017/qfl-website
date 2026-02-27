@@ -14,9 +14,14 @@ interface PlayerPageHeroProps {
   variant?: PlayerPageVariant;
 }
 
+function safeParseDob(dob: string): Date {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dob)) return new Date(dob + 'T00:00:00');
+  return new Date(dob);
+}
+
 function getAge(dob?: string | null) {
   if (!dob) return null;
-  const birthDate = new Date(dob);
+  const birthDate = safeParseDob(dob);
   if (Number.isNaN(birthDate.getTime())) return null;
   const ageDifMs = Date.now() - birthDate.getTime();
   const ageDate = new Date(ageDifMs);
@@ -27,16 +32,53 @@ function toFlagEmoji(countryCode?: string | null) {
   if (!countryCode) return null;
   const normalizedCode = countryCode.trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(normalizedCode)) return null;
-  return String.fromCodePoint(...[...normalizedCode].map((char) => 127397 + char.charCodeAt(0)));
+  const codePoints = Array.from(normalizedCode).map((char) => 127397 + char.charCodeAt(0));
+
+  try {
+    if (typeof String.fromCodePoint === 'function') {
+      return String.fromCodePoint(codePoints[0], codePoints[1]);
+    }
+
+    // Fallback for older Safari/WebKit engines without String.fromCodePoint.
+    return codePoints
+      .map((codePoint) => {
+        const normalized = codePoint - 0x10000;
+        return String.fromCharCode(0xd800 + (normalized >> 10), 0xdc00 + (normalized & 0x3ff));
+      })
+      .join('');
+  } catch {
+    return null;
+  }
+}
+
+function formatDateByLanguage(date: Date, language: 'kz' | 'ru'): string {
+  const locales = language === 'kz' ? ['kk-KZ', 'ru-RU'] : ['ru-RU', 'en-US'];
+
+  for (const locale of locales) {
+    try {
+      return date.toLocaleDateString(locale);
+    } catch {
+      // Continue to next locale fallback.
+    }
+  }
+
+  return date.toLocaleDateString();
 }
 
 export function PlayerPageHero({ player, team, variant = 'clarity' }: PlayerPageHeroProps) {
   const { t, i18n } = useTranslation('player');
   const lang = i18n.language?.substring(0, 2) === 'kz' ? 'kz' : 'ru';
   const age = getAge(player.date_of_birth);
-  const dateValue = player.date_of_birth
-    ? new Date(player.date_of_birth).toLocaleDateString(lang === 'kz' ? 'kk-KZ' : 'ru-RU')
-    : '-';
+  const dateValue = (() => {
+    if (!player.date_of_birth) return '-';
+    try {
+      const d = safeParseDob(player.date_of_birth);
+      if (isNaN(d.getTime())) return player.date_of_birth;
+      return formatDateByLanguage(d, lang);
+    } catch {
+      return player.date_of_birth;
+    }
+  })();
   const country =
     player.country?.name ||
     player.nationality ||

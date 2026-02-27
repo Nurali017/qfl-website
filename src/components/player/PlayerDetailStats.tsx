@@ -128,18 +128,18 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
   const passAccuracy = stats.pass_accuracy ?? 0;
 
   const statTiles = [
-    { label: tStats('labels.goals'), value: stats.goals ?? 0, highlight: true },
-    { label: tStats('labels.assists'), value: stats.assists ?? 0, highlight: true },
-    { label: tStats('labels.shots'), value: stats.shots ?? 0 },
-    { label: tStats('labels.shotsOnGoal'), value: stats.shots_on_goal ?? 0 },
-    { label: tStats('labels.passes'), value: stats.passes ?? 0 },
-    { label: tStats('labels.keyPasses'), value: stats.key_passes ?? 0 },
-    { label: tStats('labels.duelsWon'), value: duelsWonPercentage },
-    { label: tStats('labels.duels'), value: duels },
-    { label: tStats('labels.duelsWon'), value: duelsWon },
-    { label: tStats('labels.yellowCards'), value: stats.yellow_cards ?? 0 },
-    { label: tStats('labels.redCards'), value: stats.red_cards ?? 0 },
-    { label: tStats('labels.interceptions'), value: stats.interception ?? 0 },
+    { id: 'goals', label: tStats('labels.goals'), value: stats.goals ?? 0, highlight: true },
+    { id: 'assists', label: tStats('labels.assists'), value: stats.assists ?? 0, highlight: true },
+    { id: 'shots', label: tStats('labels.shots'), value: stats.shots ?? 0 },
+    { id: 'shots_on_goal', label: tStats('labels.shotsOnGoal'), value: stats.shots_on_goal ?? 0 },
+    { id: 'passes', label: tStats('labels.passes'), value: stats.passes ?? 0 },
+    { id: 'key_passes', label: tStats('labels.keyPasses'), value: stats.key_passes ?? 0 },
+    { id: 'duels_won_pct', label: tStats('labels.duelsWon'), value: duelsWonPercentage },
+    { id: 'duels', label: tStats('labels.duels'), value: duels },
+    { id: 'duels_won', label: tStats('labels.duelsWon'), value: duelsWon },
+    { id: 'yellow_cards', label: tStats('labels.yellowCards'), value: stats.yellow_cards ?? 0 },
+    { id: 'red_cards', label: tStats('labels.redCards'), value: stats.red_cards ?? 0 },
+    { id: 'interceptions', label: tStats('labels.interceptions'), value: stats.interception ?? 0 },
   ];
 
   return (
@@ -184,7 +184,7 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {statTiles.map((item) => (
             <StatTile
-              key={item.label}
+              key={item.id}
               label={item.label}
               value={item.value}
               highlight={item.highlight}

@@ -1,5 +1,14 @@
 type SupportedLanguage = 'ru' | 'kz' | 'en';
 
+/** Normalize date-only strings "YYYY-MM-DD" → "YYYY-MM-DDT00:00:00"
+ *  to avoid Safari returning Invalid Date on ISO 8601 date-only format. */
+function safeParseDate(dateStr: string): Date {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return new Date(dateStr + 'T00:00:00');
+  }
+  return new Date(dateStr);
+}
+
 const LOCALE_MAP: Record<SupportedLanguage, string> = {
   ru: 'ru-RU',
   kz: 'kk-KZ',
@@ -39,7 +48,7 @@ function isKz(language: string): boolean {
 }
 
 export function formatMatchDate(dateStr: string, language: string): string {
-  const date = new Date(dateStr);
+  const date = safeParseDate(dateStr);
   if (isKz(language)) return formatKzDate(date, { weekday: 'long', day: 'numeric', month: 'long' });
   const locale = getLocale(language);
 
@@ -51,7 +60,7 @@ export function formatMatchDate(dateStr: string, language: string): string {
 }
 
 export function formatNewsDate(dateStr: string, language: string): string {
-  const date = new Date(dateStr);
+  const date = safeParseDate(dateStr);
   if (isKz(language)) {
     const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     return `${formatKzDate(date, { day: 'numeric', month: 'long' })}, ${time}`;
@@ -67,7 +76,7 @@ export function formatNewsDate(dateStr: string, language: string): string {
 }
 
 export function formatShortDate(dateStr: string, language: string): string {
-  const date = new Date(dateStr);
+  const date = safeParseDate(dateStr);
   if (isKz(language)) return formatKzDate(date, { day: 'numeric', month: 'short' });
   const locale = getLocale(language);
 
@@ -80,7 +89,7 @@ export function formatShortDate(dateStr: string, language: string): string {
 export function formatDateRange(dates: string[], language: string): string {
   if (dates.length === 0) return '';
 
-  const sortedDates = [...dates].map(d => new Date(d)).sort((a, b) => a.getTime() - b.getTime());
+  const sortedDates = [...dates].map(d => safeParseDate(d)).sort((a, b) => a.getTime() - b.getTime());
 
   const startDate = sortedDates[0];
   const endDate = sortedDates[sortedDates.length - 1];
@@ -108,7 +117,7 @@ export function formatDateRange(dates: string[], language: string): string {
 }
 
 export function formatMatchDayDate(dateStr: string, language: string): string {
-  const date = new Date(dateStr);
+  const date = safeParseDate(dateStr);
   if (isKz(language)) return formatKzDate(date, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   const locale = getLocale(language);
 

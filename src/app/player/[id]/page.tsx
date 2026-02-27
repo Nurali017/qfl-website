@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -107,7 +107,7 @@ function extractTournamentName(seasonName: string | null): string {
   return seasonName.replace(/\s*\d{4}\s*/, '').trim() || seasonName;
 }
 
-export default function PlayerProfilePage() {
+function PlayerProfilePageContent() {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -283,5 +283,13 @@ export default function PlayerProfilePage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function PlayerProfilePage() {
+  return (
+    <Suspense fallback={<PlayerPageSkeleton />}>
+      <PlayerProfilePageContent />
+    </Suspense>
   );
 }

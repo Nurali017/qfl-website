@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import type { Metadata } from 'next';
 import { RoutePrefetchProvider } from '@/contexts/RoutePrefetchContext';
 import { JsonLd } from '@/components/JsonLd';
@@ -123,7 +123,7 @@ export default async function PlayerDetailLayout({
   return (
     <RoutePrefetchProvider value={prefetch}>
       {jsonLd.length > 0 && <JsonLd data={jsonLd} />}
-      {children}
+      <Suspense fallback={null}>{children}</Suspense>
     </RoutePrefetchProvider>
   );
 }

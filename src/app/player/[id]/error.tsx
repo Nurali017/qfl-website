@@ -18,6 +18,11 @@ export default function PlayerError({
         <p className="text-gray-600 dark:text-slate-400 mb-6">
           Could not retrieve player information. The player may not exist or the server is unavailable.
         </p>
+        {process.env.NODE_ENV !== 'production' && error?.message ? (
+          <p className="mb-6 rounded-lg bg-gray-100 px-3 py-2 text-left text-xs text-gray-700 dark:bg-dark-surface-soft dark:text-slate-300">
+            {error.message}
+          </p>
+        ) : null}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}

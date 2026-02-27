@@ -106,6 +106,31 @@ describe('TournamentContext', () => {
     });
   });
 
+  it('does not spam replace while canonical navigation is in-flight', async () => {
+    pathnameMock = '/table';
+    searchParamsMock = new URLSearchParams('tournament=pl');
+    window.history.replaceState({}, '', '/table?tournament=pl');
+
+    replaceMock.mockReset();
+    replaceMock.mockImplementation(() => {
+      // Simulate in-flight transition by not mutating URL/search params yet.
+    });
+
+    render(
+      <TournamentProvider>
+        <Harness />
+      </TournamentProvider>
+    );
+
+    await waitFor(() => {
+      expect(replaceMock).toHaveBeenCalledTimes(1);
+      expect(replaceMock).toHaveBeenCalledWith('/table?tournament=pl&season=61', { scroll: false });
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 120));
+    expect(replaceMock).toHaveBeenCalledTimes(1);
+  });
+
   it('uses dynamic front-map season ids for canonicalization', async () => {
     getFrontMapMock.mockResolvedValueOnce({
       pl: { season_id: 999, has_table: true, sort_order: 1 },
@@ -176,6 +201,26 @@ describe('TournamentContext', () => {
       expect(screen.getByTestId('tournament-id')).toHaveTextContent('2l');
       expect(replaceMock).toHaveBeenCalledWith('/matches/123?tournament=2l&season=80', { scroll: false });
     });
+  });
+
+  it('does not force season canonicalization on player detail routes', async () => {
+    pathnameMock = '/player/1187';
+    searchParamsMock = new URLSearchParams('tournament=pl&season=200');
+    window.history.replaceState({}, '', '/player/1187?tournament=pl&season=200');
+    replaceMock.mockClear();
+
+    render(
+      <TournamentProvider>
+        <Harness />
+      </TournamentProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('tournament-id')).toHaveTextContent('pl');
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 120));
+    expect(replaceMock).not.toHaveBeenCalled();
   });
 
   it('switches between tournaments using URL-first navigation', async () => {
@@ -344,5 +389,30 @@ describe('TournamentContext', () => {
     pushMock.mockClear();
     fireEvent.click(screen.getByRole('button', { name: 'set-pl' }));
     expect(pushMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps rendering when localStorage throws', async () => {
+    const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('storage blocked');
+    });
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage blocked');
+    });
+
+    try {
+      render(
+        <TournamentProvider>
+          <Harness />
+        </TournamentProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('season-id')).toHaveTextContent('61');
+        expect(screen.getByTestId('tournament-id')).toHaveTextContent('pl');
+      });
+    } finally {
+      setItemSpy.mockRestore();
+      getItemSpy.mockRestore();
+    }
   });
 });

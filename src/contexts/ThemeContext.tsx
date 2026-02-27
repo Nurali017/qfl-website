@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
+import { safeLocalStorageGet, safeLocalStorageSet } from '@/lib/utils/safeStorage';
 
 type Theme = 'light' | 'dark';
 
@@ -24,9 +25,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setThemeState(currentTheme);
 
     // Also sync with localStorage if not set
-    const storedTheme = localStorage.getItem('theme');
+    const storedTheme = safeLocalStorageGet('theme');
     if (!storedTheme) {
-      localStorage.setItem('theme', currentTheme);
+      safeLocalStorageSet('theme', currentTheme);
     }
   }, []);
 
@@ -42,14 +43,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
+    safeLocalStorageSet('theme', newTheme);
     applyTheme(newTheme);
   }, [applyTheme]);
 
   const toggleTheme = useCallback(() => {
     setThemeState((currentTheme) => {
       const newTheme: Theme = currentTheme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', newTheme);
+      safeLocalStorageSet('theme', newTheme);
       applyTheme(newTheme);
       return newTheme;
     });

@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { setLanguageCookie } from '@/lib/i18n/cookies.client';
 import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES, type SupportedLanguage } from './types';
+import { safeLocalStorageSet } from '@/lib/utils/safeStorage';
 
 // Russian translations
 import commonRu from '../../public/locales/ru/common.json';
@@ -86,7 +87,9 @@ export const getCurrentLanguage = (): SupportedLanguage => {
 
 export const changeLanguage = async (lng: SupportedLanguage): Promise<void> => {
   await i18n.changeLanguage(lng);
-  localStorage.setItem('i18nextLng', lng);
+  safeLocalStorageSet('i18nextLng', lng);
   setLanguageCookie(lng);
-  document.documentElement.lang = lng;
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = lng;
+  }
 };

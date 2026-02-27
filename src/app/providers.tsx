@@ -12,6 +12,7 @@ import {
   setLanguageCookie,
   getClientLanguageCookie,
 } from '@/lib/i18n/cookies.client';
+import { safeLocalStorageGet, safeLocalStorageSet } from '@/lib/utils/safeStorage';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -37,7 +38,7 @@ export function Providers({
   // Sync localStorage/cookie/document language on mount with priority:
   // cookie > localStorage > initialLang > kz
   useEffect(() => {
-    const storedLang = normalizeSupportedLanguage(localStorage.getItem('i18nextLng'));
+    const storedLang = normalizeSupportedLanguage(safeLocalStorageGet('i18nextLng'));
     const cookieLang = normalizeSupportedLanguage(getClientLanguageCookie());
     const nextLang = resolvePreferredLanguage({
       cookieLang,
@@ -51,7 +52,7 @@ export function Providers({
     }
 
     if (storedLang !== nextLang) {
-      localStorage.setItem('i18nextLng', nextLang);
+      safeLocalStorageSet('i18nextLng', nextLang);
     }
 
     if (document.documentElement.lang !== nextLang) {

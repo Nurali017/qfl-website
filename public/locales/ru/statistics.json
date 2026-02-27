@@ -180,6 +180,7 @@
     "shotsOnGoal": "Удары в створ",
     "passAccuracy": "Точность пасов",
     "duelsWon": "Выигранных дуэлей",
+    "duelsWonPct": "Выигранные дуэли (%)",
     "tackle": "Отборы",
     "interception": "Перехваты",
     "recovery": "Возвраты мяча",

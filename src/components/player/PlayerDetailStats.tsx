@@ -134,7 +134,7 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
     { id: 'shots_on_goal', label: tStats('labels.shotsOnGoal'), value: stats.shots_on_goal ?? 0 },
     { id: 'passes', label: tStats('labels.passes'), value: stats.passes ?? 0 },
     { id: 'key_passes', label: tStats('labels.keyPasses'), value: stats.key_passes ?? 0 },
-    { id: 'duels_won_pct', label: tStats('labels.duelsWon'), value: duelsWonPercentage },
+    { id: 'duels_won_pct', label: tStats('labels.duelsWonPct'), value: duelsWonPercentage },
     { id: 'duels', label: tStats('labels.duels'), value: duels },
     { id: 'duels_won', label: tStats('labels.duelsWon'), value: duelsWon },
     { id: 'yellow_cards', label: tStats('labels.yellowCards'), value: stats.yellow_cards ?? 0 },
@@ -194,7 +194,7 @@ export function PlayerDetailStats({ stats, variant = 'clarity' }: PlayerDetailSt
         </div>
 
         <div className="mx-auto mt-2 xl:mt-0">
-          <CircularChart value={duelsWonPercentage} label={tStats('labels.duelsWon')} variant={variant} />
+          <CircularChart value={duelsWonPercentage} label={tStats('labels.duelsWonPct')} variant={variant} />
         </div>
       </div>
     </section>

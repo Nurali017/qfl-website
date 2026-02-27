@@ -30,6 +30,7 @@ import {
   getClientTournamentCookie,
 } from '@/lib/tournament/cookies.client';
 import { tournamentMetaService, FrontMapEntry } from '@/lib/api/services/tournamentMetaService';
+import { safeLocalStorageGet, safeLocalStorageSet } from '@/lib/utils/safeStorage';
 
 const STORAGE_KEY = 'qfl_selected_tournament';
 
@@ -43,6 +44,11 @@ interface UpdateUrlOptions {
   replace?: boolean;
   useCurrentLocation?: boolean;
   pathname?: string;
+}
+
+interface PendingNavigationState {
+  url: string;
+  at: number;
 }
 
 function getValidTournamentId(tournamentId: string | null | undefined): string | null {
@@ -68,7 +74,7 @@ function getClientPersistedTournamentId(): string | null {
     return null;
   }
 
-  const storageTournament = getValidTournamentId(localStorage.getItem(STORAGE_KEY));
+  const storageTournament = getValidTournamentId(safeLocalStorageGet(STORAGE_KEY));
   if (storageTournament) {
     return storageTournament;
   }
@@ -82,7 +88,16 @@ function shouldRedirectHomeOnTournamentSwitch(pathname: string): boolean {
     return false;
   }
 
-  return /^\/(?:[a-z]{2}\/)?(?:player|matches)\/[^/]+$/i.test(normalizedPath);
+  return /^\/(?:[a-z]{2}\/)?(?:player|team|matches)\/[^/]+$/i.test(normalizedPath);
+}
+
+function isPlayerDetailRoute(pathname: string): boolean {
+  const normalizedPath = pathname.split('?')[0].replace(/\/+$/, '');
+  if (!normalizedPath) {
+    return false;
+  }
+
+  return /^\/(?:[a-z]{2}\/)?player\/[^/]+$/i.test(normalizedPath);
 }
 
 function buildTournamentFromApi(
@@ -156,9 +171,11 @@ export function TournamentProvider({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [frontMap, setFrontMap] = useState<TournamentFrontMap | null>(null);
+  const [isFrontMapLoaded, setIsFrontMapLoaded] = useState(false);
   const [switchTargetTournamentId, setSwitchTargetTournamentId] = useState<string | null>(null);
   const autoManagedSeasonRef = useRef<number | null>(null);
   const lastResolvedTournamentIdRef = useRef<string | null>(null);
+  const pendingNavigationRef = useRef<PendingNavigationState | null>(null);
 
   const resolvedTournamentId = useMemo(() => {
     const tournamentFromQuery = getValidTournamentId(searchParams.get('tournament'));
@@ -271,8 +288,21 @@ export function TournamentProvider({
         : `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
       if (newUrl === currentUrl) {
+        pendingNavigationRef.current = null;
         return false;
       }
+
+      const pendingNavigation = pendingNavigationRef.current;
+      const now = Date.now();
+      if (
+        pendingNavigation &&
+        pendingNavigation.url === newUrl &&
+        now - pendingNavigation.at < 1500
+      ) {
+        return false;
+      }
+
+      pendingNavigationRef.current = { url: newUrl, at: now };
 
       if (options.replace) {
         router.replace(newUrl, { scroll: false });
@@ -282,7 +312,8 @@ export function TournamentProvider({
 
       return true;
     },
-    [router, pathname, searchParams]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [router, pathname, searchParams.toString()]
   );
 
   const isSwitching = switchTargetTournamentId !== null;
@@ -302,7 +333,7 @@ export function TournamentProvider({
       const round = tournament.currentRound?.toString();
 
       if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, id);
+        safeLocalStorageSet(STORAGE_KEY, id);
         setTournamentCookie(id);
       }
 
@@ -343,7 +374,8 @@ export function TournamentProvider({
         setSwitchTargetTournamentId(null);
       }
     },
-    [frontMap, pathname, resolvedTournamentId, router, searchParams, switchTargetTournamentId, updateUrl]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [frontMap, pathname, resolvedTournamentId, router, switchTargetTournamentId, updateUrl]
   );
 
   const setSeason = useCallback(
@@ -367,6 +399,25 @@ export function TournamentProvider({
     }
   }, [resolvedTournamentId, switchTargetTournamentId]);
 
+  useEffect(() => {
+    const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    const pendingNavigation = pendingNavigationRef.current;
+
+    if (!pendingNavigation) {
+      return;
+    }
+
+    if (pendingNavigation.url === currentUrl) {
+      pendingNavigationRef.current = null;
+      return;
+    }
+
+    if (Date.now() - pendingNavigation.at > 5000) {
+      pendingNavigationRef.current = null;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams.toString()]);
+
   // Remember the latest canonical tournament to avoid SPA fallback rollback.
   useEffect(() => {
     lastResolvedTournamentIdRef.current = resolvedTournamentId;
@@ -381,11 +432,13 @@ export function TournamentProvider({
       .then((map) => {
         if (isMounted) {
           setFrontMap(map);
+          setIsFrontMapLoaded(true);
         }
       })
       .catch(() => {
         if (isMounted) {
           setFrontMap(null);
+          setIsFrontMapLoaded(true);
         }
       });
 
@@ -398,6 +451,13 @@ export function TournamentProvider({
   useEffect(() => {
     const rawTournament = searchParams.get('tournament');
     const seasonValue = getNumericSearchParam(searchParams, 'season');
+    const isPlayerRoute = isPlayerDetailRoute(pathname);
+    const shouldDeferMissingSeasonCanonicalization = seasonValue === null && !isFrontMapLoaded;
+
+    if (shouldDeferMissingSeasonCanonicalization) {
+      return;
+    }
+
     const needsTournamentUpdate = rawTournament !== resolvedTournamentId;
 
     // Check if season in URL is valid for the current tournament
@@ -407,12 +467,15 @@ export function TournamentProvider({
       !frontMap[resolvedTournamentId].seasons!.some((s) => s.season_id === seasonValue);
 
     const needsSeasonUpdate =
-      seasonValue === null ||
-      isSeasonInvalid ||
+      !isPlayerRoute &&
       (
-        autoManagedSeasonRef.current !== null &&
-        seasonValue === autoManagedSeasonRef.current &&
-        seasonValue !== effectiveSeasonId
+        seasonValue === null ||
+        isSeasonInvalid ||
+        (
+          autoManagedSeasonRef.current !== null &&
+          seasonValue === autoManagedSeasonRef.current &&
+          seasonValue !== effectiveSeasonId
+        )
       );
 
     const updateParams: Record<string, string | undefined> = {};
@@ -429,7 +492,15 @@ export function TournamentProvider({
     }
 
     updateUrl(updateParams, { replace: true });
-  }, [effectiveSeasonId, resolvedTournamentId, searchParams, updateUrl]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    effectiveSeasonId,
+    isFrontMapLoaded,
+    pathname,
+    resolvedTournamentId,
+    searchParams.toString(),
+    updateUrl,
+  ]);
 
   // Keep localStorage/cookie aligned with canonical URL tournament
   useEffect(() => {
@@ -437,9 +508,9 @@ export function TournamentProvider({
       return;
     }
 
-    const storedTournament = localStorage.getItem(STORAGE_KEY);
+    const storedTournament = safeLocalStorageGet(STORAGE_KEY);
     if (storedTournament !== resolvedTournamentId) {
-      localStorage.setItem(STORAGE_KEY, resolvedTournamentId);
+      safeLocalStorageSet(STORAGE_KEY, resolvedTournamentId);
     }
 
     const cookieTournament = getClientTournamentCookie();

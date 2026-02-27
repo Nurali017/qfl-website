@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect, Suspense } from 'react';
+import React, { useMemo, useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -144,6 +144,7 @@ function PlayerProfilePageContent() {
   }, [seasonFromUrl, selectorItems, tournamentFromUrl]);
 
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+  const pendingReplaceUrlRef = useRef<{ url: string; at: number } | null>(null);
 
   // Initialize selectedSeasonId once we have data
   useEffect(() => {
@@ -157,6 +158,19 @@ function PlayerProfilePageContent() {
     if (effectiveSeasonId === null) return null;
     return selectorItems.find((item) => item.seasonId === effectiveSeasonId) ?? null;
   }, [effectiveSeasonId, selectorItems]);
+
+  useEffect(() => {
+    const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    const pendingReplace = pendingReplaceUrlRef.current;
+    if (!pendingReplace) {
+      return;
+    }
+
+    if (pendingReplace.url === currentUrl || Date.now() - pendingReplace.at > 5000) {
+      pendingReplaceUrlRef.current = null;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams.toString()]);
 
   // Keep URL in sync with effective player page context
   useEffect(() => {
@@ -180,16 +194,33 @@ function PlayerProfilePageContent() {
     const currentQuery = searchParams.toString();
     const nextQuery = nextParams.toString();
     if (nextQuery === currentQuery) {
+      pendingReplaceUrlRef.current = null;
       return;
     }
 
     const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+    const currentUrl = typeof window !== 'undefined'
+      ? `${window.location.pathname}${window.location.search}`
+      : `${pathname}${currentQuery ? `?${currentQuery}` : ''}`;
+    if (nextUrl === currentUrl) {
+      pendingReplaceUrlRef.current = null;
+      return;
+    }
+
+    const pendingReplace = pendingReplaceUrlRef.current;
+    const now = Date.now();
+    if (pendingReplace && pendingReplace.url === nextUrl && now - pendingReplace.at < 1500) {
+      return;
+    }
+
+    pendingReplaceUrlRef.current = { url: nextUrl, at: now };
     router.replace(nextUrl, { scroll: false });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     effectiveSeasonId,
     pathname,
     router,
-    searchParams,
+    searchParams.toString(),
     selectedSeasonItem,
     tournamentFromUrl,
   ]);

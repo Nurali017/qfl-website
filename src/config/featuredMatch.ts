@@ -1,13 +1,18 @@
 export const SUPER_CUP_HERO_ENABLED = true;
 
+export const SUPER_CUP_SEASON_ID = 201;
+
 export const SUPER_CUP_FEATURED_MATCH = {
   heroTitle: 'The Super Cup',
   date: '2026-02-28',
   homeTeamId: 13,
   awayTeamId: 90,
   h2hSeasonId: 61,
+  seasonId: SUPER_CUP_SEASON_ID,
   canonicalTicketUrl: 'https://afisha.yandex.kz/astana/sport/football-kairat-tobyl',
   kickoffTime: '2026-02-28T17:00:00+05:00',
+  /** Hero section is disabled after this ISO date */
+  heroDisableAfter: '2026-03-05T00:00:00+05:00',
 } as const;
 
 /** Check if a match is the Super Cup match by team IDs */

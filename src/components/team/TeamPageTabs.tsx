@@ -4,11 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils/cn';
 import { TEAM_PAGE_NAV_TABS, TeamPageTab } from './tabState';
+import { TeamFilters } from './TeamFilters';
+import type { TeamYearOption } from '@/hooks/useTeam';
 
 interface TeamPageTabsProps {
   activeTab: TeamPageTab;
   onChange: (tab: TeamPageTab) => void;
-  yearItems?: { year: string; seasonId: number }[];
+  tournaments?: { code: string; shortName: string }[];
+  selectedTournamentCode?: string;
+  onTournamentChange?: (code: string) => void;
+  yearItems?: TeamYearOption[];
   selectedSeasonId?: number;
   onSeasonChange?: (seasonId: number) => void;
 }
@@ -16,8 +21,11 @@ interface TeamPageTabsProps {
 export function TeamPageTabs({
   activeTab,
   onChange,
-  yearItems,
-  selectedSeasonId,
+  tournaments = [],
+  selectedTournamentCode = '',
+  onTournamentChange,
+  yearItems = [],
+  selectedSeasonId = 0,
   onSeasonChange,
 }: TeamPageTabsProps) {
   const { t, i18n } = useTranslation('team');
@@ -52,63 +60,54 @@ export function TeamPageTabs({
     };
   }, [i18n.language]);
 
-  const showYears = yearItems && yearItems.length > 1 && onSeasonChange;
+  const hasFilters = tournaments.length > 1 || yearItems.length > 1;
 
   return (
     <div className="sticky top-14 md:top-20 z-40 mb-6 md:mb-8 border-b border-gray-200 dark:border-white/10 bg-white/95 dark:bg-[#050a13]/85 backdrop-blur">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8">
-        <div className="relative">
-          <div className="flex items-center">
-            <div
-              ref={scrollerRef}
-              className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2.5 md:py-3 flex-1 min-w-0"
-            >
-              {TEAM_PAGE_NAV_TABS.map((tab) => {
-                const isActive = activeTab === tab;
+        <div className="relative flex items-center">
+          <div
+            ref={scrollerRef}
+            className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2.5 md:py-3 flex-1 min-w-0"
+          >
+            {TEAM_PAGE_NAV_TABS.map((tab) => {
+              const isActive = activeTab === tab;
 
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => onChange(tab)}
-                    className={cn(
-                      'rounded-full px-3.5 md:px-4 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-colors',
-                      isActive
-                        ? 'bg-primary/10 text-primary border border-primary/20 dark:bg-white/15 dark:text-white dark:border-white/20 shadow-sm'
-                        : 'text-slate-600 hover:bg-gray-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white'
-                    )}
-                  >
-                    {tabLabels[tab]}
-                  </button>
-                );
-              })}
-            </div>
-
-            {showYears && (
-              <div className="flex items-center gap-1 shrink-0 pl-3 border-l border-gray-200 dark:border-white/10 ml-2">
-                {yearItems.map((item) => (
-                  <button
-                    key={item.year}
-                    type="button"
-                    onClick={() => onSeasonChange(item.seasonId)}
-                    className={cn(
-                      'rounded-full px-2.5 py-1.5 text-xs font-bold whitespace-nowrap transition-all',
-                      selectedSeasonId === item.seasonId
-                        ? 'bg-primary/10 text-primary dark:bg-white/15 dark:text-white'
-                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:text-white/40 dark:hover:text-white/70 dark:hover:bg-white/5'
-                    )}
-                  >
-                    {item.year}
-                  </button>
-                ))}
-              </div>
-            )}
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => onChange(tab)}
+                  className={cn(
+                    'rounded-full px-3.5 md:px-4 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-colors',
+                    isActive
+                      ? 'bg-primary/10 text-primary border border-primary/20 dark:bg-white/15 dark:text-white dark:border-white/20 shadow-sm'
+                      : 'text-slate-600 hover:bg-gray-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white'
+                  )}
+                >
+                  {tabLabels[tab]}
+                </button>
+              );
+            })}
           </div>
+
+          {hasFilters && (
+            <div className="shrink-0 pl-3 border-l border-gray-200 dark:border-white/10 ml-2 py-2.5 md:py-3">
+              <TeamFilters
+                tournaments={tournaments}
+                selectedTournamentCode={selectedTournamentCode}
+                onTournamentChange={onTournamentChange ?? (() => {})}
+                yearItems={yearItems}
+                selectedSeasonId={selectedSeasonId}
+                onSeasonChange={onSeasonChange ?? (() => {})}
+              />
+            </div>
+          )}
 
           {showLeftHint ? (
             <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white/90 dark:from-slate-900/90 to-transparent md:hidden" />
           ) : null}
-          {showRightHint && !showYears ? (
+          {showRightHint && !hasFilters ? (
             <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/90 dark:from-slate-900/90 to-transparent md:hidden" />
           ) : null}
         </div>

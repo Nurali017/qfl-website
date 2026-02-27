@@ -7,6 +7,7 @@ import { useTournament } from '@/contexts/TournamentContext';
 import { useMatchCenter, useMatches } from '@/hooks';
 import { formatMatchDate } from '@/lib/utils/dateFormat';
 import { getTeamLogo } from '@/lib/utils/teamLogos';
+import { SUPER_CUP_FEATURED_MATCH, SUPER_CUP_HERO_ENABLED } from '@/config/featuredMatch';
 import { Game } from '@/types';
 import {
   HOME_MATCHES_PRESEASON_DATE_FROM,
@@ -73,6 +74,18 @@ export function HomeMatches() {
   } = useMatchCenter({
     ...matchCenterFilters,
     enabled: !useTourBasedMatches,
+  });
+
+  // Fetch Super Cup match separately (lives in its own season)
+  const scEnabled = SUPER_CUP_HERO_ENABLED && Date.now() < new Date(SUPER_CUP_FEATURED_MATCH.heroDisableAfter).getTime();
+  const {
+    groups: scGroups,
+  } = useMatchCenter({
+    season_id: SUPER_CUP_FEATURED_MATCH.seasonId,
+    date_from: SUPER_CUP_FEATURED_MATCH.date,
+    date_to: SUPER_CUP_FEATURED_MATCH.date,
+    group_by_date: true,
+    enabled: scEnabled,
   });
 
   const groupedMatches = groups.flatMap((group) => group.games);
@@ -142,14 +155,26 @@ export function HomeMatches() {
         games: group.games,
       }));
 
+  // Prepend Super Cup match group before PL matches
+  const scDisplayGroups: DisplayGroup[] = scEnabled
+    ? scGroups
+        .filter((g) => g.games.length > 0)
+        .map((g) => ({
+          date: g.date,
+          dateLabel: g.date_label || formatMatchDate(g.date, i18n.language),
+          games: g.games,
+        }))
+    : [];
+  const mergedForDisplay = [...scDisplayGroups, ...groupedForDisplay];
+
   const isSuperCupAndRoundOneMode =
     homeMatchesQueryPlan.source === 'matchCenter' &&
     homeMatchesQueryPlan.matchCenterFilters.date_from === HOME_MATCHES_PRESEASON_DATE_FROM &&
     homeMatchesQueryPlan.matchCenterFilters.date_to === HOME_MATCHES_PRESEASON_DATE_TO;
 
   const displayGroups: DisplayGroup[] = isSuperCupAndRoundOneMode
-    ? groupedForDisplay
-    : groupedForDisplay.reduce<{ groups: DisplayGroup[]; remaining: number }>(
+    ? mergedForDisplay
+    : mergedForDisplay.reduce<{ groups: DisplayGroup[]; remaining: number }>(
         (acc, group) => {
           if (acc.remaining <= 0) {
             return acc;

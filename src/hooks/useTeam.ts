@@ -8,6 +8,7 @@ import { teamService } from '@/lib/api/services/teamService';
 import { queryKeys } from '@/lib/api/queryKeys';
 import { prefetchKeys } from '@/lib/api/prefetchKeys';
 import { useRoutePrefetchValue } from '@/contexts/RoutePrefetchContext';
+import { getTournamentById } from '@/config/tournaments';
 
 // Teams list hook - fetches from real API
 export function useTeams(seasonId: number = DEFAULT_SEASON_ID) {
@@ -269,8 +270,23 @@ export function useTeamSeasons(teamId: number | null, tournamentCode: string | n
       .map(([, option]) => option);
   }, [data, tournamentCode]);
 
+  const availableTournaments = useMemo<{ code: string; shortName: string }[]>(() => {
+    if (!data?.length) return [];
+    const seen = new Set<string>();
+    const result: { code: string; shortName: string }[] = [];
+    for (const entry of data) {
+      const code = normalizeTournamentCode(entry.frontend_code);
+      if (!code || seen.has(code)) continue;
+      seen.add(code);
+      const t = getTournamentById(code);
+      if (t) result.push({ code, shortName: t.name.short });
+    }
+    return result;
+  }, [data]);
+
   return {
     items,
+    availableTournaments,
     loading: isLoading,
     error,
   };

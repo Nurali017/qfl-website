@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notFound, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
@@ -15,7 +15,8 @@ import {
   TeamSquad,
 } from '@/components/team';
 import { useTeamGames, useTeamOverview, useTeamPlayers, useTeamSeasons, useTeamStats } from '@/hooks/useTeam';
-import { useTournament, usePreSeasonEffectiveId } from '@/contexts/TournamentContext';
+import { useTournament } from '@/contexts/TournamentContext';
+import { PRE_SEASON_CONFIG } from '@/config/tournaments';
 import { PageSeasonProvider } from '@/contexts/PageSeasonContext';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
@@ -30,13 +31,16 @@ interface TeamPageProps {
 
 export default function TeamPage({ params }: TeamPageProps) {
   const { t, i18n } = useTranslation('team');
-  const { currentTournament, setSeason } = useTournament();
-  const effectiveSeasonId = usePreSeasonEffectiveId('previous');
+  const { currentTournament } = useTournament();
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const lang = i18n.language === 'kz' ? 'kz' : 'ru';
   const teamId = Number(params.teamId);
+
+  // Local tournament/season state — doesn't touch global context or URL
+  const [localTournament, setLocalTournament] = useState(currentTournament.id);
+  const [localSeasonId, setLocalSeasonId] = useState<number | null>(null);
 
   const parsedTab = parseTeamPageTab(searchParams.get('tab'));
   const activeTab = parsedTab ?? DEFAULT_TEAM_PAGE_TAB;
@@ -54,14 +58,33 @@ export default function TeamPage({ params }: TeamPageProps) {
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   }, [pathname, router, searchParams]);
 
-  const { items: yearItems } = useTeamSeasons(teamId, currentTournament.id);
+  const { items: yearItems, availableTournaments } = useTeamSeasons(teamId, localTournament);
 
+  const handleTournamentChange = useCallback((code: string) => {
+    setLocalTournament(code);
+    setLocalSeasonId(null); // reset season — will pick newest for new tournament
+  }, []);
+
+  // Pre-season: default to SuperCup if the team participates
+  useEffect(() => {
+    if (PRE_SEASON_CONFIG.seasonStarted) return;
+    if (!availableTournaments.length) return;
+    const hasSuperCup = availableTournaments.some(t => t.code === 'sc');
+    if (hasSuperCup && localTournament !== 'sc') {
+      setLocalTournament('sc');
+      setLocalSeasonId(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableTournaments.length]);
+
+  // Default to newest season when yearItems change or localSeasonId is null
   useEffect(() => {
     if (!yearItems.length) return;
-    if (!yearItems.some((item) => item.seasonId === effectiveSeasonId)) {
-      setSeason(yearItems[0].seasonId);
-    }
-  }, [yearItems, effectiveSeasonId, setSeason]);
+    if (localSeasonId !== null && yearItems.some(item => item.seasonId === localSeasonId)) return;
+    setLocalSeasonId(yearItems[0].seasonId);
+  }, [yearItems, localSeasonId]);
+
+  const effectiveSeasonId = localSeasonId ?? yearItems[0]?.seasonId ?? currentTournament.seasonId;
 
   const { overview, loading: overviewLoading, error: overviewError } = useTeamOverview(teamId, effectiveSeasonId);
   const { stats: detailedStats } = useTeamStats(activeTab === 'overview' ? teamId : null, effectiveSeasonId);
@@ -88,7 +111,8 @@ export default function TeamPage({ params }: TeamPageProps) {
     );
   }
 
-  const tournamentName = (currentTournament.name as Record<string, string>)[lang] || currentTournament.name.short;
+  const activeTournament = availableTournaments.find(t => t.code === localTournament);
+  const tournamentName = activeTournament?.shortName || (currentTournament.name as Record<string, string>)[lang] || currentTournament.name.short;
   const leaguePosition = overview.standings_window?.find(s => s.team_id === teamId)?.position ?? null;
 
   return (
@@ -106,9 +130,12 @@ export default function TeamPage({ params }: TeamPageProps) {
         <TeamPageTabs
           activeTab={activeTab}
           onChange={handleTabChange}
+          tournaments={availableTournaments}
+          selectedTournamentCode={localTournament}
+          onTournamentChange={handleTournamentChange}
           yearItems={yearItems}
           selectedSeasonId={effectiveSeasonId}
-          onSeasonChange={setSeason}
+          onSeasonChange={setLocalSeasonId}
         />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 space-y-8 md:space-y-10">

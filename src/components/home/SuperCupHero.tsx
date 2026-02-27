@@ -6,7 +6,6 @@ import { TournamentAwareLink as Link } from '@/components/navigation/TournamentA
 import { useTranslation } from 'react-i18next';
 import { HeroSection } from '@/components/HeroSection';
 import { HeroSkeleton } from '@/components/ui/Skeleton';
-import { useTournament } from '@/contexts/TournamentContext';
 import { useMatchCenter } from '@/hooks';
 import { formatMatchDate } from '@/lib/utils/dateFormat';
 import { getTeamLogo } from '@/lib/utils/teamLogos';
@@ -109,10 +108,9 @@ function formatKickoffTime(raw: string | null): string | null {
 
 export function SuperCupHero() {
   const { t, i18n } = useTranslation('match');
-  const { effectiveSeasonId } = useTournament();
 
   const { groups, loading, error } = useMatchCenter({
-    season_id: effectiveSeasonId,
+    season_id: SUPER_CUP_FEATURED_MATCH.seasonId,
     date_from: SUPER_CUP_FEATURED_MATCH.date,
     date_to: SUPER_CUP_FEATURED_MATCH.date,
     team_ids: [SUPER_CUP_FEATURED_MATCH.homeTeamId, SUPER_CUP_FEATURED_MATCH.awayTeamId],
@@ -191,7 +189,7 @@ export function SuperCupHero() {
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-white/20 to-white/10 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-full w-fit backdrop-blur-md ring-1 ring-white/20">
             <img src="/images/tournaments/sc.png" alt="" className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="text-[11px] sm:text-xs font-bold tracking-wider uppercase">
-              {t('superCupHero.badge', SUPER_CUP_FEATURED_MATCH.heroTitle)}
+              {t('superCupHero.badge', SUPER_CUP_FEATURED_MATCH.heroTitle || 'Super Cup')}
             </span>
           </div>
 

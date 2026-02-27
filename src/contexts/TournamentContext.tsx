@@ -22,6 +22,7 @@ import {
   isLeagueTournament,
   isCupTournament,
   getPreSeasonSeasonId,
+  isHiddenFromSwitcher,
   type PreSeasonPageHint,
 } from '@/config/tournaments';
 import {
@@ -81,7 +82,7 @@ function shouldRedirectHomeOnTournamentSwitch(pathname: string): boolean {
     return false;
   }
 
-  return /^\/(?:[a-z]{2}\/)?(?:player|team|teams|matches)\/[^/]+$/i.test(normalizedPath);
+  return /^\/(?:[a-z]{2}\/)?(?:player|matches)\/[^/]+$/i.test(normalizedPath);
 }
 
 function buildTournamentFromApi(
@@ -193,6 +194,7 @@ export function TournamentProvider({
 
     const tournaments: Tournament[] = [];
     for (const [id, entry] of Object.entries(frontMap)) {
+      if (isHiddenFromSwitcher(id)) continue;
       const fallback = getTournamentById(id);
       if (!fallback) continue;
       tournaments.push(buildTournamentFromApi(id, entry, fallback));

@@ -1,4 +1,5 @@
 import { Tournament, TournamentColors, Season } from '@/types/tournament';
+import { SUPER_CUP_SEASON_ID } from '@/config/featuredMatch';
 
 // Color palettes as RGB channels for Tailwind opacity support
 export const TOURNAMENT_COLORS: Record<string, TournamentColors> = {
@@ -128,9 +129,39 @@ export const TOURNAMENTS: Record<string, Tournament> = {
     hasTable: true,
     hasBracket: false,
   },
+  sc: {
+    id: 'sc',
+    seasonId: SUPER_CUP_SEASON_ID, // Super Cup 2026
+    type: 'supercup',
+    format: 'knockout',
+    name: {
+      ru: 'Суперкубок',
+      kz: 'Суперкубок',
+      short: 'Суперкубок',
+    },
+    sponsorName: 'СУПЕРКУБОК',
+    logo: '/images/tournaments/cup.png',
+    colors: {
+      primary: '168 131 43',
+      primaryLight: '196 158 61',
+      primaryDark: '127 98 32',
+      accent: '229 183 59',
+      accentSoft: '240 201 93',
+    },
+    order: 6,
+    hasTable: false,
+    hasBracket: false,
+  },
 };
 
 export const DEFAULT_TOURNAMENT_ID = 'pl';
+
+// Tournament IDs hidden from the main switcher but still accessible via URL and team filters
+const HIDDEN_FROM_SWITCHER: ReadonlySet<string> = new Set(['sc']);
+
+export function isHiddenFromSwitcher(id: string): boolean {
+  return HIDDEN_FROM_SWITCHER.has(id);
+}
 
 // Pre-season configuration
 // When seasonStarted is false, certain pages/blocks show data from the previous season:
@@ -190,7 +221,9 @@ export function getTournamentById(id: string): Tournament | undefined {
 }
 
 export function getActiveTournaments(): Tournament[] {
-  return Object.values(TOURNAMENTS).sort((a, b) => a.order - b.order);
+  return Object.values(TOURNAMENTS)
+    .filter((t) => !HIDDEN_FROM_SWITCHER.has(t.id))
+    .sort((a, b) => a.order - b.order);
 }
 
 export function isLeagueTournament(tournament: Tournament): boolean {

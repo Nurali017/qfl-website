@@ -148,7 +148,7 @@ export const teamService = {
       first_name: player.first_name,
       last_name: player.last_name,
       jersey_number: player.number,
-      position: mapPlayerTypeToPosition(player.player_type),
+      position: player.position || mapPlayerTypeToPosition(player.player_type),
       photo_url: player.photo_url,
       nationality: player.country?.name,
       country_code: player.country?.code,

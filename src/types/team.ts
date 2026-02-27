@@ -110,6 +110,7 @@ export interface TeamPlayer {
   last_name: string;
   birthday: string;
   player_type: string;
+  position?: 'GK' | 'DEF' | 'MID' | 'FWD' | null;
   country?: {
     id: number;
     code: string;

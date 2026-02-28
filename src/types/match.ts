@@ -32,6 +32,8 @@ export interface Game {
   season_id: number | null;
   home_score: number | null;
   away_score: number | null;
+  home_penalty_score?: number | null;
+  away_penalty_score?: number | null;
   home_team: GameTeam;
   away_team: GameTeam;
   stadium: Stadium | null;
@@ -210,6 +212,10 @@ export interface MatchDetail extends Game {
     offsides: { home: number; away: number };
     yellow_cards: { home: number; away: number };
     red_cards: { home: number; away: number };
+    shots_on_bar?: { home: number; away: number };
+    shots_blocked?: { home: number; away: number };
+    penalties?: { home: number; away: number };
+    saves?: { home: number; away: number };
   };
 
   // События (расширенные из /live/events/{id})

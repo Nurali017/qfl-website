@@ -147,6 +147,11 @@ export function SuperCupMatchHeader({
                     Техническая победа
                   </div>
                 )}
+                {match.status === 'finished' && match.home_penalty_score != null && (
+                  <div className="mt-1.5 text-[11px] sm:text-xs text-amber-400/90 font-semibold uppercase tracking-wider">
+                    по пен. {match.home_penalty_score}:{match.away_penalty_score}
+                  </div>
+                )}
               </>
             ) : (
               <div className="flex flex-col items-center">

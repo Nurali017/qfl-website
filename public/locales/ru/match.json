@@ -266,7 +266,11 @@
     "title": "Статистика",
     "notAvailable": "Статистика матча пока недоступна",
     "possessionPercent": "Владение (%)",
-    "shotsMissed": "Удары мимо"
+    "shotsMissed": "Удары мимо",
+    "shotsOnBar": "Удары в штангу",
+    "shotsBlocked": "Ударов заблокировано",
+    "penalties": "Пенальти",
+    "saves": "Сейвы"
   },
   "protocolCard": {
     "title": "Протокол матча",

@@ -88,7 +88,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
               {homeTeamHref ? (
                 <Link
                   href={homeTeamHref}
-                  className="self-center flex flex-col md:flex-row items-center justify-end gap-2 md:gap-5 group text-center md:text-right focus-visible:outline-none"
+                  className="self-center flex flex-col md:flex-row items-center justify-end gap-2 md:gap-5 group text-center md:text-right focus-visible:outline-none min-w-0"
                 >
                   <div className="flex-1 min-w-0 flex flex-col items-end hidden md:flex">
                     <h2 className="text-sm md:text-3xl font-bold text-white uppercase tracking-wider leading-tight mb-1 truncate max-w-[200px] lg:max-w-[280px] xl:max-w-none group-hover:text-amber-400 transition-colors">
@@ -109,7 +109,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
                   </div>
                 </Link>
               ) : (
-                <div className="self-center flex flex-col md:flex-row items-center justify-end gap-2 md:gap-5 text-center md:text-right">
+                <div className="self-center flex flex-col md:flex-row items-center justify-end gap-2 md:gap-5 text-center md:text-right min-w-0">
                   <div className="flex-1 min-w-0 flex flex-col items-end hidden md:flex">
                     <h2 className="text-sm md:text-3xl font-bold text-white uppercase tracking-wider leading-tight mb-1 truncate max-w-[200px] lg:max-w-[280px] xl:max-w-none">
                       {match.home_team.name}
@@ -154,6 +154,11 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
                           {match.status === 'finished' ? t('matchEnded') : match.status === 'upcoming' ? t('upcoming') : match.status}
                         </span>
                       )}
+                      {match.status === 'finished' && match.home_penalty_score != null && (
+                        <div className="text-[11px] md:text-xs text-white/70 font-medium mt-0.5">
+                          по пен. {match.home_penalty_score}:{match.away_penalty_score}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -170,7 +175,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
               {awayTeamHref ? (
                 <Link
                   href={awayTeamHref}
-                  className="self-center flex flex-col md:flex-row items-center justify-start gap-2 md:gap-5 group text-center md:text-left focus-visible:outline-none"
+                  className="self-center flex flex-col md:flex-row items-center justify-start gap-2 md:gap-5 group text-center md:text-left focus-visible:outline-none min-w-0"
                 >
                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 flex-shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform z-10">
                     {awayLogoUrl ? (
@@ -191,7 +196,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
                   </div>
                 </Link>
               ) : (
-                <div className="self-center flex flex-col md:flex-row items-center justify-start gap-2 md:gap-5 text-center md:text-left">
+                <div className="self-center flex flex-col md:flex-row items-center justify-start gap-2 md:gap-5 text-center md:text-left min-w-0">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 flex-shrink-0 flex items-center justify-center z-10">
                     {awayLogoUrl ? (
                       <img src={awayLogoUrl} alt={match.away_team.name} className="w-full h-full object-contain drop-shadow-lg" />
@@ -215,22 +220,22 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
               {/* Row 2 — Scorers (share same grid columns as Row 1) */}
               {hasGoals && (
                 <>
-                  <div className="self-start flex flex-col items-end gap-1.5 px-4 md:px-8 mt-4 md:mt-10">
+                  <div className="self-start flex flex-col items-end gap-1.5 min-w-0 overflow-hidden px-1 sm:px-4 md:px-8 mt-4 md:mt-10">
                     {uniqueEvents.filter(e => e.team_id === match.home_team.id && (e.event_type === 'goal' || e.event_type === 'penalty')).map((e, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
-                        <span className="font-semibold">{e.player_name}</span>
-                        <span className="text-white/60">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
-                        <span className="text-[10px] ml-1 opacity-80" role="img" aria-label="goal">⚽</span>
+                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px] max-w-full min-w-0">
+                        <span className="font-semibold truncate min-w-0">{e.player_name}</span>
+                        <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
+                        <span className="text-[10px] ml-1 opacity-80 shrink-0" role="img" aria-label="goal">⚽</span>
                       </div>
                     ))}
                   </div>
                   <div className="self-start mt-4 md:mt-10"></div>
-                  <div className="self-start flex flex-col items-start gap-1.5 px-4 md:px-8 mt-4 md:mt-10">
+                  <div className="self-start flex flex-col items-start gap-1.5 min-w-0 overflow-hidden px-1 sm:px-4 md:px-8 mt-4 md:mt-10">
                     {uniqueEvents.filter(e => e.team_id === match.away_team.id && (e.event_type === 'goal' || e.event_type === 'penalty')).map((e, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
-                        <span className="text-[10px] mr-1 opacity-80" role="img" aria-label="goal">⚽</span>
-                        <span className="text-white/60">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
-                        <span className="font-semibold">{e.player_name}</span>
+                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px] max-w-full min-w-0">
+                        <span className="text-[10px] mr-1 opacity-80 shrink-0" role="img" aria-label="goal">⚽</span>
+                        <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
+                        <span className="font-semibold truncate min-w-0">{e.player_name}</span>
                       </div>
                     ))}
                   </div>

@@ -136,6 +136,19 @@ export function MatchStatisticsTab({ match }: MatchStatisticsTabProps) {
                 <SimpleStatRow label={t('shots')} homeValue={getStat('shots', 'home')} awayValue={getStat('shots', 'away')} homeColor={homeColor} awayColor={awayColor} />
                 <SimpleStatRow label={t('shotsOnTarget')} homeValue={getStat('shots_on_target', 'home')} awayValue={getStat('shots_on_target', 'away')} homeColor={homeColor} awayColor={awayColor} />
                 <SimpleStatRow label={t('statisticsTab.shotsMissed')} homeValue={getStat('shots', 'home') - getStat('shots_on_target', 'home')} awayValue={getStat('shots', 'away') - getStat('shots_on_target', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                {stats.shots_on_bar && (
+                    <SimpleStatRow label={t('statisticsTab.shotsOnBar')} homeValue={getStat('shots_on_bar', 'home')} awayValue={getStat('shots_on_bar', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                )}
+                {stats.shots_blocked && (
+                    <SimpleStatRow label={t('statisticsTab.shotsBlocked')} homeValue={getStat('shots_blocked', 'home')} awayValue={getStat('shots_blocked', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                )}
+
+                {stats.saves && (
+                    <>
+                        <div className="h-px bg-gray-100 dark:bg-dark-border" />
+                        <SimpleStatRow label={t('statisticsTab.saves')} homeValue={getStat('saves', 'home')} awayValue={getStat('saves', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                    </>
+                )}
 
                 <div className="h-px bg-gray-100 dark:bg-dark-border" />
 
@@ -149,6 +162,9 @@ export function MatchStatisticsTab({ match }: MatchStatisticsTabProps) {
                 <SimpleStatRow label={t('fouls')} homeValue={getStat('fouls', 'home')} awayValue={getStat('fouls', 'away')} homeColor={homeColor} awayColor={awayColor} />
                 <SimpleStatRow label={t('yellowCards')} homeValue={getStat('yellow_cards', 'home')} awayValue={getStat('yellow_cards', 'away')} homeColor={homeColor} awayColor={awayColor} />
                 <SimpleStatRow label={t('redCards')} homeValue={getStat('red_cards', 'home')} awayValue={getStat('red_cards', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                {stats.penalties && (
+                    <SimpleStatRow label={t('statisticsTab.penalties')} homeValue={getStat('penalties', 'home')} awayValue={getStat('penalties', 'away')} homeColor={homeColor} awayColor={awayColor} />
+                )}
             </div>
         </div>
     );

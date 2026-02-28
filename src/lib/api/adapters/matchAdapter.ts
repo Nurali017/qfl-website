@@ -18,6 +18,10 @@ export interface BackendTeamStatsEntry {
   offsides?: number | null;
   yellow_cards?: number | null;
   red_cards?: number | null;
+  shots_on_bar?: number | null;
+  shots_blocked?: number | null;
+  penalties?: number | null;
+  saves?: number | null;
 }
 
 export interface BackendCountry {
@@ -306,5 +310,17 @@ export function transformTeamStats(
       home: homeStats.red_cards || 0,
       away: awayStats.red_cards || 0,
     },
+    ...(homeStats.shots_on_bar != null || awayStats.shots_on_bar != null
+      ? { shots_on_bar: { home: homeStats.shots_on_bar ?? 0, away: awayStats.shots_on_bar ?? 0 } }
+      : {}),
+    ...(homeStats.shots_blocked != null || awayStats.shots_blocked != null
+      ? { shots_blocked: { home: homeStats.shots_blocked ?? 0, away: awayStats.shots_blocked ?? 0 } }
+      : {}),
+    ...(homeStats.penalties != null || awayStats.penalties != null
+      ? { penalties: { home: homeStats.penalties ?? 0, away: awayStats.penalties ?? 0 } }
+      : {}),
+    ...(homeStats.saves != null || awayStats.saves != null
+      ? { saves: { home: homeStats.saves ?? 0, away: awayStats.saves ?? 0 } }
+      : {}),
   };
 }

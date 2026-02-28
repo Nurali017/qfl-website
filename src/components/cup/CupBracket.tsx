@@ -104,6 +104,11 @@ function MatchCard({ entry }: { entry: BracketEntry }) {
         <TeamLine team={game?.home_team} score={game?.home_score} />
         <div className="border-t border-white/10" />
         <TeamLine team={game?.away_team} score={game?.away_score} />
+        {game?.home_penalty_score != null && (
+          <div className="text-center text-[10px] text-white/50 py-0.5 border-t border-white/10">
+            пен. {game.home_penalty_score}:{game.away_penalty_score}
+          </div>
+        )}
       </div>
     </>
   );

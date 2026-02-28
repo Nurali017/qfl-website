@@ -105,12 +105,17 @@ export function MatchCard({
                   <span className="block text-[9px] font-bold text-red-500 mb-0.5">{t('live')}</span>
                 )}
                 {isFinished ? (
-                  <div className="flex items-center justify-center gap-1">
-                    <div className="text-lg font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
-                      {match.home_score} - {match.away_score}
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="text-lg font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
+                        {match.home_score} - {match.away_score}
+                      </div>
+                      {match.is_technical && (
+                        <span className="text-[10px] text-orange-500 font-medium">Т</span>
+                      )}
                     </div>
-                    {match.is_technical && (
-                      <span className="text-[10px] text-orange-500 font-medium">Т</span>
+                    {match.home_penalty_score != null && (
+                      <span className="text-[10px] text-gray-500 dark:text-slate-400">(пен. {match.home_penalty_score}:{match.away_penalty_score})</span>
                     )}
                   </div>
                 ) : isLive ? (
@@ -234,12 +239,17 @@ export function MatchCard({
                   <span className="block text-[9px] font-bold text-red-500 mb-0.5">{t('live')}</span>
                 )}
                 {isFinished ? (
-                  <div className="flex items-center justify-center gap-1">
-                    <div className="text-xl font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
-                      {match.home_score} - {match.away_score}
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <div className="text-xl font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
+                        {match.home_score} - {match.away_score}
+                      </div>
+                      {match.is_technical && (
+                        <span className="text-[10px] text-orange-500 font-medium">Т</span>
+                      )}
                     </div>
-                    {match.is_technical && (
-                      <span className="text-[10px] text-orange-500 font-medium">Т</span>
+                    {match.home_penalty_score != null && (
+                      <span className="text-[10px] text-gray-500 dark:text-slate-400">(пен. {match.home_penalty_score}:{match.away_penalty_score})</span>
                     )}
                   </div>
                 ) : isLive ? (

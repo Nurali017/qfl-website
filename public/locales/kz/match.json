@@ -266,7 +266,11 @@
     "title": "Статистика",
     "notAvailable": "Матч статистикасы әлі қолжетімсіз",
     "possessionPercent": "Допты бақылау (%)",
-    "shotsMissed": "Қиыс соққылар"
+    "shotsMissed": "Қиыс соққылар",
+    "shotsOnBar": "Қақпа бағанына соққы",
+    "shotsBlocked": "Тосқауыл қойылған соққылар",
+    "penalties": "Пенальти",
+    "saves": "Сейвтер"
   },
   "protocolCard": {
     "title": "Матч хаттамасы",

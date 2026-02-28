@@ -3,6 +3,7 @@ import {
   LineupPlayerExtended,
   LineupResponse,
   MatchDetail,
+  RefereeInfo,
   TeamLineupData,
 } from '@/types';
 
@@ -56,7 +57,7 @@ export interface BackendCoach {
 export interface BackendReferee {
   first_name?: string | null;
   last_name?: string | null;
-  role: 'main' | 'assistant' | 'fourth' | 'var';
+  role: 'main' | 'first_assistant' | 'second_assistant' | 'fourth_referee' | 'var_main' | 'var_assistant' | 'match_inspector';
 }
 
 export interface BackendLineupResponse {
@@ -169,6 +170,18 @@ function transformTeamLineup(
   };
 }
 
+function mapRefereeRole(backendRole: string): RefereeInfo['role'] | null {
+  const map: Record<string, RefereeInfo['role']> = {
+    main: 'main',
+    first_assistant: 'assistant',
+    second_assistant: 'assistant',
+    fourth_referee: 'fourth',
+    var_main: 'var',
+    var_assistant: 'avar',
+  };
+  return map[backendRole] ?? null;
+}
+
 export function adaptLineupResponse(backendResponse: BackendLineupResponse): LineupResponse {
   const homeTeam = backendResponse.lineups.home_team;
   const awayTeam = backendResponse.lineups.away_team;
@@ -206,10 +219,16 @@ export function adaptLineupResponse(backendResponse: BackendLineupResponse): Lin
         backendResponse.coaches?.away_team || []
       ),
     },
-    referees: backendResponse.referees?.map((referee) => ({
-      name: `${referee.first_name || ''} ${referee.last_name || ''}`.trim(),
-      role: referee.role,
-    })),
+    referees: backendResponse.referees
+      ?.map((referee) => {
+        const role = mapRefereeRole(referee.role);
+        if (!role) return null;
+        return {
+          name: `${referee.first_name || ''} ${referee.last_name || ''}`.trim(),
+          role,
+        };
+      })
+      .filter((r): r is RefereeInfo => r !== null),
     coaches: backendResponse.coaches?.home && backendResponse.coaches?.away
       ? {
           home: backendResponse.coaches.home,

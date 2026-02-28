@@ -20,28 +20,22 @@ export function MatchEventsList({ events, homeTeam, awayTeam, loading, isTechnic
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
-        <div className="divide-y divide-gray-200">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="px-4 py-3">
-              <div className="h-16 bg-gray-200 rounded" />
-            </div>
-          ))}
-        </div>
+      <div className="space-y-3 animate-pulse">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="bg-[#f5f5f5] dark:bg-dark-surface rounded-xl h-20" />
+        ))}
       </div>
     );
   }
 
   if (!events || events.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-4 py-8 text-center">
-          {isTechnical ? (
-            <span className="text-orange-500 font-medium">{t('events.technicalWin')}</span>
-          ) : (
-            <span className="text-gray-500">{t('events.noEvents')}</span>
-          )}
-        </div>
+      <div className="bg-[#f5f5f5] dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border px-4 py-8 text-center">
+        {isTechnical ? (
+          <span className="text-orange-500 font-medium">{t('events.technicalWin')}</span>
+        ) : (
+          <span className="text-gray-500">{t('events.noEvents')}</span>
+        )}
       </div>
     );
   }
@@ -77,8 +71,8 @@ export function MatchEventsList({ events, homeTeam, awayTeam, loading, isTechnic
         );
       case 'substitution':
         return (
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center shadow-md">
-            <SubstitutionIcon className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 flex items-center justify-center">
+            <SubstitutionIcon className="w-7 h-7 text-gray-700 dark:text-gray-300 drop-shadow-sm" />
           </div>
         );
       default:
@@ -86,98 +80,79 @@ export function MatchEventsList({ events, homeTeam, awayTeam, loading, isTechnic
     }
   };
 
-  const getEventLabel = (eventType: string) => {
-    switch (eventType) {
-      case 'goal':
-        return t('events.goal');
-      case 'yellow_card':
-        return t('yellowCard');
-      case 'red_card':
-        return t('redCard');
-      case 'substitution':
-        return t('substitution');
-      case 'penalty':
-        return t('events.penalty');
-      default:
-        return '';
-    }
-  };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      {/* Body - список событий */}
-      <div className="divide-y divide-gray-200">
-        {sortedEvents.map((event) => {
-          const label = getEventLabel(event.event_type);
+    <div className="space-y-3">
+      {sortedEvents.map((event) => {
+        const teamColor = event.team_id === homeTeam.id ? HOME_COLOR : event.team_id === awayTeam.id ? AWAY_COLOR : '#9CA3AF';
 
-          return (
-            <div
-              key={event.id}
-              className="px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3"
-            >
-              {/* Time Badge */}
-              <div className="text-xs font-semibold text-gray-500 w-8 flex-shrink-0">
-                {event.minute}&apos;
-              </div>
+        return (
+          <div
+            key={event.id}
+            className="bg-[#f5f5f5] dark:bg-dark-surface rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center gap-4 transition-colors hover:bg-gray-200/50 dark:hover:bg-dark-border/50 overflow-hidden relative"
+          >
+            {/* Left Accent Bar colored by team */}
+            <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: teamColor }} />
 
-              {/* Event Icon */}
-              <div className="flex-shrink-0">
-                {getEventIcon(event.event_type)}
-              </div>
-
-              {/* Player Info */}
-              <div className="flex-1 min-w-0">
-                {event.player_id ? (
-                  <Link
-                    href={`/player/${event.player_id}`}
-                    className="block hover:text-primary transition-colors"
-                  >
-                    <div className="text-[13px] font-semibold text-gray-800">
-                      {event.player_name}
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="text-[13px] font-semibold text-gray-800">{event.player_name}</div>
-                )}
-
-                {/* Additional info */}
-                {event.event_type === 'substitution' && event.player2_name && (
-                  <div className="text-[11px] text-gray-500 mt-0.5">
-                    {t('events.subIn')}: {event.player2_name}
-                  </div>
-                )}
-
-                {event.event_type === 'goal' && event.player2_name && (
-                  <div className="text-[11px] text-gray-500 mt-0.5">
-                    {t('events.assistLabel')}: {event.player2_name}
-                  </div>
-                )}
-
-                {(event.event_type === 'penalty' || event.event_type === 'yellow_card' || event.event_type === 'red_card') && event.description && (
-                  <div className="text-[11px] text-gray-500 mt-0.5">
-                    {event.description}
-                  </div>
-                )}
-              </div>
-
-              {/* Team Color Indicator */}
-              <div className="flex-shrink-0">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{
-                    backgroundColor:
-                      event.team_id === homeTeam.id
-                        ? HOME_COLOR
-                        : event.team_id === awayTeam.id
-                          ? AWAY_COLOR
-                          : '#9CA3AF',
-                  }}
-                />
-              </div>
+            {/* Time Badge */}
+            <div className="text-sm sm:text-base font-black text-gray-900 dark:text-white w-8 sm:w-10 flex-shrink-0 text-right">
+              {event.minute}&apos;
             </div>
-          );
-        })}
-      </div>
+
+            {/* Event Icon */}
+            <div className="flex-shrink-0">
+              {getEventIcon(event.event_type)}
+            </div>
+
+            {/* Player & Event Info */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+              <div className="flex items-baseline gap-2">
+                {(() => {
+                  // For substitutions, show the incoming player as the main name
+                  const primaryName = event.event_type === 'substitution' && event.player2_name ? event.player2_name : event.player_name;
+                  const primaryId = event.event_type === 'substitution' && event.player2_id ? event.player2_id : event.player_id;
+
+                  return primaryId ? (
+                    <Link
+                      href={`/player/${primaryId}`}
+                      className="block hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate"
+                    >
+                      <span className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-slate-100">
+                        {primaryName}
+                      </span>
+                    </Link>
+                  ) : (
+                    <span className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-slate-100 truncate">
+                      {primaryName}
+                    </span>
+                  );
+                })()}
+              </div>
+
+              {/* Additional info */}
+              {event.event_type === 'substitution' && event.player2_name && (
+                <div className="text-[12px] sm:text-[13px] text-gray-600 dark:text-gray-400 mt-0.5 flex items-center gap-1.5 line-clamp-1">
+                  <span className="text-red-600 dark:text-red-500 font-bold text-[10px]">{t('events.out')}</span>
+                  {event.player_name}
+                </div>
+              )}
+
+              {(event.event_type === 'goal' || event.event_type === 'penalty') && event.assist_player_name && (
+                <div className="text-[12px] sm:text-[13px] text-gray-600 dark:text-gray-400 mt-0.5 flex items-center gap-1">
+                  <span className="font-semibold text-gray-500 text-[10px] uppercase">{t('events.assistLabel')}:</span>
+                  {event.assist_player_name}
+                </div>
+              )}
+
+              {(event.event_type === 'penalty' || event.event_type === 'yellow_card' || event.event_type === 'red_card') && event.description && (
+                <div className="text-[12px] sm:text-[13px] text-gray-600 dark:text-gray-400 mt-0.5">
+                  {event.description}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

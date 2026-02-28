@@ -57,9 +57,9 @@ describe('lineupPlacement', () => {
     );
 
     expect(byId[503]).toEqual({ x: 50, y: 5 });
-    expect(byId[505]).toEqual({ x: 34, y: 25 });
-    expect(byId[504]).toEqual({ x: 82, y: 40 });
-    expect(byId[502]).toEqual({ x: 34, y: 64 });
+    expect(byId[505]).toEqual({ x: 32, y: 25 });
+    expect(byId[504]).toEqual({ x: 86, y: 40 });
+    expect(byId[502]).toEqual({ x: 32, y: 64 });
     expect(byId[501]).toEqual({ x: 50, y: 76 });
   });
 
@@ -74,8 +74,8 @@ describe('lineupPlacement', () => {
       buildPlacedPlayers({ starters }).map(({ player, position }) => [player.player_id, position])
     );
 
-    expect(byId[601]).toEqual({ x: 30, y: 40 });
-    expect(byId[602]).toEqual({ x: 34, y: 40 });
+    expect(byId[601]).toEqual({ x: 26, y: 40 });
+    expect(byId[602]).toEqual({ x: 32, y: 40 });
     expect(byId[603]).toEqual({ x: 38, y: 40 });
   });
 
@@ -112,6 +112,6 @@ describe('lineupPlacement', () => {
     );
 
     expect(byId[801]).toEqual({ x: 50, y: 95 });
-    expect(byId[802]).toEqual({ x: 82, y: 75 });
+    expect(byId[802]).toEqual({ x: 86, y: 75 });
   });
 });

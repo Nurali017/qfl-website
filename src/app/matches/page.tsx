@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { MatchCenter } from '@/components/MatchCenter';
 import { SeasonYearSelector } from '@/components/ui/SeasonYearSelector';
+import { LiveMatchBanner } from '@/components/matches/LiveMatchBanner';
 
 export default function MatchesPage() {
   const { t } = useTranslation('match');
@@ -17,7 +18,8 @@ export default function MatchesPage() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 pb-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 pb-8 space-y-6">
+        <LiveMatchBanner />
         <MatchCenter />
       </div>
     </div>

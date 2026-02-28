@@ -143,7 +143,7 @@ export function MatchEventTimeline({
                   {activeEvent.event_type === 'substitution' && activeEvent.player2_name ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-green-400 text-xs font-extrabold">ON</span>
+                        <span className="text-green-400 text-xs font-extrabold">{t('events.in')}</span>
                         <span className="text-green-400">▲</span>
                         <JerseyIcon
                           number={activeEvent.player2_number || 0}
@@ -175,7 +175,7 @@ export function MatchEventTimeline({
                         })()}
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-red-400 text-xs font-extrabold">OFF</span>
+                        <span className="text-red-400 text-xs font-extrabold">{t('events.out')}</span>
                         <span className="text-red-400">▼</span>
                         <JerseyIcon
                           number={activeEvent.player_number || 0}
@@ -333,7 +333,7 @@ export function MatchEventTimeline({
                       /* Substitution - show two players */
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-green-500 text-xs font-bold">ON</span>
+                          <span className="text-green-500 text-xs font-bold">{t('events.in')}</span>
                           <span className="text-green-500">▲</span>
                           <JerseyIcon number={event.player2_number || 0} color={event.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR} className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
                           {event.player2_id && playerCountryMap[event.player2_id]?.flag_url && (
@@ -357,7 +357,7 @@ export function MatchEventTimeline({
                           })()}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-red-500 text-xs font-bold">OFF</span>
+                          <span className="text-red-500 text-xs font-bold">{t('events.out')}</span>
                           <span className="text-red-500">▼</span>
                           <JerseyIcon number={event.player_number || 0} color={event.team_id === homeTeam.id ? HOME_COLOR : AWAY_COLOR} className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
                           {event.player_id && playerCountryMap[event.player_id]?.flag_url && (

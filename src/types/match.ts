@@ -36,6 +36,7 @@ export interface Game {
   status: "upcoming" | "live" | "finished";
   ticket_url: string | null;
   video_url: string | null;
+  youtube_live_url?: string | null;
   protocol_url?: string | null;
 }
 
@@ -149,7 +150,7 @@ export interface TeamLineupData {
 
 export interface RefereeInfo {
   name: string;
-  role: 'main' | 'assistant' | 'fourth' | 'var';
+  role: 'main' | 'assistant' | 'fourth' | 'var' | 'avar';
 }
 
 export interface CoachInfo {

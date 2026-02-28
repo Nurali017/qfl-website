@@ -233,3 +233,7 @@ export function isLeagueTournament(tournament: Tournament): boolean {
 export function isCupTournament(tournament: Tournament): boolean {
   return tournament.type === 'cup' || tournament.type === 'supercup';
 }
+
+export function getTournamentBySeasonId(seasonId: number): Tournament | undefined {
+  return Object.values(TOURNAMENTS).find((t) => t.seasonId === seasonId);
+}

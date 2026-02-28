@@ -37,6 +37,7 @@
   "noStats": "Статистика недоступна",
   "tabs": {
     "overview": "Обзор",
+    "timeline": "Таймлайн",
     "lineups": "Составы команд",
     "playerStats": "Статистика игроков",
     "events": "События",
@@ -190,7 +191,19 @@
     "noData": "Составы недоступны",
     "formation": "Формация",
     "mainSquad": "Основной состав",
-    "substitutes": "Запасные"
+    "substitutes": "Запасные",
+    "listView": "Список",
+    "pitchView": "Поле",
+    "rosterInfoBanner": "Стартовый состав будет доступен перед началом матча",
+    "seasonRoster": "Заявка на сезон"
+  },
+  "referee": {
+    "brigade": "Судейская бригада",
+    "main": "Главный судья",
+    "assistants": "Боковые арбитры",
+    "fourth": "Резервный арбитр",
+    "var": "Арбитр VAR",
+    "avar": "Арбитр AVAR"
   },
   "matchInfo": {
     "title": "Информация о матче",

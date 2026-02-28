@@ -93,7 +93,7 @@ export function H2HContentCards({
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* 1. Overall Record */}
         <Section {...sectionProps(0)}>
           <H2HOverallRecord

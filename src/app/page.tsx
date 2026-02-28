@@ -36,6 +36,7 @@ import {
 import { TournamentHomeContent, type CupHomeData, type SecondLeagueHomeData } from '@/components/home';
 import { SuperCupHero } from '@/components/home/SuperCupHero';
 import { getHomeMatchesQueryPlan } from '@/lib/home/homeMatchesQueryPlan';
+import { LiveMatchBanner } from '@/components/matches/LiveMatchBanner';
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = getSeoLang();
@@ -395,6 +396,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <HomeMatches />
           </div>
         </div>
+
+        {/* Live Match Banner */}
+        <LiveMatchBanner />
 
         {/* Row 2: News + LeagueTable (aligned with MatchCenter) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">

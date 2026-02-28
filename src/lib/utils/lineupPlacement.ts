@@ -61,23 +61,23 @@ const ROLE_Y: Record<PlacementAmplua, number> = {
 };
 
 const BASE_X: Record<PlacementFieldPosition, number> = {
-  L: 18,
-  LC: 34,
+  L: 14,
+  LC: 32,
   C: 50,
-  RC: 66,
-  R: 82,
+  RC: 68,
+  R: 86,
 };
 
 const LANE_BOUNDS: Record<PlacementFieldPosition, { min: number; max: number }> = {
-  L: { min: 6, max: 24 },
-  LC: { min: 24, max: 42 },
-  C: { min: 42, max: 58 },
-  RC: { min: 58, max: 76 },
-  R: { min: 76, max: 94 },
+  L: { min: 4, max: 22 },
+  LC: { min: 22, max: 40 },
+  C: { min: 40, max: 60 },
+  RC: { min: 60, max: 78 },
+  R: { min: 78, max: 96 },
 };
 
 const LANE_MARGIN = 2;
-const DUPLICATE_OFFSET_STEP = 4;
+const DUPLICATE_OFFSET_STEP = 6;
 
 function getOrderKey(
   amplua?: LineupPlayerExtended['amplua'],

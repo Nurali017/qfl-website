@@ -42,7 +42,7 @@ export function H2HPreviousMeetings({
   }
 
   return (
-    <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl p-5 sm:p-6">
+    <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl p-4 sm:p-6">
       {/* Header */}
       <h3 className="text-base font-extrabold uppercase tracking-wide text-gray-900 dark:text-white text-center mb-5">
         {t('h2h.previousMeetings', 'ИСТОРИЯ ВСТРЕЧ')}
@@ -140,8 +140,8 @@ function MeetingRowContent({
   awayColor: string;
 }) {
   const inner = (
-    <div className="flex items-center justify-center gap-2 sm:gap-3 py-2 px-3 rounded-xl bg-white dark:bg-gray-700 hover:shadow-md transition-shadow">
-      <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 text-right flex-1 truncate">
+    <div className="flex items-center justify-center gap-1.5 sm:gap-3 py-2 px-2 sm:px-3 rounded-xl bg-white dark:bg-gray-700 hover:shadow-md transition-shadow">
+      <span className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 text-right flex-1 truncate">
         {meeting.home_team_name}
       </span>
       <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
@@ -170,7 +170,7 @@ function MeetingRowContent({
           <div className="w-full h-full rounded-full bg-gray-300 dark:bg-gray-600" />
         )}
       </div>
-      <span className="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-300 text-left flex-1 truncate">
+      <span className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 text-left flex-1 truncate">
         {meeting.away_team_name}
       </span>
     </div>

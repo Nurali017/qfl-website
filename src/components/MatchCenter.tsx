@@ -7,6 +7,7 @@ import { useTournament } from '@/contexts/TournamentContext';
 import { useMatchCenter } from '@/hooks';
 import { MatchCenterFilters } from '@/components/matches/MatchCenterFilters';
 import { MatchCard } from '@/components/matches/MatchCard';
+import { LiveMatchCard } from '@/components/matches/LiveMatchCard';
 import { MatchCenterSkeleton } from '@/components/ui/Skeleton';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { formatMatchDate, formatDateRange } from '@/lib/utils/dateFormat';
@@ -200,9 +201,13 @@ export function MatchCenter() {
 
               {/* Matches in this date group */}
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
-                {group.games.map((match) => (
-                  <MatchCard key={match.id} match={match} showTour showScheduleDisclaimer />
-                ))}
+                {group.games.map((match) =>
+                  match.is_live || match.status === 'live' ? (
+                    <LiveMatchCard key={match.id} match={match} />
+                  ) : (
+                    <MatchCard key={match.id} match={match} showTour showScheduleDisclaimer />
+                  )
+                )}
               </div>
             </div>
           ))}

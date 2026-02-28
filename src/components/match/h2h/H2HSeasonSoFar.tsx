@@ -148,7 +148,7 @@ export function H2HSeasonSoFar({
   return (
     <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-5 sm:p-6 pb-3">
+      <div className="flex items-center justify-between p-4 sm:p-6 pb-3">
         <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
           {homeLogo && (
             <img src={homeLogo} alt={homeTeam.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.src = '/images/placeholders/team.svg'; }} />
@@ -172,13 +172,13 @@ export function H2HSeasonSoFar({
       {/* Team name sub-headers */}
       <div className="grid grid-cols-3 items-center px-4 pb-2">
         <div className="text-right">
-          <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-bold text-gray-700 dark:text-gray-300 truncate">
             {homeTeam.name}
           </span>
         </div>
         <div />
         <div className="text-left">
-          <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-bold text-gray-700 dark:text-gray-300 truncate">
             {awayTeam.name}
           </span>
         </div>

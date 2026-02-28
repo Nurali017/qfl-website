@@ -58,11 +58,11 @@ function MatchRow({
   const wrapperProps = prefersReducedMotion
     ? {}
     : {
-        initial: { opacity: 0, x: -12 },
-        whileInView: { opacity: 1, x: 0 },
-        viewport: { once: true },
-        transition: { duration: 0.3, delay: index * 0.06, ease: 'easeOut' as const },
-      };
+      initial: { opacity: 0, x: -12 },
+      whileInView: { opacity: 1, x: 0 },
+      viewport: { once: true },
+      transition: { duration: 0.3, delay: index * 0.06, ease: 'easeOut' as const },
+    };
 
   return (
     <Wrapper {...wrapperProps} className="flex items-center gap-1.5 sm:gap-2 py-1.5">
@@ -148,6 +148,8 @@ export function H2HFormGuide({
   homeTeam,
   awayTeam,
   formGuide,
+  homeColor,
+  awayColor,
 }: H2HFormGuideProps) {
   const { t } = useTranslation('match');
   const prefersReducedMotion = useReducedMotion();
@@ -156,26 +158,34 @@ export function H2HFormGuide({
   const awayLogo = awayTeam.logo_url;
 
   return (
-    <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl p-5 sm:p-6">
+    <div className="bg-[#f5f5f5] rounded-2xl md:rounded-[2rem] border border-gray-200/60 p-4 sm:p-6 md:p-10 shadow-lg max-w-4xl mx-auto mt-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-          {homeLogo && (
-            <img src={homeLogo} alt={homeTeam.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.src = '/images/placeholders/team.svg'; }} />
-          )}
+      <div className="flex items-center justify-between mb-5 md:mb-8">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center shrink-0 drop-shadow-md bg-white rounded-full p-2 border border-gray-100">
+            {homeLogo ? (
+              <img src={homeLogo} alt={homeTeam.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.src = '/images/placeholders/team.svg'; }} />
+            ) : <span className="font-bold text-xl" style={{ color: homeColor }}>{homeTeam.name[0]}</span>}
+          </div>
+          <span className="font-black text-gray-900 hidden md:inline text-xl uppercase tracking-tighter" style={{ color: homeColor }}>{homeTeam.name}</span>
         </div>
-        <h3 className="text-base font-extrabold uppercase tracking-wide text-gray-900 dark:text-white text-center">
-          {t('h2h.formGuide', 'ТЕКУЩАЯ ФОРМА')}
+
+        <h3 className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-gray-400 bg-white px-4 py-2 rounded-full border border-gray-100 shadow-sm text-center">
+          {t('h2h.formGuide', 'FORM GUIDE')}
         </h3>
-        <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
-          {awayLogo && (
-            <img src={awayLogo} alt={awayTeam.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.src = '/images/placeholders/team.svg'; }} />
-          )}
+
+        <div className="flex items-center gap-4">
+          <span className="font-black text-gray-900 hidden md:inline text-xl uppercase tracking-tighter" style={{ color: awayColor }}>{awayTeam.name}</span>
+          <div className="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center shrink-0 drop-shadow-md bg-white rounded-full p-2 border border-gray-100">
+            {awayLogo ? (
+              <img src={awayLogo} alt={awayTeam.name} className="w-full h-full object-contain" onError={(e) => { e.currentTarget.src = '/images/placeholders/team.svg'; }} />
+            ) : <span className="font-bold text-xl" style={{ color: awayColor }}>{awayTeam.name[0]}</span>}
+          </div>
         </div>
       </div>
 
       {/* Two columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12 w-full">
         <TeamFormColumn team={homeTeam} formGuide={formGuide.team1} prefersReducedMotion={prefersReducedMotion} />
         <TeamFormColumn team={awayTeam} formGuide={formGuide.team2} prefersReducedMotion={prefersReducedMotion} />
       </div>

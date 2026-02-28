@@ -4,21 +4,24 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useMatchDetail, useMatchEvents, useMatchLineup, useMatchStats } from '@/hooks';
+import { useTeamPlayers } from '@/hooks/useTeam';
 import { transformTeamStats } from '@/lib/api/transformers/matchTransformers';
 import { LineupRenderingMode, PlayerCountry } from '@/types';
 import { MatchHeader } from '@/components/MatchHeader';
 import { MatchTabs, TabId } from '@/components/match/MatchTabs';
 import { MatchVideoCard } from '@/components/match/MatchVideoCard';
+import { MatchLiveStreamCard } from '@/components/match/MatchLiveStreamCard';
 import { LineupField } from '@/components/match/LineupField';
 import { LineupFieldMini } from '@/components/match/LineupFieldMini';
+import { SeasonRosterCards } from '@/components/match/SeasonRosterCards';
 import { TournamentTableMini } from '@/components/match/TournamentTableMini';
 import { MatchStatisticsTab } from '@/components/match/MatchStatisticsTab';
 import { MiniKeyStats } from '@/components/match/MiniKeyStats';
 import { H2HContentCards } from '@/components/match/H2HContentCards';
-import { MatchEventTimeline } from '@/components/match/MatchEventTimeline';
+import { MatchEventsList } from '@/components/match/MatchEventsList';
 import { HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
-import { isSuperCupMatch } from '@/config/featuredMatch';
-import { SuperCupMatchHeader, TrophyCabinet } from '@/components/supercup';
+import { getTournamentBySeasonId, isCupTournament } from '@/config/tournaments';
+import { RefereeCard } from '@/components/match/RefereeCard';
 
 function LoadingSkeleton() {
   return (
@@ -49,7 +52,6 @@ export default function MatchDetailPage() {
   const matchId = params.id ? Number(params.id) : null;
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const { t, i18n } = useTranslation('match');
-
   // Data fetching
   const { match, loading: matchLoading, error: matchError } = useMatchDetail(matchId, true);
   const isLive = match?.is_live || false;
@@ -70,8 +72,35 @@ export default function MatchDetailPage() {
     return 'hidden';
   }, [lineup, lineupLoading]);
 
-  const showLineupsTab = lineupLoading || lineupMode !== 'hidden';
+  // Определяем isCup по season_id самого матча, а не по глобальному контексту
+  const matchIsCup = useMemo(() => {
+    if (!match?.season_id) return false;
+    const tournament = getTournamentBySeasonId(match.season_id);
+    return tournament ? isCupTournament(tournament) : false;
+  }, [match?.season_id]);
+
   const isUpcoming = match?.status === 'upcoming';
+
+  // For upcoming matches, check if the lineup API returned real lineup data (not just team_squad fallback)
+  const hasRealLineup = !!(
+    lineup?.has_lineup &&
+    lineup?.rendering?.source &&
+    lineup.rendering.source !== 'team_squad'
+  );
+
+  // Always show Lineups tab for upcoming matches (to show season roster fallback)
+  const showLineupsTab = isUpcoming || lineupLoading || lineupMode !== 'hidden';
+
+  // Fetch season rosters for upcoming matches when no real lineup
+  const shouldFetchRosters = isUpcoming && !hasRealLineup && !lineupLoading;
+  const { players: homePlayers } = useTeamPlayers(
+    shouldFetchRosters ? match?.home_team?.id ?? null : null,
+    match?.season_id ?? undefined
+  );
+  const { players: awayPlayers } = useTeamPlayers(
+    shouldFetchRosters ? match?.away_team?.id ?? null : null,
+    match?.season_id ?? undefined
+  );
 
   useEffect(() => {
     if (!showLineupsTab && activeTab === 'lineups') {
@@ -131,8 +160,6 @@ export default function MatchDetailPage() {
     );
   }
 
-  const isSuperCup = match ? isSuperCupMatch(match.home_team.id, match.away_team.id) : false;
-
   if (matchError || !match) {
     return (
       <div className="max-w-[1440px] mx-auto px-4 py-8">
@@ -144,24 +171,15 @@ export default function MatchDetailPage() {
   return (
     <div className="bg-[#FAFBFC] dark:bg-dark-bg min-h-screen">
       {/* 1. Hero Section */}
-      {isSuperCup ? (
-        <SuperCupMatchHeader
-          match={match}
-          events={events?.events || []}
-          eventsLoading={eventsLoading}
-          playerCountryMap={playerCountryMap}
-        />
-      ) : (
-        <MatchHeader
-          match={match}
-          events={events?.events || []}
-          eventsLoading={eventsLoading}
-          playerCountryMap={playerCountryMap}
-        />
-      )}
+      <MatchHeader
+        match={match}
+        events={events?.events || []}
+        eventsLoading={eventsLoading}
+        playerCountryMap={playerCountryMap}
+      />
 
       {match.is_schedule_tentative === true && (
-        <div className={`max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 ${isSuperCup ? 'pt-3 md:pt-4' : 'pt-4'}`}>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 pt-4">
           <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-700/70 dark:bg-amber-900/25 dark:text-amber-100">
             {t('scheduleNotice.perMatch')}
           </div>
@@ -175,22 +193,31 @@ export default function MatchDetailPage() {
         protocolUrl={match.protocol_url}
         showLineupsTab={showLineupsTab}
         showStatisticsTab={!isUpcoming}
-        isSuperCup={isSuperCup}
+        showTimelineTab={!isUpcoming}
       />
 
       {/* 3. Tab Content - Constrained Container */}
-      <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 ${isSuperCup ? 'py-5 md:py-8' : 'py-8'}`}>
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-5 md:py-8">
 
         {/* Lineups tab - full width without sidebar */}
         {activeTab === 'lineups' && showLineupsTab && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <LineupField
-              lineups={lineup?.lineups}
-              homeTeam={match.home_team}
-              awayTeam={match.away_team}
-              loading={lineupLoading}
-              renderingMode={lineupMode}
-            />
+            {isUpcoming && !hasRealLineup ? (
+              <SeasonRosterCards
+                homeTeam={match.home_team}
+                awayTeam={match.away_team}
+                homePlayers={homePlayers}
+                awayPlayers={awayPlayers}
+              />
+            ) : (
+              <LineupField
+                lineups={lineup?.lineups}
+                homeTeam={match.home_team}
+                awayTeam={match.away_team}
+                loading={lineupLoading}
+                renderingMode={lineupMode}
+              />
+            )}
           </div>
         )}
 
@@ -208,28 +235,27 @@ export default function MatchDetailPage() {
           </div>
         )}
 
+        {/* Timeline tab - full width without sidebar */}
+        {activeTab === 'timeline' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <MatchEventsList
+              events={events?.events || []}
+              homeTeam={match.home_team}
+              awayTeam={match.away_team}
+              loading={eventsLoading}
+              isTechnical={match.is_technical}
+            />
+          </div>
+        )}
+
         {/* Overview tab - with sidebar layout */}
         {activeTab === 'overview' && (
-          <div className={`grid grid-cols-1 ${isSuperCup ? '' : 'lg:grid-cols-[1fr_380px]'} ${isSuperCup ? 'gap-5 md:gap-8' : 'gap-8'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Left Column - main content */}
-            <div className={isSuperCup ? 'space-y-5 md:space-y-8' : 'space-y-8'}>
-              {isSuperCup && (
-                <div className="md:hidden -mx-4 sm:-mx-6" data-testid="supercup-mobile-overview-timeline">
-                  <MatchEventTimeline
-                    events={events?.events || []}
-                    homeTeam={match.home_team}
-                    awayTeam={match.away_team}
-                    currentMinute={match.minute || (match.status === 'finished' ? 90 : 0)}
-                    loading={eventsLoading}
-                    playerCountryMap={playerCountryMap}
-                  />
-                </div>
+            <div className="space-y-8">
+              {match.youtube_live_url && (
+                <MatchLiveStreamCard liveUrl={match.youtube_live_url} />
               )}
-
-              {isSuperCup && (
-                <TrophyCabinet variant="full" />
-              )}
-
               {match.video_url && (
                 <MatchVideoCard videoUrl={match.video_url} />
               )}
@@ -244,25 +270,26 @@ export default function MatchDetailPage() {
               )}
             </div>
 
-            {/* Right Sidebar - hidden for Super Cup */}
-            {!isSuperCup && (
-              <div className="space-y-6">
-                {showLineupsTab && (
-                  <LineupFieldMini
-                    lineups={lineup?.lineups}
-                    homeTeam={match.home_team}
-                    awayTeam={match.away_team}
-                    loading={lineupLoading}
-                    renderingMode={lineupMode}
-                  />
-                )}
+            {/* Right Sidebar */}
+            <div className="space-y-6">
+              {showLineupsTab && !isUpcoming && (
+                <LineupFieldMini
+                  lineups={lineup?.lineups}
+                  homeTeam={match.home_team}
+                  awayTeam={match.away_team}
+                  loading={lineupLoading}
+                  renderingMode={lineupMode}
+                />
+              )}
+              <RefereeCard referees={lineup?.referees} />
+              {!matchIsCup && (
                 <TournamentTableMini
                   seasonId={match.season_id ?? undefined}
                   homeTeamId={match.home_team.id}
                   awayTeamId={match.away_team.id}
                 />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>

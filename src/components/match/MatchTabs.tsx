@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 
-export type TabId = 'lineups' | 'statistics' | 'overview' | 'h2h';
+export type TabId = 'lineups' | 'statistics' | 'overview' | 'h2h' | 'timeline';
 
 interface Tab {
   id: TabId;
@@ -15,7 +15,7 @@ interface MatchTabsProps {
   protocolUrl?: string | null;
   showLineupsTab?: boolean;
   showStatisticsTab?: boolean;
-  isSuperCup?: boolean;
+  showTimelineTab?: boolean;
 }
 
 export function MatchTabs({
@@ -24,23 +24,24 @@ export function MatchTabs({
   protocolUrl,
   showLineupsTab = true,
   showStatisticsTab = true,
-  isSuperCup = false,
+  showTimelineTab = true,
 }: MatchTabsProps) {
   const { t } = useTranslation('match');
   const hasProtocol = Boolean(protocolUrl);
 
   const tabs: Tab[] = [
     { id: 'overview', labelKey: 'tabs.overview' },
+    ...(showTimelineTab ? [{ id: 'timeline', labelKey: 'tabs.timeline' } as Tab] : []),
     ...(showLineupsTab ? [{ id: 'lineups', labelKey: 'tabs.lineups' } as Tab] : []),
     ...(showStatisticsTab ? [{ id: 'statistics', labelKey: 'tabs.statistics' } as Tab] : []),
     { id: 'h2h', labelKey: 'tabs.h2h' },
   ];
 
   return (
-    <div className="bg-white dark:bg-dark-surface border-b border-gray-200 dark:border-dark-border sticky top-14 md:top-16 z-30 shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
-        <div className="flex items-end gap-2 md:gap-4">
-          <nav className="flex flex-1 min-w-0 gap-1 md:gap-8 overflow-x-auto scrollbar-hide -mb-px">
+    <div className="bg-white dark:bg-dark-surface border-b border-gray-100 dark:border-dark-border sticky top-14 md:top-16 z-30 shadow-sm">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 md:py-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <nav className="flex flex-1 min-w-0 gap-2 md:gap-3 overflow-x-auto scrollbar-hide items-center">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
 
@@ -49,12 +50,10 @@ export function MatchTabs({
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
                   className={`
-                    ${isSuperCup ? 'min-h-[44px] px-3 py-2.5 text-[13px]' : 'py-3 px-2 text-xs'} md:min-h-0 md:py-4 md:px-4 md:text-sm font-bold transition-all duration-200 whitespace-nowrap border-b-2 outline-none focus-visible:ring-2 ${isSuperCup ? 'focus-visible:ring-amber-400' : 'focus-visible:ring-blue-500'} rounded-t-lg
+                    px-3.5 py-1.5 sm:px-5 sm:py-2 md:px-6 md:py-2.5 rounded-full text-xs sm:text-[13px] md:text-sm font-bold transition-all duration-200 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-blue-500
                     ${isActive
-                      ? isSuperCup
-                        ? 'text-amber-500 border-amber-500'
-                        : 'text-primary dark:text-accent-cyan border-primary dark:border-accent-cyan'
-                      : 'text-gray-500 dark:text-slate-400 border-transparent hover:text-gray-700 dark:hover:text-slate-200 hover:border-gray-300 dark:hover:border-slate-500'
+                      ? 'bg-[#001a3d] text-white shadow-md cursor-default'
+                      : 'bg-gray-100/80 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-transparent'
                     }
                   `}
                 >
@@ -64,43 +63,18 @@ export function MatchTabs({
             })}
           </nav>
 
-          {hasProtocol && isSuperCup && (
-            <a
-              href={protocolUrl || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="protocol-link-mobile-inline"
-              className="md:hidden inline-flex h-10 items-center justify-center rounded-lg bg-amber-400 text-[#0a1628] px-3 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 mb-1 hover:opacity-90 transition-opacity"
-            >
-              {t('tabs.protocol')}
-            </a>
-          )}
-
           {hasProtocol && (
             <a
               href={protocolUrl || undefined}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="protocol-link-desktop"
-              className={`hidden md:inline-flex items-center justify-center px-4 py-2 mb-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:opacity-90 transition-opacity ${isSuperCup ? 'bg-amber-400 text-[#0a1628]' : 'bg-primary text-white'}`}
+              className="hidden md:inline-flex items-center justify-center px-4 py-2 mb-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:opacity-90 transition-opacity bg-primary text-white"
             >
               {t('tabs.protocol')}
             </a>
           )}
         </div>
-
-        {hasProtocol && !isSuperCup && (
-          <div className="md:hidden pb-3" data-testid="protocol-link-mobile-stacked">
-            <a
-              href={protocolUrl || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-            >
-              {t('tabs.protocol')}
-            </a>
-          </div>
-        )}
       </div>
     </div>
   );

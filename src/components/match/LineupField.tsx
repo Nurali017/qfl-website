@@ -43,7 +43,7 @@ function PlayerMarker({ player, position, teamColor }: { player: LineupPlayerExt
     <>
       <JerseyIcon color={teamColor} number={player.number} />
       <div className="flex items-center justify-center gap-1">
-        <span className="text-[8px] md:text-[10px] font-medium text-white text-center leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] max-w-[64px] md:max-w-[84px] tracking-wide line-clamp-2">
+        <span className="text-[8px] md:text-[10px] font-medium text-white text-center leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] max-w-[80px] md:max-w-[100px] truncate">
           {player.last_name}
         </span>
         {player.is_captain && (
@@ -293,7 +293,7 @@ function FieldVisualization({
   });
   const mapToAwayHalf = (pos: { x: number; y: number }) => ({
     x: pos.x,
-    y: pos.y * 0.53 + 41.3,
+    y: pos.y * 0.53 + 43,
   });
 
   return (

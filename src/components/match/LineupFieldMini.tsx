@@ -182,7 +182,7 @@ export function LineupFieldMini({
 
   const mapToAwayHalf = (pos: { x: number; y: number }) => ({
     x: pos.x,
-    y: pos.y * 0.53 + 41.3,
+    y: pos.y * 0.53 + 43,
   });
 
   return (
@@ -290,7 +290,7 @@ function PlayerMarkerMini({ player, position, teamColor }: PlayerMarkerMiniProps
   const content = (
     <>
       <JerseyIconMini color={teamColor} number={player.number} />
-      <span className="text-[7px] font-medium text-white text-center leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] max-w-[50px] truncate">
+      <span className="text-[7px] font-medium text-white text-center leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] max-w-[60px] truncate">
         {player.last_name}
       </span>
     </>

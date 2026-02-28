@@ -54,10 +54,10 @@ type PlacementFieldPosition = 'L' | 'LC' | 'C' | 'RC' | 'R';
 const ROLE_Y: Record<PlacementAmplua, number> = {
   Gk: 5,
   D: 25,
-  DM: 40,
+  DM: 43,
   M: 52,
   AM: 64,
-  F: 76,
+  F: 80,
 };
 
 const BASE_X: Record<PlacementFieldPosition, number> = {

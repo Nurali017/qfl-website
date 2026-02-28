@@ -62,16 +62,13 @@ export function formatMatchDate(dateStr: string, language: string): string {
 export function formatNewsDate(dateStr: string, language: string): string {
   const date = safeParseDate(dateStr);
   if (isKz(language)) {
-    const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    return `${formatKzDate(date, { day: 'numeric', month: 'long' })}, ${time}`;
+    return formatKzDate(date, { day: 'numeric', month: 'long' });
   }
   const locale = getLocale(language);
 
   return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
   });
 }
 

@@ -34,7 +34,7 @@ export function LiveMatch({ match }: LiveMatchProps) {
       </span>
 
       {/* Minute */}
-      <span className="text-xs text-white/60">{match.minute}&apos;</span>
+      {/* {match.minute && <span className="text-xs text-white/60">{match.minute}&apos;</span>} */}
     </Link>
   );
 }

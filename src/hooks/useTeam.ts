@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_SEASON_ID } from '@/lib/api/endpoints';
-import { TeamCoach, TeamDetail, TeamOverviewResponse, TeamSeasonEntry, TeamStats, SquadPlayer } from '@/types';
+import { NewsArticle, TeamCoach, TeamDetail, TeamOverviewResponse, TeamSeasonEntry, TeamStats, SquadPlayer } from '@/types';
 import { Game } from '@/types/match';
 import { teamService } from '@/lib/api/services/teamService';
 import { queryKeys } from '@/lib/api/queryKeys';
@@ -207,6 +207,14 @@ export function useTeamGames(
     error,
     refetch: mutate,
   };
+}
+
+export function useTeamNews(teamId: number | null, lang: string) {
+  const { data, isLoading } = useSWR<NewsArticle[]>(
+    teamId ? queryKeys.teams.news(teamId, lang) : null,
+    () => teamService.getTeamNews(teamId!, lang),
+  );
+  return { news: data ?? [], loading: isLoading };
 }
 
 export interface TeamYearOption {

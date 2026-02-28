@@ -273,6 +273,10 @@ export function HomeMatches() {
                           <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
                             {game.home_score} : {game.away_score}
                           </div>
+                        ) : (game.is_live || game.status === 'live') ? (
+                          <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
+                            {game.home_score ?? 0} : {game.away_score ?? 0}
+                          </div>
                         ) : (
                           <div className="text-sm text-gray-500 dark:text-slate-400 font-medium">
                             {formatKickoffTime(game.time)}

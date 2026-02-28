@@ -16,6 +16,7 @@ interface TeamPageTabsProps {
   yearItems?: TeamYearOption[];
   selectedSeasonId?: number;
   onSeasonChange?: (seasonId: number) => void;
+  showNewsTab?: boolean;
 }
 
 export function TeamPageTabs({
@@ -27,6 +28,7 @@ export function TeamPageTabs({
   yearItems = [],
   selectedSeasonId = 0,
   onSeasonChange,
+  showNewsTab = false,
 }: TeamPageTabsProps) {
   const { t, i18n } = useTranslation('team');
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -39,6 +41,7 @@ export function TeamPageTabs({
     squad: t('tabs.squad', 'Состав'),
     stats: t('tabs.stats', 'Статистика'),
     staff: t('tabs.staff', 'Персонал'),
+    news: t('tabs.news', 'Жаңалықтар'),
   };
 
   useEffect(() => {
@@ -72,7 +75,7 @@ export function TeamPageTabs({
               ref={scrollerRef}
               className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2.5 md:py-3 flex-1 min-w-0"
             >
-              {TEAM_PAGE_NAV_TABS.map((tab) => {
+              {TEAM_PAGE_NAV_TABS.filter((tab) => tab !== 'news' || showNewsTab).map((tab) => {
                 const isActive = activeTab === tab;
 
                 return (

@@ -76,10 +76,36 @@ function NewsPageContent() {
 
   const { news, loading, totalPages } = useNewsPagination(filters, page, 12);
 
+  // Lightweight count calls to determine which tabs have content
+  const { total: newsTotal, loading: newsCountLoading } = useNewsPagination(
+    { ...filters, article_type: 'news' }, 1, 1
+  );
+  const { total: analyticsTotal, loading: analyticsCountLoading } = useNewsPagination(
+    { ...filters, article_type: 'analytics' }, 1, 1
+  );
+
+  const countsLoaded = !newsCountLoading && !analyticsCountLoading;
+  const visibleTabs = useMemo(() => {
+    const set = new Set<'all' | 'news' | 'analytics'>(['all']);
+    if (!countsLoaded) return set;
+    if (newsTotal > 0) set.add('news');
+    if (analyticsTotal > 0) set.add('analytics');
+    return set;
+  }, [countsLoaded, newsTotal, analyticsTotal]);
+
   // Determine active tab from filters
   const activeTab = filters.article_type === 'news' ? 'news'
     : filters.article_type === 'analytics' ? 'analytics'
     : 'all';
+
+  // If the active tab is no longer visible, fall back to "all"
+  useEffect(() => {
+    if (countsLoaded && activeTab !== 'all' && !visibleTabs.has(activeTab)) {
+      const newFilters = { ...filters, article_type: undefined };
+      const nextUrl = buildNewsUrl(newFilters, 1);
+      router.replace(nextUrl, { scroll: false });
+    }
+  }, [countsLoaded, activeTab, visibleTabs, filters, buildNewsUrl, router]);
 
   const handleTabChange = (tab: 'all' | 'news' | 'analytics') => {
     const newFilters = {
@@ -157,6 +183,7 @@ function NewsPageContent() {
         <NewsTabs
           activeTab={activeTab}
           onTabChange={handleTabChange}
+          visibleTabs={visibleTabs}
           variant="hero"
           className="mb-6"
         />

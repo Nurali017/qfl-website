@@ -1,6 +1,7 @@
 import { apiClient } from '../client';
 import { ENDPOINTS, DEFAULT_SEASON_ID } from '../endpoints';
 import {
+  NewsArticle,
   SquadPlayer,
   TeamCoach,
   TeamDetail,
@@ -194,6 +195,18 @@ export const teamService = {
     }
 
     return response.data.items;
+  },
+
+  async getTeamNews(
+    teamId: number,
+    language: string,
+    limit = 10
+  ): Promise<NewsArticle[]> {
+    const response = await apiClient.get<NewsArticle[]>(
+      ENDPOINTS.TEAM_NEWS(teamId),
+      { lang: language, limit }
+    );
+    return response.success ? response.data : [];
   },
 
   async getTeamSeasons(

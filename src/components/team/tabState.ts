@@ -1,8 +1,8 @@
-export const TEAM_PAGE_TABS = ['overview', 'matches', 'squad', 'stats', 'staff'] as const;
+export const TEAM_PAGE_TABS = ['overview', 'matches', 'squad', 'stats', 'staff', 'news'] as const;
 
 export type TeamPageTab = (typeof TEAM_PAGE_TABS)[number];
 
-export const TEAM_PAGE_NAV_TABS: readonly TeamPageTab[] = ['overview', 'matches', 'squad', 'stats'];
+export const TEAM_PAGE_NAV_TABS: readonly TeamPageTab[] = ['overview', 'matches', 'squad', 'stats', 'news'];
 
 export const DEFAULT_TEAM_PAGE_TAB: TeamPageTab = 'overview';
 

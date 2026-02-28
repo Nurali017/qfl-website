@@ -27,10 +27,13 @@ export function PhaseMatchesList({ groups, limit = 4 }: PhaseMatchesListProps) {
       {matches.map((match) => {
         const homeLogo = match.home_team.logo_url || getTeamLogo(match.home_team.id) || '/images/team-placeholder.png';
         const awayLogo = match.away_team.logo_url || getTeamLogo(match.away_team.id) || '/images/team-placeholder.png';
+        const isLive = match.is_live || match.status === 'live';
         const scoreText =
           match.home_score !== null && match.away_score !== null
             ? `${match.home_score}:${match.away_score}`
-            : (match.time || '-');
+            : isLive
+              ? `${match.home_score ?? 0}:${match.away_score ?? 0}`
+              : (match.time || '-');
 
         return (
           <Link

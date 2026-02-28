@@ -129,6 +129,14 @@ export const newsService = {
     return response.data;
   },
 
+  async getByMatch(matchId: number, language: string, limit = 10): Promise<NewsArticle[]> {
+    const response = await apiClient.get<NewsArticle[]>(ENDPOINTS.GAME_NEWS(matchId), {
+      lang: language,
+      limit,
+    });
+    return response.success ? response.data : [];
+  },
+
   async getNavigation(
     id: number,
     language: string = DEFAULT_LANGUAGE

@@ -40,6 +40,8 @@ export const ENDPOINTS = {
   TEAM_GAMES: (id: number) => `/teams/${id}/games`,
   TEAM_COACHES: (id: number) => `/teams/${id}/coaches`,
   TEAM_SEASONS: (id: number) => `/teams/${id}/seasons`,
+  TEAM_NEWS: (id: number) => `/teams/${id}/news`,
+  GAME_NEWS: (id: number) => `/games/${id}/news`,
   HEAD_TO_HEAD: (team1Id: number, team2Id: number) =>
     `/teams/${team1Id}/vs/${team2Id}/head-to-head`,
   // Pages

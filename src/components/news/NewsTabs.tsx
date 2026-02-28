@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 interface NewsTabsProps {
   activeTab: 'all' | 'news' | 'analytics';
   onTabChange: (tab: 'all' | 'news' | 'analytics') => void;
+  visibleTabs?: Set<'all' | 'news' | 'analytics'>;
   className?: string;
   variant?: 'default' | 'hero';
 }
@@ -12,17 +13,20 @@ interface NewsTabsProps {
 export function NewsTabs({
   activeTab,
   onTabChange,
+  visibleTabs,
   className = '',
   variant = 'default',
 }: NewsTabsProps) {
   const { t } = useTranslation('news');
   const isHero = variant === 'hero';
 
-  const tabs = [
+  const allTabs = [
     { id: 'all' as const, label: t('allNews') },
     { id: 'news' as const, label: t('typeNews') },
     { id: 'analytics' as const, label: t('typeAnalytics') },
   ];
+
+  const tabs = visibleTabs ? allTabs.filter(tab => visibleTabs.has(tab.id)) : allTabs;
 
   const containerClass = isHero
     ? 'border-b border-white/20'

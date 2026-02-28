@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { NewsArticle } from '@/types';
 
-interface TeamNewsProps {
+interface MatchRelatedNewsProps {
   news: NewsArticle[];
   loading?: boolean;
 }
@@ -21,8 +21,8 @@ function NewsCardSkeleton() {
   );
 }
 
-export function TeamNews({ news, loading = false }: TeamNewsProps) {
-  const { t } = useTranslation('team');
+export function MatchRelatedNews({ news, loading = false }: MatchRelatedNewsProps) {
+  const { t } = useTranslation('match');
 
   if (loading) {
     return (
@@ -37,7 +37,7 @@ export function TeamNews({ news, loading = false }: TeamNewsProps) {
   if (!news.length) {
     return (
       <div className="text-center py-16 text-gray-400 dark:text-slate-500">
-        {t('news.empty', 'Команданың жаңалықтары жоқ')}
+        {t('news.empty', 'Матч бойынша жаңалықтар жоқ')}
       </div>
     );
   }

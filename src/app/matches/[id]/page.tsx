@@ -9,6 +9,8 @@ import { transformTeamStats } from '@/lib/api/transformers/matchTransformers';
 import { LineupRenderingMode, PlayerCountry } from '@/types';
 import { MatchHeader } from '@/components/MatchHeader';
 import { MatchTabs, TabId } from '@/components/match/MatchTabs';
+import { MatchRelatedNews } from '@/components/match/MatchRelatedNews';
+import { useMatchNews } from '@/hooks/useMatchNews';
 import { MatchVideoCard } from '@/components/match/MatchVideoCard';
 import { MatchLiveStreamCard } from '@/components/match/MatchLiveStreamCard';
 import { LineupField } from '@/components/match/LineupField';
@@ -58,6 +60,7 @@ export default function MatchDetailPage() {
   const { events, loading: eventsLoading } = useMatchEvents(matchId, isLive);
   const { lineup, loading: lineupLoading } = useMatchLineup(matchId, isLive);
   const { stats, loading: statsLoading } = useMatchStats(matchId, isLive);
+  const { news: matchNews, loading: matchNewsLoading } = useMatchNews(matchId, i18n.language);
 
   const lineupMode: LineupRenderingMode = useMemo(() => {
     if (lineup?.rendering?.mode) {
@@ -109,7 +112,10 @@ export default function MatchDetailPage() {
     if (isUpcoming && activeTab === 'statistics') {
       setActiveTab('overview');
     }
-  }, [activeTab, showLineupsTab, isUpcoming]);
+    if (activeTab === 'news' && !matchNewsLoading && matchNews.length === 0) {
+      setActiveTab('overview');
+    }
+  }, [activeTab, showLineupsTab, isUpcoming, matchNews.length, matchNewsLoading]);
 
   // Трансформировать team_stats в формат home/away
   const transformedStats = useMemo(() => {
@@ -194,6 +200,7 @@ export default function MatchDetailPage() {
         showLineupsTab={showLineupsTab}
         showStatisticsTab={!isUpcoming}
         showTimelineTab={!isUpcoming}
+        showNewsTab={matchNews.length > 0}
       />
 
       {/* 3. Tab Content - Constrained Container */}
@@ -245,6 +252,13 @@ export default function MatchDetailPage() {
               loading={eventsLoading}
               isTechnical={match.is_technical}
             />
+          </div>
+        )}
+
+        {/* News tab */}
+        {activeTab === 'news' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <MatchRelatedNews news={matchNews} loading={matchNewsLoading} />
           </div>
         )}
 

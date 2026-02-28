@@ -2,7 +2,7 @@
 
 import { useTranslation } from 'react-i18next';
 
-export type TabId = 'lineups' | 'statistics' | 'overview' | 'h2h' | 'timeline';
+export type TabId = 'lineups' | 'statistics' | 'overview' | 'h2h' | 'timeline' | 'news';
 
 interface Tab {
   id: TabId;
@@ -16,6 +16,7 @@ interface MatchTabsProps {
   showLineupsTab?: boolean;
   showStatisticsTab?: boolean;
   showTimelineTab?: boolean;
+  showNewsTab?: boolean;
 }
 
 export function MatchTabs({
@@ -25,6 +26,7 @@ export function MatchTabs({
   showLineupsTab = true,
   showStatisticsTab = true,
   showTimelineTab = true,
+  showNewsTab = false,
 }: MatchTabsProps) {
   const { t } = useTranslation('match');
   const hasProtocol = Boolean(protocolUrl);
@@ -35,6 +37,7 @@ export function MatchTabs({
     ...(showLineupsTab ? [{ id: 'lineups', labelKey: 'tabs.lineups' } as Tab] : []),
     ...(showStatisticsTab ? [{ id: 'statistics', labelKey: 'tabs.statistics' } as Tab] : []),
     { id: 'h2h', labelKey: 'tabs.h2h' },
+    ...(showNewsTab ? [{ id: 'news', labelKey: 'tabs.news' } as Tab] : []),
   ];
 
   return (
@@ -53,7 +56,7 @@ export function MatchTabs({
                     px-3.5 py-1.5 sm:px-5 sm:py-2 md:px-6 md:py-2.5 rounded-full text-xs sm:text-[13px] md:text-sm font-bold transition-all duration-200 whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-blue-500
                     ${isActive
                       ? 'bg-[#001a3d] text-white shadow-md cursor-default'
-                      : 'bg-gray-100/80 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-transparent'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-transparent'
                     }
                   `}
                 >

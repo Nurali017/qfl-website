@@ -9,12 +9,13 @@ import {
   TeamFullStats,
   TeamKeyStats,
   TeamMatches,
+  TeamNews,
   TeamOverviewSection,
   TeamPageHero,
   TeamPageTabs,
   TeamSquad,
 } from '@/components/team';
-import { useTeamGames, useTeamOverview, useTeamPlayers, useTeamSeasons, useTeamStats } from '@/hooks/useTeam';
+import { useTeamGames, useTeamNews, useTeamOverview, useTeamPlayers, useTeamSeasons, useTeamStats } from '@/hooks/useTeam';
 import { useTournament } from '@/contexts/TournamentContext';
 import { PRE_SEASON_CONFIG } from '@/config/tournaments';
 import { PageSeasonProvider } from '@/contexts/PageSeasonContext';
@@ -90,6 +91,7 @@ export default function TeamPage({ params }: TeamPageProps) {
   const { stats: detailedStats } = useTeamStats(activeTab === 'overview' ? teamId : null, effectiveSeasonId);
   const { games, loading: gamesLoading } = useTeamGames(activeTab === 'matches' ? teamId : null, effectiveSeasonId);
   const { players, loading: playersLoading } = useTeamPlayers(activeTab === 'squad' ? teamId : null, effectiveSeasonId);
+  const { news: teamNews, loading: newsLoading } = useTeamNews(teamId, lang);
 
   if (overviewLoading && !overview) {
     return (
@@ -136,6 +138,7 @@ export default function TeamPage({ params }: TeamPageProps) {
           yearItems={yearItems}
           selectedSeasonId={effectiveSeasonId}
           onSeasonChange={setLocalSeasonId}
+          showNewsTab={teamNews.length > 0}
         />
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 space-y-8 md:space-y-10">
@@ -185,6 +188,12 @@ export default function TeamPage({ params }: TeamPageProps) {
             {activeTab === 'staff' ? (
               <motion.div key="staff" initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={fadeInUp}>
                 <TeamCoachingStaff teamId={teamId} />
+              </motion.div>
+            ) : null}
+
+            {activeTab === 'news' ? (
+              <motion.div key="news" initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={fadeInUp}>
+                <TeamNews news={teamNews} loading={newsLoading} />
               </motion.div>
             ) : null}
           </AnimatePresence>

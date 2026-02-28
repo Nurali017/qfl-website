@@ -132,22 +132,22 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
 
               {/* Row 1 — Score / Status */}
               <div className="self-center flex flex-col items-center justify-center px-2">
-                {hasScore ? (
+                {hasScore || isLive ? (
                   <div className="flex flex-col items-center gap-3 md:gap-4">
                     <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
                       {/* Home Score */}
-                      <span className="text-2xl sm:text-4xl md:text-6xl font-black text-white leading-none">{match.home_score}</span>
+                      <span className="text-2xl sm:text-4xl md:text-6xl font-black text-white leading-none">{match.home_score ?? 0}</span>
 
                       <div className="text-white/30 text-xl font-bold">-</div>
 
                       {/* Away Score */}
-                      <span className="text-2xl sm:text-4xl md:text-6xl font-black text-white leading-none">{match.away_score}</span>
+                      <span className="text-2xl sm:text-4xl md:text-6xl font-black text-white leading-none">{match.away_score ?? 0}</span>
                     </div>
 
                     <div className="flex flex-col items-center justify-center w-full mt-1">
                       {isLive ? (
                         <div className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:py-1.5 rounded-full uppercase tracking-wider animate-pulse mb-1 border border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]">
-                          {match.minute ? `${match.minute}'` : 'LIVE'}
+                          LIVE
                         </div>
                       ) : (
                         <span className="text-white text-[11px] md:text-sm font-bold uppercase tracking-[0.1em] mb-1">

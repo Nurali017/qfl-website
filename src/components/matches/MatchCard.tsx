@@ -66,11 +66,6 @@ export function MatchCard({
                   </p>
                 )}
               </div>
-              {isLive ? (
-                <span className="px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded whitespace-nowrap">
-                  {t('live')}
-                </span>
-              ) : null}
             </div>
 
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
@@ -99,6 +94,16 @@ export function MatchCard({
               </div>
 
               <div className="px-1 text-center shrink-0">
+                {isUpcoming && match.broadcasters && match.broadcasters.length > 0 && (
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    {match.broadcasters.filter(b => b.logo_url).map(b => (
+                      <img key={b.id} src={b.logo_url!} alt={b.name} title={b.name} className="h-6 w-auto object-contain" />
+                    ))}
+                  </div>
+                )}
+                {isLive && (
+                  <span className="block text-[9px] font-bold text-red-500 mb-0.5">{t('live')}</span>
+                )}
                 {isFinished ? (
                   <div className="flex items-center justify-center gap-1">
                     <div className="text-lg font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
@@ -172,6 +177,7 @@ export function MatchCard({
                 </button>
               ) : null}
             </div>
+
           </div>
 
           {/* Desktop layout */}
@@ -217,6 +223,16 @@ export function MatchCard({
               </div>
 
               <div className="px-2 lg:px-4 text-center shrink-0">
+                {isUpcoming && match.broadcasters && match.broadcasters.length > 0 && (
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    {match.broadcasters.filter(b => b.logo_url).map(b => (
+                      <img key={b.id} src={b.logo_url!} alt={b.name} title={b.name} className="h-6 w-auto object-contain" />
+                    ))}
+                  </div>
+                )}
+                {isLive && (
+                  <span className="block text-[9px] font-bold text-red-500 mb-0.5">{t('live')}</span>
+                )}
                 {isFinished ? (
                   <div className="flex items-center justify-center gap-1">
                     <div className="text-xl font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
@@ -279,11 +295,7 @@ export function MatchCard({
                 </div>
               )}
 
-              {isLive ? (
-                <span className="px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded whitespace-nowrap">
-                  {t('live')}
-                </span>
-              ) : match.ticket_url && isUpcoming ? (
+              {match.ticket_url && isUpcoming ? (
                 <button
                   onClick={(e) => {
                     e.preventDefault();

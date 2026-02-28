@@ -256,6 +256,19 @@ export function HomeMatches() {
 
                       {/* Score or Time */}
                       <div className="flex-shrink-0 text-center min-w-[44px] sm:min-w-[52px]">
+                        {game.status === 'upcoming' && game.broadcasters && game.broadcasters.length > 0 && (
+                          <div className="flex items-center justify-center gap-1 mb-0.5">
+                            {game.broadcasters.filter(b => b.logo_url).map(b => (
+                              <img key={b.id} src={b.logo_url!} alt={b.name} title={b.name} className="h-5 w-auto object-contain" />
+                            ))}
+                          </div>
+                        )}
+                        {(game.is_live || game.status === 'live') && (
+                          <div className="flex items-center justify-center gap-1 mb-0.5">
+                            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                            <span className="text-[9px] font-bold text-red-500">LIVE</span>
+                          </div>
+                        )}
                         {game.home_score !== null && game.away_score !== null ? (
                           <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
                             {game.home_score} : {game.away_score}
@@ -286,13 +299,6 @@ export function HomeMatches() {
                       </div>
                     </div>
 
-                    {/* Live badge */}
-                    {(game.is_live || game.status === 'live') && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                        LIVE
-                      </div>
-                    )}
                   </Link>
                 );
               })}

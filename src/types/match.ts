@@ -16,6 +16,14 @@ export interface Stadium {
   capacity: number | null;
 }
 
+export interface BroadcasterInfo {
+  id: number;
+  name: string;
+  logo_url: string | null;
+  type: string | null;  // "tv" | "youtube"
+  website: string | null;
+}
+
 export interface Game {
   id: number;
   date: string;
@@ -38,6 +46,7 @@ export interface Game {
   video_url: string | null;
   youtube_live_url?: string | null;
   protocol_url?: string | null;
+  broadcasters?: BroadcasterInfo[];
 }
 
 export interface MatchEvent {

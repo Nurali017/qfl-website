@@ -7,7 +7,7 @@ import { useTournament } from '@/contexts/TournamentContext';
 import { useMatchCenter, useMatches } from '@/hooks';
 import { formatMatchDate } from '@/lib/utils/dateFormat';
 import { getTeamLogo } from '@/lib/utils/teamLogos';
-import { SUPER_CUP_FEATURED_MATCH, SUPER_CUP_HERO_ENABLED } from '@/config/featuredMatch';
+import { SUPER_CUP_FEATURED_MATCH } from '@/config/featuredMatch';
 import { Game } from '@/types';
 import {
   HOME_MATCHES_PRESEASON_DATE_FROM,
@@ -77,7 +77,7 @@ export function HomeMatches() {
   });
 
   // Fetch Super Cup match separately (lives in its own season)
-  const scEnabled = SUPER_CUP_HERO_ENABLED && Date.now() < new Date(SUPER_CUP_FEATURED_MATCH.heroDisableAfter).getTime();
+  const scEnabled = Date.now() < new Date(SUPER_CUP_FEATURED_MATCH.heroDisableAfter).getTime();
   const {
     groups: scGroups,
   } = useMatchCenter({
@@ -270,8 +270,15 @@ export function HomeMatches() {
                           </div>
                         )}
                         {game.home_score !== null && game.away_score !== null ? (
-                          <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
-                            {game.home_score} : {game.away_score}
+                          <div className="text-center">
+                            <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
+                              {game.home_score} : {game.away_score}
+                            </div>
+                            {game.home_penalty_score != null && game.away_penalty_score != null && (
+                              <div className="text-[10px] text-gray-400 dark:text-slate-500 font-medium">
+                                ({game.home_penalty_score} : {game.away_penalty_score} пен.)
+                              </div>
+                            )}
                           </div>
                         ) : (game.is_live || game.status === 'live') ? (
                           <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">

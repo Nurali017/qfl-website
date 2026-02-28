@@ -1,6 +1,7 @@
 'use client';
 
 import { MatchDetail } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface MiniKeyStatsProps {
   stats: MatchDetail['stats'];
@@ -52,11 +53,13 @@ function ProgressCircle({ value, color }: { value: number; color: string }) {
 
 // Possession row with progress circles
 function PossessionRow({
+  label,
   homeValue,
   awayValue,
   homeColor,
   awayColor
 }: {
+  label: string;
   homeValue: number;
   awayValue: number;
   homeColor: string;
@@ -68,7 +71,7 @@ function PossessionRow({
 
       <div className="flex-1">
         <p className="text-center text-xs font-medium text-gray-500 dark:text-slate-400 tracking-wide">
-          Possession (%)
+          {label}
         </p>
       </div>
 
@@ -118,15 +121,18 @@ function SimpleStatRow({
 }
 
 export function MiniKeyStats({ stats, homeColor, awayColor }: MiniKeyStatsProps) {
+  const { t } = useTranslation('match');
+
   if (!stats) return null;
 
   return (
     <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6 shadow-sm">
-      <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Key stats</h3>
+      <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">{t('keyStats.title')}</h3>
 
       <div className="space-y-6">
         {/* Possession with circles */}
         <PossessionRow
+          label={t('statisticsTab.possessionPercent')}
           homeValue={stats.possession?.home || 0}
           awayValue={stats.possession?.away || 0}
           homeColor={homeColor}
@@ -135,7 +141,7 @@ export function MiniKeyStats({ stats, homeColor, awayColor }: MiniKeyStatsProps)
 
         {/* Other stats - simple rows */}
         <SimpleStatRow
-          label="Total attempts"
+          label={t('keyStats.totalAttempts')}
           homeValue={stats.shots?.home || 0}
           awayValue={stats.shots?.away || 0}
           homeColor={homeColor}
@@ -143,7 +149,7 @@ export function MiniKeyStats({ stats, homeColor, awayColor }: MiniKeyStatsProps)
         />
 
         <SimpleStatRow
-          label="Shots on target"
+          label={t('shotsOnTarget')}
           homeValue={stats.shots_on_target?.home || 0}
           awayValue={stats.shots_on_target?.away || 0}
           homeColor={homeColor}
@@ -151,7 +157,7 @@ export function MiniKeyStats({ stats, homeColor, awayColor }: MiniKeyStatsProps)
         />
 
         <SimpleStatRow
-          label="Corners taken"
+          label={t('corners')}
           homeValue={stats.corners?.home || 0}
           awayValue={stats.corners?.away || 0}
           homeColor={homeColor}

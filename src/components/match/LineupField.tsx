@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { MatchLineups, GameTeam, LineupPlayerExtended, LineupRenderingMode } from '@/types';
@@ -43,7 +42,7 @@ function PlayerMarker({ player, position, teamColor }: { player: LineupPlayerExt
     <>
       <JerseyIcon color={teamColor} number={player.number} />
       <div className="flex items-center justify-center gap-1">
-        <span className="text-[8px] md:text-[10px] font-medium text-white text-center leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] max-w-[80px] md:max-w-[100px] truncate">
+        <span className="text-[8px] md:text-[10px] font-medium text-white text-center leading-tight max-w-[80px] md:max-w-[100px] truncate bg-black/50 rounded px-1 py-0.5">
           {player.last_name}
         </span>
         {player.is_captain && (
@@ -53,12 +52,14 @@ function PlayerMarker({ player, position, teamColor }: { player: LineupPlayerExt
     </>
   );
 
+  const zIndex = Math.round(1000 - position.y * 10);
+
   if (!playerHref) {
     return (
       <div
         data-testid={`lineup-marker-${player.player_id}`}
         className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer flex flex-col items-center gap-0.5 pointer-events-auto"
-        style={{ left: `${position.x}%`, top: `${position.y}%` }}
+        style={{ left: `${position.x}%`, top: `${position.y}%`, zIndex }}
       >
         {content}
       </div>
@@ -70,7 +71,7 @@ function PlayerMarker({ player, position, teamColor }: { player: LineupPlayerExt
       href={playerHref}
       data-testid={`lineup-marker-${player.player_id}`}
       className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer flex flex-col items-center gap-0.5 pointer-events-auto"
-      style={{ left: `${position.x}%`, top: `${position.y}%` }}
+      style={{ left: `${position.x}%`, top: `${position.y}%`, zIndex }}
     >
       {content}
     </Link>
@@ -353,7 +354,7 @@ function FieldVisualization({
         </svg>
       </div>
 
-      {/* Players Home */}
+      {/* All Players in single container so individual z-index values compete directly */}
       <div className="absolute inset-0 z-30 pointer-events-none">
         {homePlacedPlayers.map(({ player, position }) => (
           <PlayerMarker
@@ -363,10 +364,6 @@ function FieldVisualization({
             teamColor={homeColor}
           />
         ))}
-      </div>
-
-      {/* Players Away */}
-      <div className="absolute inset-0 z-30 pointer-events-none">
         {awayPlacedPlayers.map(({ player, position }) => (
           <PlayerMarker
             key={player.player_id}
@@ -385,7 +382,6 @@ interface LineupFieldProps { lineups?: MatchLineups; homeTeam: GameTeam; awayTea
 
 export function LineupField({ lineups, homeTeam, awayTeam, loading, renderingMode = 'field' }: LineupFieldProps) {
   const { t } = useTranslation('match');
-  const [viewMode, setViewMode] = useState<'pitch' | 'list'>('pitch');
 
   if (loading) return <div className="animate-pulse h-[800px] bg-gray-200 rounded-xl" />;
   if (renderingMode === 'hidden') return null;
@@ -399,7 +395,6 @@ export function LineupField({ lineups, homeTeam, awayTeam, loading, renderingMod
   const homeStarters = orderStartersForPlacement(lineups.home_team.starters).slice(0, 11);
   const awayStarters = orderStartersForPlacement(lineups.away_team.starters).slice(0, 11);
 
-  // When renderingMode is 'list', skip the toggle and show list directly
   if (renderingMode === 'list') {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
@@ -409,73 +404,41 @@ export function LineupField({ lineups, homeTeam, awayTeam, loading, renderingMod
     );
   }
 
-  // Effective view: use internal toggle for field renderingMode
-  const showPitch = viewMode === 'pitch';
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* View Toggles */}
-      <div className="flex items-center justify-start">
-        <div className="inline-flex bg-gray-100 p-1.5 rounded-full border border-gray-200">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`px-6 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all duration-300 ${!showPitch ? 'bg-[#1e293b] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'}`}
-          >
-            {t('lineup.listView', 'LIST VIEW')}
-          </button>
-          <button
-            onClick={() => setViewMode('pitch')}
-            className={`px-6 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all duration-300 ${showPitch ? 'bg-[#1e293b] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'}`}
-          >
-            {t('lineup.pitchView', 'PITCH VIEW')}
-          </button>
+      {/* Desktop: 3-column layout — Home subs | Pitch | Away subs */}
+      <div className="hidden lg:flex max-w-7xl mx-auto gap-4 xl:gap-6 items-start">
+        <div className="w-[240px] xl:w-[280px] shrink-0 sticky top-4">
+          <SubstituteSidePanel team={homeTeam} logoUrl={homeTeam.logo_url} substitutes={lineups.home_team.substitutes || []} align="left" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <FieldVisualization
+            homeStarters={homeStarters} awayStarters={awayStarters}
+            homeFormation={lineups.home_team.formation} awayFormation={lineups.away_team.formation}
+            homeColor={homeColor} awayColor={awayColor}
+            homeTeam={homeTeam} awayTeam={awayTeam}
+          />
+        </div>
+        <div className="w-[240px] xl:w-[280px] shrink-0 sticky top-4">
+          <SubstituteSidePanel team={awayTeam} logoUrl={awayTeam.logo_url} substitutes={lineups.away_team.substitutes || []} align="right" />
         </div>
       </div>
 
-      {!showPitch && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-          <TeamLineupListCard team={homeTeam} logoUrl={homeTeam.logo_url} starters={homeStarters} substitutes={lineups.home_team.substitutes || []} formation={lineups.home_team.formation} />
-          <TeamLineupListCard team={awayTeam} logoUrl={awayTeam.logo_url} starters={awayStarters} substitutes={lineups.away_team.substitutes || []} formation={lineups.away_team.formation} />
+      {/* Mobile: Pitch on top, subs in 2-col grid below */}
+      <div className="lg:hidden flex flex-col gap-6">
+        <div className="max-w-3xl mx-auto w-full">
+          <FieldVisualization
+            homeStarters={homeStarters} awayStarters={awayStarters}
+            homeFormation={lineups.home_team.formation} awayFormation={lineups.away_team.formation}
+            homeColor={homeColor} awayColor={awayColor}
+            homeTeam={homeTeam} awayTeam={awayTeam}
+          />
         </div>
-      )}
-
-      {showPitch && (
-        <>
-          {/* Desktop: 3-column layout — Home subs | Pitch | Away subs */}
-          <div className="hidden lg:flex max-w-7xl mx-auto gap-4 xl:gap-6 items-start">
-            <div className="w-[240px] xl:w-[280px] shrink-0 sticky top-4">
-              <SubstituteSidePanel team={homeTeam} logoUrl={homeTeam.logo_url} substitutes={lineups.home_team.substitutes || []} align="left" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <FieldVisualization
-                homeStarters={homeStarters} awayStarters={awayStarters}
-                homeFormation={lineups.home_team.formation} awayFormation={lineups.away_team.formation}
-                homeColor={homeColor} awayColor={awayColor}
-                homeTeam={homeTeam} awayTeam={awayTeam}
-              />
-            </div>
-            <div className="w-[240px] xl:w-[280px] shrink-0 sticky top-4">
-              <SubstituteSidePanel team={awayTeam} logoUrl={awayTeam.logo_url} substitutes={lineups.away_team.substitutes || []} align="right" />
-            </div>
-          </div>
-
-          {/* Mobile: Pitch on top, subs in 2-col grid below */}
-          <div className="lg:hidden flex flex-col gap-6">
-            <div className="max-w-3xl mx-auto w-full">
-              <FieldVisualization
-                homeStarters={homeStarters} awayStarters={awayStarters}
-                homeFormation={lineups.home_team.formation} awayFormation={lineups.away_team.formation}
-                homeColor={homeColor} awayColor={awayColor}
-                homeTeam={homeTeam} awayTeam={awayTeam}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <SubstituteSidePanel team={homeTeam} logoUrl={homeTeam.logo_url} substitutes={lineups.home_team.substitutes || []} align="left" />
-              <SubstituteSidePanel team={awayTeam} logoUrl={awayTeam.logo_url} substitutes={lineups.away_team.substitutes || []} align="right" />
-            </div>
-          </div>
-        </>
-      )}
+        <div className="grid grid-cols-2 gap-4">
+          <SubstituteSidePanel team={homeTeam} logoUrl={homeTeam.logo_url} substitutes={lineups.home_team.substitutes || []} align="left" />
+          <SubstituteSidePanel team={awayTeam} logoUrl={awayTeam.logo_url} substitutes={lineups.away_team.substitutes || []} align="right" />
+        </div>
+      </div>
     </div>
   );
 }

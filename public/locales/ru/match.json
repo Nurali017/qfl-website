@@ -14,6 +14,10 @@
   "spectators": "зрителей",
   "weather": "Погода",
   "statistics": "Статистика",
+  "keyStats": {
+    "title": "Ключевая статистика",
+    "totalAttempts": "Всего ударов"
+  },
   "possession": "Владение мячом",
   "shots": "Удары",
   "shotsOnTarget": "Удары в створ",

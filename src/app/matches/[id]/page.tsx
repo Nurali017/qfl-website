@@ -18,10 +18,8 @@ import { LineupFieldMini } from '@/components/match/LineupFieldMini';
 import { SeasonRosterCards } from '@/components/match/SeasonRosterCards';
 import { TournamentTableMini } from '@/components/match/TournamentTableMini';
 import { MatchStatisticsTab } from '@/components/match/MatchStatisticsTab';
-import { MiniKeyStats } from '@/components/match/MiniKeyStats';
 import { H2HContentCards } from '@/components/match/H2HContentCards';
 import { MatchEventsList } from '@/components/match/MatchEventsList';
-import { HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
 import { getTournamentBySeasonId, isCupTournament } from '@/config/tournaments';
 import { RefereeCard } from '@/components/match/RefereeCard';
 
@@ -198,7 +196,7 @@ export default function MatchDetailPage() {
         onTabChange={setActiveTab}
         protocolUrl={match.protocol_url}
         showLineupsTab={showLineupsTab}
-        showStatisticsTab={!isUpcoming}
+        showStatisticsTab={false}
         showTimelineTab={!isUpcoming}
         showNewsTab={matchNews.length > 0}
       />
@@ -225,13 +223,6 @@ export default function MatchDetailPage() {
                 renderingMode={lineupMode}
               />
             )}
-          </div>
-        )}
-
-        {/* Statistics tab - full width without sidebar */}
-        {activeTab === 'statistics' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <MatchStatisticsTab match={matchWithStats || match} />
           </div>
         )}
 
@@ -274,13 +265,9 @@ export default function MatchDetailPage() {
                 <MatchVideoCard videoUrl={match.video_url} />
               )}
 
-              {/* Key Stats Section - after video */}
-              {matchWithStats?.stats && (
-                <MiniKeyStats
-                  stats={matchWithStats.stats}
-                  homeColor={HOME_COLOR}
-                  awayColor={AWAY_COLOR}
-                />
+              {/* Full Statistics - after key stats */}
+              {!isUpcoming && (
+                <MatchStatisticsTab match={matchWithStats || match} />
               )}
             </div>
 

@@ -38,7 +38,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
       <div className="relative z-10 max-w-[1440px] mx-auto px-3 sm:px-4 md:px-10 lg:px-20 pt-3 pb-0 md:pt-6">
 
         {/* Match Information Bar */}
-        <div className="mb-4 md:mb-10 max-w-5xl mx-auto xl:-ml-4 w-full border-b border-white/10 pb-4">
+        <div className="mb-4 md:mb-10 max-w-5xl mx-auto w-full border-b border-white/10 pb-4">
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] md:text-[13px] text-white/80">
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-white/60" />
@@ -82,7 +82,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
           );
           const hasGoals = hasScore && uniqueEvents.some(e => e.event_type === 'goal' || e.event_type === 'penalty');
           return (
-            <div className="mb-4 md:mb-12 grid grid-cols-[1fr_auto_1fr] w-full max-w-5xl mx-auto xl:-ml-4">
+            <div className="mb-4 md:mb-12 grid grid-cols-[1fr_auto_1fr] w-full max-w-5xl mx-auto">
 
               {/* Row 1 — Home Team */}
               {homeTeamHref ? (

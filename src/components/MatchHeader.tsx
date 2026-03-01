@@ -18,7 +18,7 @@ interface MatchHeaderProps {
 }
 
 export function MatchHeader({ match, events = [], eventsLoading = false, playerCountryMap = {} }: MatchHeaderProps) {
-  const { t, i18n } = useTranslation('match');
+  const { i18n } = useTranslation('match');
   const displayTime = formatMatchTime(match.time) || match.time;
 
   const homeLogoUrl = match.home_team.logo_url || getTeamLogo(match.home_team.id);
@@ -132,14 +132,10 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
                     </div>
 
                     <div className="flex flex-col items-center justify-center w-full mt-1">
-                      {isLive ? (
+                      {isLive && (
                         <div className="bg-red-600 text-white text-[10px] md:text-xs font-bold px-3 py-1 md:py-1.5 rounded-full uppercase tracking-wider animate-pulse mb-1 border border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]">
                           LIVE
                         </div>
-                      ) : (
-                        <span className="text-white text-[11px] md:text-sm font-bold uppercase tracking-[0.1em] mb-1">
-                          {match.status === 'finished' ? t('matchEnded') : match.status === 'upcoming' ? t('upcoming') : match.status}
-                        </span>
                       )}
                       {match.status === 'finished' && match.home_penalty_score != null && (
                         <div className="text-[11px] md:text-xs text-white/70 font-medium mt-0.5">
@@ -151,9 +147,6 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
                 ) : (
                   <div className="flex flex-col items-center mt-2">
                     <div className="text-2xl md:text-5xl font-bold text-white mb-3 tracking-tight">{displayTime || '—'}</div>
-                    <div className="px-4 py-1.5 rounded-full bg-white/10 text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border border-white/10 backdrop-blur-sm">
-                      {t('upcoming')}
-                    </div>
                   </div>
                 )}
               </div>

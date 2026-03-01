@@ -207,21 +207,27 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
               {/* Row 2 — Scorers (grid-cols-2 so center axis aligns with score dash) */}
               {hasGoals && (
                 <div className="col-span-3 grid grid-cols-2 gap-x-4 md:gap-x-8 mt-4 md:mt-10">
-                  <div className="flex flex-col items-end gap-1.5">
+                  <div className="flex flex-col items-end gap-1.5 min-w-0">
                     {uniqueEvents.filter(e => e.team_id === match.home_team.id && (e.event_type === 'goal' || e.event_type === 'penalty') && (e.half ?? 1) <= 2).map((e, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
-                        <span className="font-semibold">{e.player_name}</span>
-                        <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
+                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px] min-w-0 w-full justify-end">
+                        <span className="font-semibold truncate min-w-0">
+                          <span className="md:hidden">{e.player_name.split(' ').at(-1)}</span>
+                          <span className="hidden md:inline">{e.player_name}</span>
+                        </span>
+                        <span className="text-white/60 shrink-0 whitespace-nowrap">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
                         <GoalIcon className="w-3.5 h-3.5 ml-1 text-white/80 shrink-0" color="currentColor" />
                       </div>
                     ))}
                   </div>
-                  <div className="flex flex-col items-start gap-1.5">
+                  <div className="flex flex-col items-start gap-1.5 min-w-0">
                     {uniqueEvents.filter(e => e.team_id === match.away_team.id && (e.event_type === 'goal' || e.event_type === 'penalty') && (e.half ?? 1) <= 2).map((e, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
+                      <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px] min-w-0 w-full">
                         <GoalIcon className="w-3.5 h-3.5 mr-1 text-white/80 shrink-0" color="currentColor" />
-                        <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
-                        <span className="font-semibold">{e.player_name}</span>
+                        <span className="text-white/60 shrink-0 whitespace-nowrap">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
+                        <span className="font-semibold truncate min-w-0">
+                          <span className="md:hidden">{e.player_name.split(' ').at(-1)}</span>
+                          <span className="hidden md:inline">{e.player_name}</span>
+                        </span>
                       </div>
                     ))}
                   </div>

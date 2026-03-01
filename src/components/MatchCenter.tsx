@@ -205,7 +205,7 @@ export function MatchCenter() {
                   match.is_live || match.status === 'live' ? (
                     <LiveMatchCard key={match.id} match={match} />
                   ) : (
-                    <MatchCard key={match.id} match={match} showTour showScheduleDisclaimer />
+                    <MatchCard key={match.id} match={match} showTour showDate={false} showScheduleDisclaimer />
                   )
                 )}
               </div>

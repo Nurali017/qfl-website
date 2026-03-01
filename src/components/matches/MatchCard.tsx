@@ -9,6 +9,7 @@ import { getTeamLogo, HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
 interface MatchCardProps {
   match: Game;
   showTour?: boolean;
+  showDate?: boolean;
   className?: string;
   showScheduleDisclaimer?: boolean;
 }
@@ -24,6 +25,7 @@ function formatMatchTime(raw: string | null | undefined): string | undefined {
 export function MatchCard({
   match,
   showTour = true,
+  showDate = true,
   className = '',
   showScheduleDisclaimer = false,
 }: MatchCardProps) {
@@ -39,13 +41,15 @@ export function MatchCard({
   const isUpcoming = match.status === 'upcoming';
   const shouldShowScheduleDisclaimer = showScheduleDisclaimer && match.is_schedule_tentative === true;
   const displayTime = formatMatchTime(match.time);
-  const displayDateTime = match.is_schedule_tentative
-    ? null
-    : isUpcoming
-      ? match.date || null
-      : match.date && displayTime
-        ? `${match.date}, ${displayTime}`
-        : match.date || displayTime;
+  const displayDateTime = !showDate
+    ? (isUpcoming ? null : displayTime || null)
+    : match.is_schedule_tentative
+      ? null
+      : isUpcoming
+        ? match.date || null
+        : match.date && displayTime
+          ? `${match.date}, ${displayTime}`
+          : match.date || displayTime;
 
   const isTentative = match.is_schedule_tentative === true;
 

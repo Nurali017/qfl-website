@@ -63,13 +63,13 @@ export function H2HContentCards({
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-8 shadow-sm">
         <div className="text-center">
           <div className="text-red-500 text-4xl mb-4">!</div>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-500 dark:text-slate-400 text-sm">
             {t('h2h.error', 'Error loading data')}
           </p>
-          <p className="text-gray-400 text-xs mt-2">{error}</p>
+          <p className="text-gray-400 dark:text-slate-500 text-xs mt-2">{error}</p>
         </div>
       </div>
     );
@@ -77,8 +77,8 @@ export function H2HContentCards({
 
   if (!data) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-        <div className="text-center text-gray-500 text-sm">
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-8 shadow-sm">
+        <div className="text-center text-gray-500 dark:text-slate-400 text-sm">
           {t('h2h.noData', 'No previous meetings data')}
         </div>
       </div>

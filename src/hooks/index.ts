@@ -11,6 +11,7 @@ export { useMatchLineup } from './useMatchLineup';
 export { useMatchEvents } from './useMatchEvents';
 export { useSliderNews, useLatestNews, useNewsById } from './useNews';
 export { useNewsPagination } from './useNewsPagination';
+export { useArticleTypeCounts } from './useArticleTypeCounts';
 export { useNewsReactions } from './useNewsReactions';
 export { useNewsNavigation } from './useNewsNavigation';
 export { useDebounce } from './useDebounce';

@@ -173,7 +173,7 @@ export default function MatchDetailPage() {
   }
 
   return (
-    <div className="bg-[#FAFBFC] dark:bg-dark-bg min-h-screen">
+    <div className="bg-white dark:bg-dark-bg min-h-screen">
       {/* 1. Hero Section */}
       <MatchHeader
         match={match}

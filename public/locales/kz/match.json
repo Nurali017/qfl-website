@@ -207,7 +207,12 @@
     "listView": "Тізім",
     "pitchView": "Алаңда",
     "rosterInfoBanner": "Негізгі құрам матч басталуына жақындағанды жарияланады",
-    "seasonRoster": "Маусымға өтініш"
+    "seasonRoster": "Маусымға өтініш",
+    "goalkeeper": "Қақпашы",
+    "defenders": "Қорғаушылар",
+    "midfielders": "Жартылай қорғаушылар",
+    "forwards": "Шабуылшылар",
+    "players": "Ойыншылар"
   },
   "referee": {
     "brigade": "Төрешілер бригадасы",

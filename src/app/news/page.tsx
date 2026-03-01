@@ -9,7 +9,7 @@ import { NewsFilters } from '@/components/news/NewsFilters';
 import { NewsTabs } from '@/components/news/NewsTabs';
 import { NewsPagination } from '@/components/news/NewsPagination';
 import { useTournament } from '@/contexts/TournamentContext';
-import { useNewsPagination } from '@/hooks';
+import { useNewsPagination, useArticleTypeCounts } from '@/hooks';
 import { buildSearchParams, getFiltersFromSearchParams, getPageFromSearchParams } from '@/lib/utils/urlState';
 import { HeroBackground } from '@/components/ui/HeroBackground';
 
@@ -76,22 +76,19 @@ function NewsPageContent() {
 
   const { news, loading, totalPages } = useNewsPagination(filters, page, 12);
 
-  // Lightweight count calls to determine which tabs have content
-  const { total: newsTotal, loading: newsCountLoading } = useNewsPagination(
-    { ...filters, article_type: 'news' }, 1, 1
-  );
-  const { total: analyticsTotal, loading: analyticsCountLoading } = useNewsPagination(
-    { ...filters, article_type: 'analytics' }, 1, 1
+  // Single API call to determine which tabs have content
+  const { counts: articleTypeCounts, loading: countsLoading } = useArticleTypeCounts(
+    currentTournament.id
   );
 
-  const countsLoaded = !newsCountLoading && !analyticsCountLoading;
+  const countsLoaded = !countsLoading;
   const visibleTabs = useMemo(() => {
     const set = new Set<'all' | 'news' | 'analytics'>(['all']);
     if (!countsLoaded) return set;
-    if (newsTotal > 0) set.add('news');
-    if (analyticsTotal > 0) set.add('analytics');
+    if (articleTypeCounts.NEWS > 0) set.add('news');
+    if (articleTypeCounts.ANALYTICS > 0) set.add('analytics');
     return set;
-  }, [countsLoaded, newsTotal, analyticsTotal]);
+  }, [countsLoaded, articleTypeCounts.NEWS, articleTypeCounts.ANALYTICS]);
 
   // Determine active tab from filters
   const activeTab = filters.article_type === 'news' ? 'news'

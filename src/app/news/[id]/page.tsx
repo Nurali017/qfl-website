@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
@@ -196,10 +197,13 @@ export default function NewsDetailPage() {
           {/* Main Image */}
           {normalizedImageUrl && (
             <div className="relative h-[250px] md:h-[450px] overflow-hidden">
-              <img
+              <Image
                 src={normalizedImageUrl}
                 alt={news.title}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 900px) 100vw, 900px"
+                priority
+                className="object-cover"
               />
             </div>
           )}

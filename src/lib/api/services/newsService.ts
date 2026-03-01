@@ -48,6 +48,25 @@ export const newsService = {
     return response.data;
   },
 
+  async getArticleTypeCounts(
+    language: string = DEFAULT_LANGUAGE,
+    championshipCode?: string
+  ): Promise<Record<string, number>> {
+    const params: NewsQuery = { lang: language };
+    if (championshipCode) params.championship_code = championshipCode;
+
+    const response = await apiClient.get<Record<string, number>>(
+      ENDPOINTS.NEWS_ARTICLE_TYPES,
+      params
+    );
+
+    if (!response.success) {
+      return {};
+    }
+
+    return response.data;
+  },
+
   async getById(
     id: number,
     language: string = DEFAULT_LANGUAGE

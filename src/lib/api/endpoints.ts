@@ -19,6 +19,7 @@ export const ENDPOINTS = {
   NEWS_LATEST: '/news/latest',
   NEWS_BY_ID: (id: number) => `/news/${id}`,
   NEWS_PAGINATED: '/news',
+  NEWS_ARTICLE_TYPES: '/news/article-types',
   NEWS_VIEW: (id: number) => `/news/${id}/view`,
   NEWS_LIKE: (id: number) => `/news/${id}/like`,
   NEWS_REACTIONS: (id: number) => `/news/${id}/reactions`,

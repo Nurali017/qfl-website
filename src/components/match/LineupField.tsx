@@ -84,29 +84,29 @@ function PlayerRow({ player }: { player: LineupPlayerExtended }) {
   const playerHref = getPlayerHref(player.player_id);
 
   const content = (
-    <div className="flex items-center gap-4 w-full px-4 py-2 bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 relative group">
-      <div className="w-6 text-center text-sm md:text-[20px] font-black text-gray-900 overflow-hidden">
+    <div className="flex items-center gap-4 w-full px-4 py-2 bg-white dark:bg-dark-surface-alt hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors border-b border-gray-100 dark:border-dark-border last:border-0 relative group">
+      <div className="w-6 text-center text-sm md:text-[20px] font-black text-gray-900 dark:text-white overflow-hidden">
         {player.number}
       </div>
 
       {/* Small Shield for List view */}
       <div
-        className="w-10 h-11 shrink-0 bg-gray-200 relative group-hover:scale-105 transition-transform"
+        className="w-10 h-11 shrink-0 bg-gray-200 dark:bg-dark-border relative group-hover:scale-105 transition-transform"
         style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)', padding: '1px' }}
       >
-        <div className="w-full h-full bg-white" style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)' }}>
+        <div className="w-full h-full bg-white dark:bg-dark-surface" style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)' }}>
           {player.photo_url ? (
             <img src={player.photo_url} className="w-full h-full object-cover object-top" alt="" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-[10px] text-gray-400 font-bold">{player.number}</span>
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-dark-border">
+              <span className="text-[10px] text-gray-400 dark:text-slate-500 font-bold">{player.number}</span>
             </div>
           )}
         </div>
       </div>
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="text-[13px] md:text-sm font-bold text-gray-900 truncate uppercase mt-0.5 tracking-tight group-hover:text-blue-700">
+        <div className="text-[13px] md:text-sm font-bold text-gray-900 dark:text-white truncate uppercase mt-0.5 tracking-tight group-hover:text-blue-700 dark:group-hover:text-blue-400">
           {fullName}
         </div>
         {player.country?.flag_url && (
@@ -116,7 +116,7 @@ function PlayerRow({ player }: { player: LineupPlayerExtended }) {
               alt={player.country.code}
               className="w-3.5 h-2.5 object-cover rounded-[1px] shadow-sm flex-shrink-0"
             />
-            <span className="text-[10px] text-gray-500 font-semibold">{player.country.name}</span>
+            <span className="text-[10px] text-gray-500 dark:text-slate-400 font-semibold">{player.country.name}</span>
           </div>
         )}
       </div>
@@ -138,9 +138,9 @@ function SubstituteRow({ player }: { player: LineupPlayerExtended }) {
   const playerHref = getPlayerHref(player.player_id);
 
   const content = (
-    <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/60 transition-colors border-b border-gray-200/60 last:border-0 group">
-      <span className="w-5 text-right text-[11px] font-bold text-gray-400 tabular-nums shrink-0">{player.number}</span>
-      <span className="text-[12px] font-semibold text-gray-800 truncate uppercase tracking-tight group-hover:text-blue-700">
+    <div className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/60 dark:hover:bg-dark-border/30 transition-colors border-b border-gray-100 dark:border-dark-border/60 last:border-0 group">
+      <span className="w-5 text-right text-[11px] font-bold text-gray-400 dark:text-slate-500 tabular-nums shrink-0">{player.number}</span>
+      <span className="text-[12px] font-semibold text-gray-800 dark:text-slate-200 truncate uppercase tracking-tight group-hover:text-blue-700 dark:group-hover:text-blue-400">
         {player.last_name}
       </span>
     </div>
@@ -157,12 +157,13 @@ function SubstituteRow({ player }: { player: LineupPlayerExtended }) {
 
 // --- SUBSTITUTE SIDE PANEL (FOR PITCH VIEW) ---
 function SubstituteSidePanel({ team, logoUrl, substitutes, align }: { team: GameTeam; logoUrl: string | null | undefined; substitutes: LineupPlayerExtended[]; align: 'left' | 'right' }) {
+  const { t } = useTranslation('match');
   const teamHref = getTeamHref(team.id);
 
   return (
-    <div className="bg-[#f5f5f5] rounded-xl border border-gray-200 overflow-hidden shadow-sm flex flex-col">
+    <div className="bg-gray-50 dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm flex flex-col">
       {/* Header */}
-      <div className={`px-3 py-2.5 bg-white border-b-2 border-slate-800 flex items-center gap-2 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
+      <div className={`px-3 py-2.5 bg-white dark:bg-dark-surface-alt border-b border-gray-100 dark:border-dark-border flex items-center gap-2 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
         {teamHref ? (
           <Link href={teamHref} className="flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0">
             <img src={logoUrl || getTeamLogo(team.id) || ''} className="w-6 h-6 object-contain" alt={team.name} />
@@ -171,8 +172,8 @@ function SubstituteSidePanel({ team, logoUrl, substitutes, align }: { team: Game
           <img src={logoUrl || getTeamLogo(team.id) || ''} className="w-6 h-6 object-contain shrink-0" alt={team.name} />
         )}
         <div className={`flex flex-col min-w-0 ${align === 'right' ? 'items-end' : ''}`}>
-          <span className="font-bold text-gray-900 text-[11px] uppercase tracking-tight truncate max-w-full">{team.name}</span>
-          <span className="text-[9px] text-gray-400 font-black tracking-widest uppercase">Substitutes</span>
+          <span className="font-bold text-gray-900 dark:text-white text-[11px] uppercase tracking-tight truncate max-w-full">{team.name}</span>
+          <span className="text-[9px] text-gray-400 dark:text-slate-500 font-black tracking-widest uppercase">{t('lineup.substitutes')}</span>
         </div>
       </div>
       {/* Player list */}
@@ -188,6 +189,7 @@ function SubstituteSidePanel({ team, logoUrl, substitutes, align }: { team: Game
 
 // --- TEAM LIST CARD (LIST VIEW) ---
 function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }: { team: GameTeam; logoUrl: string | null | undefined; starters: LineupPlayerExtended[]; substitutes: LineupPlayerExtended[]; formation?: string }) {
+  const { t } = useTranslation('match');
   const teamHref = getTeamHref(team.id);
 
   const gks = starters.filter(p => p.position === 'GK');
@@ -202,23 +204,23 @@ function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }:
   );
 
   return (
-    <div className="w-full flex flex-col shadow-lg rounded-xl overflow-hidden border border-gray-200/50 bg-[#f5f5f5]">
+    <div className="w-full flex flex-col shadow-sm rounded-2xl overflow-hidden border border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-surface">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 bg-white border-b-4 border-slate-900">
+      <div className="flex items-center justify-between px-5 py-4 bg-white dark:bg-dark-surface-alt border-b border-gray-100 dark:border-dark-border">
         <LogoContainer>
           <img src={logoUrl || getTeamLogo(team.id) || ''} className="w-10 h-10 object-contain drop-shadow" alt={team.name} />
-          <span className="font-black text-gray-900 tracking-tight text-lg">{team.name}</span>
+          <span className="font-black text-gray-900 dark:text-white tracking-tight text-lg">{team.name}</span>
         </LogoContainer>
         {formation && (
-          <div className="text-gray-500 font-mono font-bold text-sm tracking-widest whitespace-nowrap shrink-0">{formation}</div>
+          <div className="text-gray-500 dark:text-slate-400 font-mono font-bold text-sm tracking-widest whitespace-nowrap shrink-0">{formation}</div>
         )}
       </div>
 
       <div className="flex flex-col">
         {gks.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mx-0 mt-0">
-              <span>GOALKEEPER</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mx-0 mt-0">
+              <span>{t('lineup.goalkeeper')}</span>
             </div>
             {gks.map(p => <PlayerRow key={p.player_id} player={p} />)}
           </>
@@ -226,8 +228,8 @@ function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }:
 
         {defs.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mt-2">
-              <span>DEFENDERS</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mt-2">
+              <span>{t('lineup.defenders')}</span>
             </div>
             {defs.map(p => <PlayerRow key={p.player_id} player={p} />)}
           </>
@@ -235,8 +237,8 @@ function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }:
 
         {mids.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mt-2">
-              <span>MIDFIELDERS</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mt-2">
+              <span>{t('lineup.midfielders')}</span>
             </div>
             {mids.map(p => <PlayerRow key={p.player_id} player={p} />)}
           </>
@@ -244,8 +246,8 @@ function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }:
 
         {fwds.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mt-2">
-              <span>FORWARDS</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mt-2">
+              <span>{t('lineup.forwards')}</span>
             </div>
             {fwds.map(p => <PlayerRow key={p.player_id} player={p} />)}
           </>
@@ -253,8 +255,8 @@ function TeamLineupListCard({ team, logoUrl, starters, substitutes, formation }:
 
         {substitutes.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mt-6">
-              <span>SUBSTITUTES</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mt-6">
+              <span>{t('lineup.substitutes')}</span>
             </div>
             {substitutes.map(p => <PlayerRow key={p.player_id} player={p} />)}
           </>
@@ -383,11 +385,11 @@ interface LineupFieldProps { lineups?: MatchLineups; homeTeam: GameTeam; awayTea
 export function LineupField({ lineups, homeTeam, awayTeam, loading, renderingMode = 'field' }: LineupFieldProps) {
   const { t } = useTranslation('match');
 
-  if (loading) return <div className="animate-pulse h-[800px] bg-gray-200 rounded-xl" />;
+  if (loading) return <div className="animate-pulse h-[800px] bg-gray-200 dark:bg-dark-border rounded-2xl" />;
   if (renderingMode === 'hidden') return null;
 
   if (!lineups || !lineups.home_team || !lineups.away_team) {
-    return <div className="bg-white rounded-2xl p-12 text-center border shadow-sm"><p className="text-gray-500">{t('lineup.noData')}</p></div>;
+    return <div className="bg-white dark:bg-dark-surface rounded-2xl p-12 text-center border border-gray-100 dark:border-dark-border shadow-sm"><p className="text-gray-500 dark:text-slate-400">{t('lineup.noData')}</p></div>;
   }
 
   const homeColor = resolveKitColor(lineups.home_team.kit_color, HOME_COLOR);

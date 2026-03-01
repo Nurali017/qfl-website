@@ -5,7 +5,7 @@ import { TournamentAwareLink as Link } from '@/components/navigation/TournamentA
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EnhancedMatchEvent, GameTeam } from '@/types';
-import { GoalIcon, YellowCardIcon, RedCardIcon, PenaltyIcon } from './MatchEventIcons';
+import { GoalIcon, YellowCardIcon, RedCardIcon } from './MatchEventIcons';
 
 interface MatchEventsListProps {
   events: EnhancedMatchEvent[];
@@ -24,11 +24,11 @@ const INITIAL_VISIBLE = 4;
 function EventMarkerIcon({ type }: { type: string }) {
   switch (type) {
     case 'goal':
-      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" color="currentColor" />;
+      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" color="currentColor" />;
     case 'own_goal':
-      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" color="currentColor" />;
+      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 dark:text-red-400" color="currentColor" />;
     case 'penalty':
-      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" color="currentColor" />;
+      return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" color="currentColor" />;
     case 'missed_penalty':
       return (
         <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-500/15 dark:bg-red-500/30 flex items-center justify-center">
@@ -232,17 +232,9 @@ function groupShootoutRounds(
 
 function ShootoutIcon({ scored }: { scored: boolean }) {
   if (scored) {
-    return (
-      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-        <PenaltyIcon className="w-3.5 h-3.5 text-white" />
-      </div>
-    );
+    return <GoalIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-900 dark:text-white" color="currentColor" />;
   }
-  return (
-    <div className="w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center">
-      <X className="w-3.5 h-3.5 text-white" />
-    </div>
-  );
+  return <X className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />;
 }
 
 function ShootoutSection({
@@ -339,7 +331,7 @@ export function MatchEventsList({ events, homeTeam, awayTeam, loading, isTechnic
     return (
       <div className="space-y-3 animate-pulse">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="bg-[#f5f5f5] dark:bg-dark-surface rounded-xl h-20" />
+          <div key={i} className="bg-gray-100 dark:bg-dark-surface rounded-2xl h-20" />
         ))}
       </div>
     );
@@ -352,7 +344,7 @@ export function MatchEventsList({ events, homeTeam, awayTeam, loading, isTechnic
 
   if ((!events || events.length === 0) && !showShootout) {
     return (
-      <div className="bg-[#f5f5f5] dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border px-4 py-8 text-center">
+      <div className="bg-gray-50 dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border px-4 py-8 text-center">
         {isTechnical ? (
           <span className="text-orange-500 font-medium">{t('events.technicalWin')}</span>
         ) : (

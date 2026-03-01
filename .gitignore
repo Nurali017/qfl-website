@@ -38,3 +38,6 @@ next-env.d.ts
 
 # UX audit artifacts
 /ux-screenshots/
+
+# Generated images
+images/

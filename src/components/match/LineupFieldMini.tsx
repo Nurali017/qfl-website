@@ -46,10 +46,10 @@ function MiniPlayerName({ player }: { player: LineupPlayerExtended }) {
 
   const content = (
     <>
-      <span className="inline-flex w-5 h-5 items-center justify-center rounded-full bg-gray-100 text-[10px] font-bold text-gray-700">
+      <span className="inline-flex w-5 h-5 items-center justify-center rounded-full bg-gray-100 dark:bg-dark-border text-[10px] font-bold text-gray-700 dark:text-slate-300">
         {player.number}
       </span>
-      <span className="truncate text-gray-800">{`${player.first_name} ${player.last_name}`}</span>
+      <span className="truncate text-gray-800 dark:text-slate-200">{`${player.first_name} ${player.last_name}`}</span>
     </>
   );
 
@@ -79,9 +79,9 @@ export function LineupFieldMini({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-bold text-gray-900">{t('lineups')}</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('lineups')}</h3>
         </div>
         <div className="animate-pulse aspect-[3/4] bg-gray-100" />
       </div>
@@ -94,11 +94,11 @@ export function LineupFieldMini({
 
   if (!lineups || !lineups.home_team || !lineups.away_team) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-bold text-gray-900">{t('lineups')}</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('lineups')}</h3>
         </div>
-        <div className="p-6 text-center text-sm text-gray-500">
+        <div className="p-6 text-center text-sm text-gray-500 dark:text-slate-400">
           {t('lineup.noData')}
         </div>
       </div>
@@ -114,21 +114,21 @@ export function LineupFieldMini({
 
   if (renderingMode === 'list') {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-bold text-gray-900">{t('lineups')}</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('lineups')}</h3>
         </div>
         <div className="grid grid-cols-1 gap-4 p-4">
           <div>
             {homeTeamHref ? (
               <Link href={homeTeamHref} className="flex items-center gap-2 mb-2 hover:text-primary transition-colors">
                 <img src={homeTeam.logo_url || getTeamLogo(homeTeam.id) || ''} className="w-5 h-5 object-contain" alt={homeTeam.name} />
-                <span className="text-xs font-bold text-gray-800">{homeTeam.name}</span>
+                <span className="text-xs font-bold text-gray-800 dark:text-white">{homeTeam.name}</span>
               </Link>
             ) : (
               <div className="flex items-center gap-2 mb-2">
                 <img src={homeTeam.logo_url || getTeamLogo(homeTeam.id) || ''} className="w-5 h-5 object-contain" alt={homeTeam.name} />
-                <span className="text-xs font-bold text-gray-800">{homeTeam.name}</span>
+                <span className="text-xs font-bold text-gray-800 dark:text-white">{homeTeam.name}</span>
               </div>
             )}
             <div className="space-y-1">
@@ -138,16 +138,16 @@ export function LineupFieldMini({
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-3">
+          <div className="border-t border-gray-100 dark:border-dark-border pt-3">
             {awayTeamHref ? (
               <Link href={awayTeamHref} className="flex items-center gap-2 mb-2 hover:text-primary transition-colors">
                 <img src={awayTeam.logo_url || getTeamLogo(awayTeam.id) || ''} className="w-5 h-5 object-contain" alt={awayTeam.name} />
-                <span className="text-xs font-bold text-gray-800">{awayTeam.name}</span>
+                <span className="text-xs font-bold text-gray-800 dark:text-white">{awayTeam.name}</span>
               </Link>
             ) : (
               <div className="flex items-center gap-2 mb-2">
                 <img src={awayTeam.logo_url || getTeamLogo(awayTeam.id) || ''} className="w-5 h-5 object-contain" alt={awayTeam.name} />
-                <span className="text-xs font-bold text-gray-800">{awayTeam.name}</span>
+                <span className="text-xs font-bold text-gray-800 dark:text-white">{awayTeam.name}</span>
               </div>
             )}
             <div className="space-y-1">
@@ -186,10 +186,10 @@ export function LineupFieldMini({
   });
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-bold text-gray-900">{t('lineups')}</h3>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+        <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('lineups')}</h3>
       </div>
 
       {/* Field */}

@@ -82,7 +82,7 @@ export function MatchStatisticsTab({ match }: MatchStatisticsTabProps) {
 
     if (!stats) {
         return (
-            <div className="text-center py-16 bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border shadow-sm max-w-4xl mx-auto">
+            <div className="text-center py-16 bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border shadow-sm">
                 <p className="text-gray-500 font-bold uppercase tracking-widest">{t('statisticsTab.notAvailable')}</p>
             </div>
         );
@@ -99,7 +99,7 @@ export function MatchStatisticsTab({ match }: MatchStatisticsTabProps) {
     );
 
     return (
-        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-200 dark:border-dark-border p-6 shadow-sm max-w-4xl mx-auto">
+        <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-5 shadow-sm">
 
             {/* Header with team logos */}
             <div className="flex items-center justify-between mb-6">

@@ -46,9 +46,9 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-bold text-gray-900">{t('tournamentTable')}</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('tournamentTable')}</h3>
         </div>
         <div className="animate-pulse p-4 space-y-3">
           {[...Array(5)].map((_, i) => (
@@ -61,11 +61,11 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
 
   if (error || !standings.length) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-bold text-gray-900">{t('tournamentTable')}</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('tournamentTable')}</h3>
         </div>
-        <div className="p-6 text-center text-sm text-gray-500">
+        <div className="p-6 text-center text-sm text-gray-500 dark:text-slate-400">
           {t('lineup.noData')}
         </div>
       </div>
@@ -73,10 +73,10 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h3 className="text-sm font-bold text-gray-900">{t('tournamentTable')}</h3>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-dark-border">
+        <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('tournamentTable')}</h3>
         <Link
           href="/table"
           className="text-xs font-semibold text-primary hover:text-primary-dark flex items-center gap-1 group"
@@ -87,23 +87,23 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
       </div>
 
       {/* Table Head */}
-      <div className="flex items-center gap-2 bg-gray-50/50 px-4 py-2 border-b border-gray-100">
-        <span className="w-8 text-[10px] font-bold text-gray-400 uppercase text-center">#</span>
-        <span className="flex-1 text-[10px] font-bold text-gray-400 uppercase">{t('table.team')}</span>
-        <span className="w-8 text-center text-[10px] font-bold text-gray-400 uppercase">{t('table.matches')}</span>
-        <span className="w-8 text-center text-[10px] font-bold text-gray-400 uppercase">{t('table.points')}</span>
+      <div className="flex items-center gap-2 bg-gray-50/50 dark:bg-dark-surface px-4 py-2 border-b border-gray-100 dark:border-dark-border">
+        <span className="w-8 text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase text-center">#</span>
+        <span className="flex-1 text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">{t('table.team')}</span>
+        <span className="w-8 text-center text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">{t('table.matches')}</span>
+        <span className="w-8 text-center text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase">{t('table.points')}</span>
       </div>
 
       {/* Table Body */}
-      <div className="divide-y divide-gray-50">
+      <div className="divide-y divide-gray-50 dark:divide-dark-border/40">
         {standings.map((row) => {
           const isHome = row.team_id === homeTeamId;
           const isAway = row.team_id === awayTeamId;
           const isHighlighted = isHome || isAway;
 
-          let bgClass = 'bg-white hover:bg-gray-50';
-          if (isHome) bgClass = 'bg-blue-50/50 hover:bg-blue-50';
-          if (isAway) bgClass = 'bg-yellow-50/50 hover:bg-yellow-50';
+          let bgClass = 'bg-white dark:bg-dark-surface hover:bg-gray-50 dark:hover:bg-dark-border/30';
+          if (isHome) bgClass = 'bg-blue-50/50 dark:bg-blue-950/30 hover:bg-blue-50 dark:hover:bg-blue-950/50';
+          if (isAway) bgClass = 'bg-yellow-50/50 dark:bg-yellow-950/30 hover:bg-yellow-50 dark:hover:bg-yellow-950/50';
 
           return (
             <div
@@ -111,7 +111,7 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
               className={`flex items-center gap-2 px-4 py-3 transition-colors ${bgClass}`}
             >
               <span
-                className={`w-8 text-xs text-center font-bold ${isHighlighted ? 'text-gray-900' : 'text-gray-500'}`}
+                className={`w-8 text-xs text-center font-bold ${isHighlighted ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-slate-400'}`}
               >
                 {row.position}
               </span>
@@ -136,7 +136,7 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
                         />
                       )}
                       <span
-                        className={`text-xs truncate ${isHighlighted ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}
+                        className={`text-xs truncate ${isHighlighted ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-700 dark:text-slate-300'}`}
                       >
                         {row.team_name}
                       </span>
@@ -156,12 +156,12 @@ export function TournamentTableMini({ seasonId, homeTeamId, awayTeamId }: Tourna
                 })()}
               </div>
 
-              <span className="w-8 text-center text-xs text-gray-500 font-medium">
+              <span className="w-8 text-center text-xs text-gray-500 dark:text-slate-400 font-medium">
                 {row.games_played}
               </span>
 
               <span
-                className={`w-8 text-center text-xs ${isHighlighted ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}
+                className={`w-8 text-center text-xs ${isHighlighted ? 'font-black text-gray-900 dark:text-white' : 'font-bold text-gray-700 dark:text-slate-300'}`}
               >
                 {row.points}
               </span>

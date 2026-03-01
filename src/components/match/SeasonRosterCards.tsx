@@ -12,33 +12,33 @@ function RosterPlayerRow({ player }: { player: SquadPlayer }) {
   const playerHref = getPlayerHref(player.player_id);
 
   const content = (
-    <div className="flex items-center gap-4 w-full px-4 py-2 bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 relative group">
-      <div className="w-6 text-center text-sm md:text-[20px] font-black text-gray-900 overflow-hidden">
+    <div className="flex items-center gap-4 w-full px-4 py-2 bg-white dark:bg-dark-surface-alt hover:bg-gray-50 dark:hover:bg-dark-border/30 transition-colors border-b border-gray-100 dark:border-dark-border last:border-0 relative group">
+      <div className="w-6 text-center text-sm md:text-[20px] font-black text-gray-900 dark:text-white overflow-hidden">
         {player.jersey_number ?? '—'}
       </div>
 
       <div
-        className="w-10 h-11 shrink-0 bg-gray-200 relative group-hover:scale-105 transition-transform"
+        className="w-10 h-11 shrink-0 bg-gray-200 dark:bg-dark-border relative group-hover:scale-105 transition-transform"
         style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)', padding: '1px' }}
       >
-        <div className="w-full h-full bg-white" style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)' }}>
+        <div className="w-full h-full bg-white dark:bg-dark-surface" style={{ clipPath: 'polygon(50% 100%, 100% 75%, 100% 0, 0 0, 0 75%)' }}>
           {player.photo_url ? (
             <img src={player.photo_url} className="w-full h-full object-cover object-top" alt="" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-[10px] text-gray-400 font-bold">{player.jersey_number ?? '—'}</span>
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-dark-border">
+              <span className="text-[10px] text-gray-400 dark:text-slate-500 font-bold">{player.jersey_number ?? '—'}</span>
             </div>
           )}
         </div>
       </div>
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="text-[13px] md:text-sm font-bold text-gray-900 truncate uppercase mt-0.5 tracking-tight group-hover:text-blue-700">
+        <div className="text-[13px] md:text-sm font-bold text-gray-900 dark:text-white truncate uppercase mt-0.5 tracking-tight group-hover:text-blue-700 dark:group-hover:text-blue-400">
           {fullName}
         </div>
         {player.country_code && (
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[10px] text-gray-500 font-semibold">{player.nationality || player.country_code}</span>
+            <span className="text-[10px] text-gray-500 dark:text-slate-400 font-semibold">{player.nationality || player.country_code}</span>
           </div>
         )}
       </div>
@@ -55,20 +55,21 @@ function RosterPlayerRow({ player }: { player: SquadPlayer }) {
 }
 
 const POSITION_ORDER = ['GK', 'DEF', 'MID', 'FWD'] as const;
-const POSITION_LABELS: Record<string, string> = {
-  GK: 'GOALKEEPER',
-  DEF: 'DEFENDERS',
-  MID: 'MIDFIELDERS',
-  FWD: 'FORWARDS',
+const POSITION_LABEL_KEYS: Record<string, string> = {
+  GK: 'lineup.goalkeeper',
+  DEF: 'lineup.defenders',
+  MID: 'lineup.midfielders',
+  FWD: 'lineup.forwards',
 };
 
 function TeamRosterCard({ team, players }: { team: GameTeam; players: SquadPlayer[] }) {
+  const { t } = useTranslation('match');
   const teamHref = getTeamHref(team.id);
   const logoUrl = team.logo_url || getTeamLogo(team.id) || '';
 
   const grouped = POSITION_ORDER.map(pos => ({
     pos,
-    label: POSITION_LABELS[pos],
+    label: t(POSITION_LABEL_KEYS[pos]),
     players: players.filter(p => p.position === pos),
   })).filter(g => g.players.length > 0);
 
@@ -82,18 +83,18 @@ function TeamRosterCard({ team, players }: { team: GameTeam; players: SquadPlaye
   );
 
   return (
-    <div className="w-full flex flex-col shadow-lg rounded-xl overflow-hidden border border-gray-200/50 bg-[#f5f5f5]">
-      <div className="flex items-center justify-between px-5 py-4 bg-white border-b-4 border-slate-900">
+    <div className="w-full flex flex-col shadow-sm rounded-2xl overflow-hidden border border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-dark-surface">
+      <div className="flex items-center justify-between px-5 py-4 bg-white dark:bg-dark-surface-alt border-b border-gray-100 dark:border-dark-border">
         <LogoContainer>
           <img src={logoUrl} className="w-10 h-10 object-contain drop-shadow" alt={team.name} />
-          <span className="font-black text-gray-900 tracking-tight text-lg">{team.name}</span>
+          <span className="font-black text-gray-900 dark:text-white tracking-tight text-lg">{team.name}</span>
         </LogoContainer>
       </div>
 
       <div className="flex flex-col">
         {grouped.map(({ pos, label, players: posPlayers }, idx) => (
           <div key={pos}>
-            <div className={`flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 ${idx > 0 ? 'mt-2' : 'mt-0'}`}>
+            <div className={`flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border ${idx > 0 ? 'mt-2' : 'mt-0'}`}>
               <span>{label}</span>
             </div>
             {posPlayers.map(p => <RosterPlayerRow key={p.player_id} player={p} />)}
@@ -102,8 +103,8 @@ function TeamRosterCard({ team, players }: { team: GameTeam; players: SquadPlaye
 
         {ungrouped.length > 0 && (
           <>
-            <div className="flex items-center justify-between px-5 py-2.5 bg-[#f5f5f5] text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] border-y border-gray-200 mt-2">
-              <span>PLAYERS</span>
+            <div className="flex items-center justify-between px-5 py-2.5 bg-gray-50 dark:bg-dark-surface text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-[0.2em] border-y border-gray-100 dark:border-dark-border mt-2">
+              <span>{t('lineup.players')}</span>
             </div>
             {ungrouped.map(p => <RosterPlayerRow key={p.player_id} player={p} />)}
           </>

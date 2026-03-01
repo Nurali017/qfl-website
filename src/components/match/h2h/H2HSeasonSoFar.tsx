@@ -48,7 +48,7 @@ function ComparisonRow({
     }
   }
 
-  const bgClass = index % 2 === 0 ? 'bg-white dark:bg-gray-700/50' : 'bg-gray-50 dark:bg-gray-700/30';
+  const bgClass = index % 2 === 0 ? 'bg-white dark:bg-dark-surface-alt' : 'bg-gray-50 dark:bg-dark-surface';
 
   const Wrapper = prefersReducedMotion ? 'div' : motion.div;
   const wrapperProps = prefersReducedMotion
@@ -146,7 +146,7 @@ export function H2HSeasonSoFar({
   }
 
   return (
-    <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl overflow-hidden">
+    <div className="bg-gray-50 dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border overflow-hidden shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between p-4 sm:p-6 pb-3">
         <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0">
@@ -155,7 +155,7 @@ export function H2HSeasonSoFar({
           )}
         </div>
         <div className="text-center">
-          <h3 className="text-base font-extrabold uppercase tracking-wide text-gray-900 dark:text-white">
+          <h3 className="text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white">
             {t('h2h.seasonSoFar', 'СЕЗОН')}
           </h3>
           <p className="text-[11px] text-gray-400 mt-0.5">
@@ -185,7 +185,7 @@ export function H2HSeasonSoFar({
       </div>
 
       {/* Comparison Rows */}
-      <div className="border-t border-gray-200 dark:border-gray-600">
+      <div className="border-t border-gray-100 dark:border-dark-border">
         {rows.map((row, i) => (
           <ComparisonRow
             key={row.label}
@@ -201,8 +201,8 @@ export function H2HSeasonSoFar({
 
       {/* Biggest Win / Worst Defeat */}
       {funFacts && (
-        <div className="border-t-2 border-gray-200 dark:border-gray-600">
-          <div className="grid grid-cols-3 items-center px-4 py-3 bg-white dark:bg-gray-700/50">
+        <div className="border-t-2 border-gray-100 dark:border-dark-border">
+          <div className="grid grid-cols-3 items-center px-4 py-3 bg-white dark:bg-dark-surface-alt">
             <div className="text-right">
               <span className="text-sm font-bold" style={{ color: homeColor }}>
                 {funFacts.team1_biggest_win?.score ?? '-'}
@@ -219,7 +219,7 @@ export function H2HSeasonSoFar({
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-3 items-center px-4 py-3 bg-gray-50 dark:bg-gray-700/30">
+          <div className="grid grid-cols-3 items-center px-4 py-3 bg-gray-50 dark:bg-dark-surface">
             <div className="text-right">
               <span className="text-sm font-bold" style={{ color: homeColor }}>
                 {funFacts.team1_worst_defeat?.score ?? '-'}

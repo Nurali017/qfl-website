@@ -1,10 +1,8 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { motion } from 'motion/react';
 import { NewsArticle } from '@/types';
 import { NewsCard } from './NewsCard';
-import { staggerContainer, fadeInUp } from '@/lib/motion';
 
 interface NewsGridProps {
   news: NewsArticle[];
@@ -85,44 +83,31 @@ export function NewsGrid({
 
   if (variant === 'list') {
     return (
-      <motion.div
-        className={`space-y-4 ${className}`}
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        {news.map((item) => (
-          <motion.div
+      <div className={`space-y-4 ${className}`}>
+        {news.map((item, index) => (
+          <div
             key={item.id}
-            variants={fadeInUp}
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            className="animate-fade-in-up"
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             <NewsCard news={item} variant="compact" showStats={showStats} />
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-    >
-      {news.map((item) => (
-        <motion.div
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+      {news.map((item, index) => (
+        <div
           key={item.id}
-          variants={fadeInUp}
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="animate-fade-in-up"
+          style={{ animationDelay: `${index * 50}ms` }}
         >
           <NewsCard news={item} showStats={showStats} />
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 }

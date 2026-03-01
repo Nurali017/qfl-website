@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EnhancedMatchEvent, GameTeam, PlayerCountry } from '@/types';
-import { GoalIcon, YellowCardIcon, RedCardIcon, SubstitutionIcon, PenaltyIcon, JerseyIcon } from './MatchEventIcons';
+import { GoalIcon, YellowCardIcon, RedCardIcon, SubstitutionIcon, JerseyIcon } from './MatchEventIcons';
 import { getPlayerHref, getTeamHref } from '@/lib/utils/entityRoutes';
 import { getTeamLogo, getTeamInitials, HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
 import { bottomSheetSlideUp, modalBackdrop } from '@/lib/motion';
@@ -35,7 +35,7 @@ export function MatchEventTimeline({
   const timelineEvents = useMemo(() => {
     return events
       .filter((e) =>
-        ['goal', 'own_goal', 'penalty', 'yellow_card', 'red_card', 'substitution'].includes(e.event_type) && e.minute <= 130
+        ['goal', 'own_goal', 'penalty', 'yellow_card', 'red_card', 'substitution'].includes(e.event_type) && (e.half ?? 1) <= 2
       )
       .slice()
       .sort((a, b) => (a.minute - b.minute) || ((a.team_id ?? 0) - (b.team_id ?? 0)) || (a.id - b.id));

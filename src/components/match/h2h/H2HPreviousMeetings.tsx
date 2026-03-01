@@ -35,16 +35,16 @@ export function H2HPreviousMeetings({
 
   if (meetings.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 text-sm">
+      <div className="text-center py-8 text-gray-500 dark:text-slate-400 text-sm">
         {t('h2h.noData', 'Нет данных о предыдущих встречах')}
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F5F7F9] dark:bg-gray-800 rounded-2xl p-4 sm:p-6">
+    <div className="bg-gray-50 dark:bg-dark-surface rounded-2xl border border-gray-100 dark:border-dark-border p-4 sm:p-6 shadow-sm">
       {/* Header */}
-      <h3 className="text-base font-extrabold uppercase tracking-wide text-gray-900 dark:text-white text-center mb-5">
+      <h3 className="text-sm font-bold uppercase tracking-wide text-gray-900 dark:text-white text-center mb-5">
         {t('h2h.previousMeetings', 'ИСТОРИЯ ВСТРЕЧ')}
       </h3>
 
@@ -140,7 +140,7 @@ function MeetingRowContent({
   awayColor: string;
 }) {
   const inner = (
-    <div className="flex items-center justify-center gap-1.5 sm:gap-3 py-2 px-2 sm:px-3 rounded-xl bg-white dark:bg-gray-700 hover:shadow-md transition-shadow">
+    <div className="flex items-center justify-center gap-1.5 sm:gap-3 py-2 px-2 sm:px-3 rounded-xl bg-white dark:bg-dark-surface-alt hover:shadow-md transition-shadow">
       <span className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 text-right flex-1 truncate">
         {meeting.home_team_name}
       </span>

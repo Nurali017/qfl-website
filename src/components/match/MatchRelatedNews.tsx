@@ -11,7 +11,7 @@ interface MatchRelatedNewsProps {
 
 function NewsCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl overflow-hidden bg-gray-100 dark:bg-dark-surface">
+    <div className="animate-pulse rounded-2xl overflow-hidden bg-gray-100 dark:bg-dark-surface">
       <div className="h-40 bg-gray-200 dark:bg-dark-border" />
       <div className="p-4 space-y-2">
         <div className="h-4 bg-gray-200 dark:bg-dark-border rounded w-3/4" />
@@ -46,7 +46,7 @@ export function MatchRelatedNews({ news, loading = false }: MatchRelatedNewsProp
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
       {news.map((article) => (
         <Link key={article.id} href={`/news/${article.id}`} className="group block">
-          <div className="rounded-xl overflow-hidden bg-white dark:bg-dark-surface border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow">
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-dark-surface border border-gray-100 dark:border-dark-border hover:shadow-md transition-shadow">
             {article.image_url ? (
               <div className="aspect-[16/9] overflow-hidden">
                 <img

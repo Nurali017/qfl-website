@@ -49,6 +49,8 @@ export const queryKeys = {
     reactions: (newsId: number) => ['/news', newsId, 'reactions'] as const,
     paginated: (language: string, filtersHash: string, page: number, limit: number) =>
       ['/news', 'paginated', language, filtersHash, page, limit] as const,
+    articleTypeCounts: (language: string, championshipCode: string | undefined) =>
+      ['/news', 'article-types', language, championshipCode ?? null] as const,
   },
   pages: {
     leadership: (language: string) => ['/pages', 'leadership', language] as const,

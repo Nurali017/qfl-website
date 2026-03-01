@@ -207,7 +207,12 @@
     "listView": "Список",
     "pitchView": "Поле",
     "rosterInfoBanner": "Стартовый состав будет доступен перед началом матча",
-    "seasonRoster": "Заявка на сезон"
+    "seasonRoster": "Заявка на сезон",
+    "goalkeeper": "Вратарь",
+    "defenders": "Защитники",
+    "midfielders": "Полузащитники",
+    "forwards": "Нападающие",
+    "players": "Игроки"
   },
   "referee": {
     "brigade": "Судейская бригада",

@@ -8,6 +8,7 @@ import { getTeamLogo, HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
 import { formatMatchDayDate, formatMatchTime } from '@/lib/utils/dateFormat';
 import { getTeamHref } from '@/lib/utils/entityRoutes';
 import { MatchEventTimeline } from '@/components/match/MatchEventTimeline';
+import { GoalIcon } from '@/components/match/MatchEventIcons';
 
 interface MatchHeaderProps {
   match: MatchDetail;
@@ -226,18 +227,18 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
               {hasGoals && (
                 <div className="col-span-3 grid grid-cols-2 gap-x-4 md:gap-x-8 mt-4 md:mt-10">
                   <div className="flex flex-col items-end gap-1.5">
-                    {uniqueEvents.filter(e => e.team_id === match.home_team.id && (e.event_type === 'goal' || e.event_type === 'penalty')).map((e, idx) => (
+                    {uniqueEvents.filter(e => e.team_id === match.home_team.id && (e.event_type === 'goal' || e.event_type === 'penalty') && (e.half ?? 1) <= 2).map((e, idx) => (
                       <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
                         <span className="font-semibold">{e.player_name}</span>
                         <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
-                        <span className="text-[10px] ml-1 opacity-80 shrink-0" role="img" aria-label="goal">⚽</span>
+                        <GoalIcon className="w-3.5 h-3.5 ml-1 text-white/80 shrink-0" color="currentColor" />
                       </div>
                     ))}
                   </div>
                   <div className="flex flex-col items-start gap-1.5">
-                    {uniqueEvents.filter(e => e.team_id === match.away_team.id && (e.event_type === 'goal' || e.event_type === 'penalty')).map((e, idx) => (
+                    {uniqueEvents.filter(e => e.team_id === match.away_team.id && (e.event_type === 'goal' || e.event_type === 'penalty') && (e.half ?? 1) <= 2).map((e, idx) => (
                       <div key={idx} className="flex items-center gap-1.5 text-white/90 text-[11px] md:text-[13px]">
-                        <span className="text-[10px] mr-1 opacity-80 shrink-0" role="img" aria-label="goal">⚽</span>
+                        <GoalIcon className="w-3.5 h-3.5 mr-1 text-white/80 shrink-0" color="currentColor" />
                         <span className="text-white/60 shrink-0">({e.minute}&apos;){e.event_type === 'penalty' ? ' (P)' : ''}</span>
                         <span className="font-semibold">{e.player_name}</span>
                       </div>

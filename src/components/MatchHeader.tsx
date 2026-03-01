@@ -2,7 +2,7 @@
 
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Building, Users, Clock } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 import { MatchDetail, EnhancedMatchEvent, PlayerCountry } from '@/types';
 import { getTeamLogo, HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
 import { formatMatchDayDate, formatMatchTime } from '@/lib/utils/dateFormat';
@@ -45,12 +45,6 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
           <div className="flex items-center gap-1.5 min-w-0">
             <Calendar className="w-3.5 h-3.5 text-white/60 shrink-0" />
             <span className="truncate">{formatMatchDayDate(match.date, i18n.language)}</span>
-            {match.visitors && (
-              <span className="ml-2 border-l border-white/20 pl-2 flex items-center gap-1.5 shrink-0">
-                <Users className="w-3.5 h-3.5 text-white/60" />
-                <span>ATT: {match.visitors.toLocaleString(i18n.language === 'en' ? 'en-US' : i18n.language === 'kz' ? 'kk-KZ' : 'ru-RU')}</span>
-              </span>
-            )}
           </div>
 
           {/* Center — time (fixed width, same as score center) */}
@@ -63,18 +57,8 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
             )}
           </div>
 
-          {/* Right — stadium */}
-          <div className="flex items-center justify-end gap-1.5 min-w-0">
-            {match.stadium && (
-              <>
-                <Building className="w-3.5 h-3.5 text-white/60 shrink-0" />
-                <span className="truncate">
-                  {match.stadium.name}
-                  {match.stadium.city ? `, ${match.stadium.city}` : ''}
-                </span>
-              </>
-            )}
-          </div>
+          {/* Right — empty (stadium moved to sidebar) */}
+          <div className="flex items-center justify-end gap-1.5 min-w-0" />
         </div>
         </div>
 

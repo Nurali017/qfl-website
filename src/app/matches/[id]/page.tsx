@@ -22,6 +22,7 @@ import { H2HContentCards } from '@/components/match/H2HContentCards';
 import { MatchEventsList } from '@/components/match/MatchEventsList';
 import { getTournamentBySeasonId, isCupTournament } from '@/config/tournaments';
 import { RefereeCard } from '@/components/match/RefereeCard';
+import { MatchInfoCard } from '@/components/match/MatchInfoCard';
 
 function LoadingSkeleton() {
   return (
@@ -194,7 +195,6 @@ export default function MatchDetailPage() {
       <MatchTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        protocolUrl={match.protocol_url}
         showLineupsTab={showLineupsTab}
         showStatisticsTab={false}
         showH2hTab={false}
@@ -286,6 +286,11 @@ export default function MatchDetailPage() {
                 />
               )}
               <RefereeCard referees={lineup?.referees} />
+              <MatchInfoCard
+                stadium={match.stadium}
+                visitors={match.visitors}
+                protocolUrl={match.protocol_url}
+              />
               {!matchIsCup && (
                 <TournamentTableMini
                   seasonId={match.season_id ?? undefined}

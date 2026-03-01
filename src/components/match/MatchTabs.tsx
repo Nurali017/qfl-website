@@ -12,7 +12,6 @@ interface Tab {
 interface MatchTabsProps {
   activeTab: TabId;
   onTabChange: (tab: TabId) => void;
-  protocolUrl?: string | null;
   showLineupsTab?: boolean;
   showStatisticsTab?: boolean;
   showTimelineTab?: boolean;
@@ -23,7 +22,6 @@ interface MatchTabsProps {
 export function MatchTabs({
   activeTab,
   onTabChange,
-  protocolUrl,
   showLineupsTab = true,
   showStatisticsTab = true,
   showTimelineTab = true,
@@ -31,7 +29,6 @@ export function MatchTabs({
   showNewsTab = false,
 }: MatchTabsProps) {
   const { t } = useTranslation('match');
-  const hasProtocol = Boolean(protocolUrl);
 
   const tabs: Tab[] = [
     { id: 'overview', labelKey: 'tabs.overview' },
@@ -66,30 +63,7 @@ export function MatchTabs({
                 </button>
               );
             })}
-            {/* Protocol link inline with tabs on mobile, separate on desktop */}
-            {hasProtocol && (
-              <a
-                href={protocolUrl || undefined}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="md:hidden px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-[13px] font-bold whitespace-nowrap bg-primary text-white hover:opacity-90 transition-opacity shrink-0"
-              >
-                {t('tabs.protocol')}
-              </a>
-            )}
           </nav>
-
-          {hasProtocol && (
-            <a
-              href={protocolUrl || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="protocol-link-desktop"
-              className="hidden md:inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap hover:opacity-90 transition-opacity bg-primary text-white"
-            >
-              {t('tabs.protocol')}
-            </a>
-          )}
         </div>
       </div>
     </div>

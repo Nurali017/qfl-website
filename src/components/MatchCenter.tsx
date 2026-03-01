@@ -192,25 +192,36 @@ export function MatchCenter() {
         </div>
       ) : (
         <div className="space-y-8">
-          {mergedGroups.map((group, idx) => (
-            <div key={`${group.date}-${idx}`} className="space-y-4">
-              {/* Date header */}
-              <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-slate-100 capitalize">
-                {group.date_label || formatMatchDate(group.date, i18n.language)}
-              </h2>
+          {mergedGroups.map((group, idx) => {
+            const groupTours = [...new Set(group.games.map(g => g.tour).filter(Boolean))];
+            const groupTour = groupTours.length === 1 ? groupTours[0] : null;
+            return (
+              <div key={`${group.date}-${idx}`} className="space-y-4">
+                {/* Date header */}
+                <div>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-slate-100 capitalize">
+                    {group.date_label || formatMatchDate(group.date, i18n.language)}
+                  </h2>
+                  {groupTour && (
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+                      {t('tour')} {groupTour}
+                    </p>
+                  )}
+                </div>
 
-              {/* Matches in this date group */}
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
-                {group.games.map((match) =>
-                  match.is_live || match.status === 'live' ? (
-                    <LiveMatchCard key={match.id} match={match} />
-                  ) : (
-                    <MatchCard key={match.id} match={match} showTour showDate={false} showScheduleDisclaimer />
-                  )
-                )}
+                {/* Matches in this date group */}
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+                  {group.games.map((match) =>
+                    match.is_live || match.status === 'live' ? (
+                      <LiveMatchCard key={match.id} match={match} />
+                    ) : (
+                      <MatchCard key={match.id} match={match} showTour={!groupTour} showDate={false} showScheduleDisclaimer />
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

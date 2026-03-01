@@ -2,9 +2,9 @@
 
 import { TournamentAwareLink as Link } from '@/components/navigation/TournamentAwareLink';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Clock } from 'lucide-react';
 import { MatchDetail, EnhancedMatchEvent, PlayerCountry } from '@/types';
 import { getTeamLogo, HOME_COLOR, AWAY_COLOR } from '@/lib/utils/teamLogos';
+import { Calendar } from 'lucide-react';
 import { formatMatchDayDate, formatMatchTime } from '@/lib/utils/dateFormat';
 import { getTeamHref } from '@/lib/utils/entityRoutes';
 import { MatchEventTimeline } from '@/components/match/MatchEventTimeline';
@@ -36,7 +36,7 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1.5px)] [background-size:24px_24px]"></div>
 
-      <div className="relative z-10 max-w-[1440px] mx-auto px-3 sm:px-4 md:px-10 lg:px-20 pt-3 pb-0 md:pt-6">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 pt-3 pb-0 md:pt-6">
 
         {/* Match Information Bar */}
         <div className="mb-4 md:mb-10 max-w-5xl mx-auto w-full border-b border-white/10 pb-4">
@@ -47,17 +47,14 @@ export function MatchHeader({ match, events = [], eventsLoading = false, playerC
             <span className="truncate">{formatMatchDayDate(match.date, i18n.language)}</span>
           </div>
 
-          {/* Center — time (fixed width, same as score center) */}
-          <div className="flex items-center justify-center gap-1.5">
+          {/* Center — time */}
+          <div className="flex items-center justify-center">
             {match.time && (
-              <>
-                <Clock className="w-3.5 h-3.5 text-white/60" />
-                <span>{displayTime}</span>
-              </>
+              <span>{displayTime}</span>
             )}
           </div>
 
-          {/* Right — empty (stadium moved to sidebar) */}
+          {/* Right — empty */}
           <div className="flex items-center justify-end gap-1.5 min-w-0" />
         </div>
         </div>

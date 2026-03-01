@@ -27,7 +27,7 @@ interface TopBarProps {
 export function TopBar({ liveMatch, className = '' }: TopBarProps) {
   return (
     <div className={`bg-primary-dark text-white ${className}`}>
-      <div className="max-w-[1400px] mx-auto px-6 h-8 flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 h-8 flex items-center justify-between">
         {/* Social Links */}
         <div className="flex items-center gap-1">
           {socialLinks.map(({ key, href, icon: Icon, label }) => (

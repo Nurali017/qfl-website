@@ -41,7 +41,7 @@ export function MatchTabs({
 
   return (
     <div className="bg-white dark:bg-dark-surface border-b border-gray-100 dark:border-dark-border sticky top-14 md:top-16 z-40 shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 md:py-4">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 md:py-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <nav className="flex flex-1 min-w-0 gap-2 md:gap-3 overflow-x-auto scrollbar-hide items-center">
             {tabs.map((tab) => {

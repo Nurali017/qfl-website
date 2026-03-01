@@ -158,7 +158,7 @@ export default function MatchDetailPage() {
 
   if (matchLoading) {
     return (
-      <div className="max-w-[1440px] mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
         <LoadingSkeleton />
       </div>
     );
@@ -166,7 +166,7 @@ export default function MatchDetailPage() {
 
   if (matchError || !match) {
     return (
-      <div className="max-w-[1440px] mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
         <ErrorState error={matchError} />
       </div>
     );
@@ -202,7 +202,7 @@ export default function MatchDetailPage() {
       />
 
       {/* 3. Tab Content - Constrained Container */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-5 md:py-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-5 md:py-8">
 
         {/* Lineups tab - full width without sidebar */}
         {activeTab === 'lineups' && showLineupsTab && (

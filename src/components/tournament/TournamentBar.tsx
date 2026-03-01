@@ -7,7 +7,7 @@ export function TournamentBar() {
     <div className="hidden lg:block">
       {/* Dark bar with tournament icons */}
       <div className="bg-[#0D1B2A]">
-        <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-3 px-3 md:px-6">
+        <div className="mx-auto flex h-14 max-w-[1400px] items-center justify-between gap-3 px-4 sm:px-6 md:px-10 lg:px-20">
           {/* Tournament icons on the left */}
           <div className="min-w-0 flex-1 overflow-x-auto no-scrollbar">
             <TournamentIcons />

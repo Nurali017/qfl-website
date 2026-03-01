@@ -34,7 +34,7 @@ export function MainNav({ navItems, hasLiveMatch, onMobileMenuToggle, isScrolled
           ? 'bg-white dark:bg-dark-surface shadow-sm'
           : 'bg-white dark:bg-dark-surface'
       } ${className}`}>
-      <div className={`max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 flex items-center justify-between transition-all duration-300 ${
+      <div className={`max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 flex items-center justify-between transition-all duration-300 ${
         isScrolled ? 'h-14 md:h-16' : 'h-16 md:h-20'
       }`}>
         {/* Logo + Navigation group */}

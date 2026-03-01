@@ -1,6 +1,6 @@
 'use client';
 
-import { Printer } from 'lucide-react';
+import { Printer, Building2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { RefereeInfo, Stadium } from '@/types/match';
 
@@ -47,7 +47,8 @@ export function RefereeCard({ referees, stadium, visitors, protocolUrl }: Refere
       {(hasStadium || hasVisitors) && (
         <div className="px-5 pt-4 pb-3 border-b border-gray-100 dark:border-dark-border">
           {hasStadium && (
-            <div className="text-sm font-bold text-gray-900 dark:text-white leading-snug">
+            <div className="flex items-center gap-1.5 text-sm font-bold text-gray-900 dark:text-white leading-snug">
+              <Building2 className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
               {stadium!.name}
             </div>
           )}

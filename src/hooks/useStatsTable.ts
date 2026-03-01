@@ -58,7 +58,7 @@ export function useStatsTable({
     () =>
       isMobile
         ? customColumns
-          ? applyCustomColumns(columns, customColumns, sortBy)
+          ? applyCustomColumns(columns, customColumns)
           : getMobileColumns(columns, sortBy)
         : columns,
     [isMobile, columns, sortBy, customColumns],
@@ -73,6 +73,18 @@ export function useStatsTable({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subTab]);
+
+  // Reset sortBy when user's custom column selection no longer includes it
+  useEffect(() => {
+    if (customColumns && !customColumns.has(sortBy)) {
+      const first = columns.find((c) => customColumns.has(c.key));
+      if (first) {
+        setSortBy(first.key);
+        setSortOrder('desc');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customColumns]);
 
   const handleSort = (key: string) => {
     if (sortBy === key) {

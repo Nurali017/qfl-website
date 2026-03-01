@@ -145,7 +145,7 @@ export function ClubStatsTable({ subTab, teams, loading }: ClubStatsTableProps) 
                 >
                   {(() => {
                     const headerLabel = isMobile
-                      ? col.label
+                      ? col.label.charAt(0)
                       : col.labelKey ? t(col.labelKey, { defaultValue: col.label }) : (col.fullLabel || col.label);
                     return col.sortable ? (
                       <button

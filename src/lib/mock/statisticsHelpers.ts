@@ -24,14 +24,8 @@ export function getMobileColumns(columns: ColumnDefinition[], sortBy: string, ma
 export function applyCustomColumns(
     columns: ColumnDefinition[],
     selected: Set<string>,
-    sortBy: string,
 ): ColumnDefinition[] {
-    const result = columns.filter(c => selected.has(c.key));
-    if (!result.some(c => c.key === sortBy)) {
-        const sortCol = columns.find(c => c.key === sortBy);
-        if (sortCol) result.push(sortCol);
-    }
-    return result;
+    return columns.filter(c => selected.has(c.key));
 }
 
 export function formatValue(value: any, format?: string) {

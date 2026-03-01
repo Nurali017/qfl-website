@@ -9,7 +9,7 @@ import { ColumnDefinition } from '@/lib/mock/statisticsHelpers';
 interface ColumnPickerProps {
   columns: ColumnDefinition[];
   selected: Set<string>;
-  onChange: (keys: Set<string>) => void;
+  onChange: (keys: Set<string> | null) => void;
   sortBy: string;
   getLabel: (col: ColumnDefinition) => string;
 }
@@ -61,8 +61,11 @@ export function ColumnPicker({ columns, selected, onChange, sortBy, getLabel }: 
   const toggleColumn = (key: string) => {
     const next = new Set(selected);
     if (next.has(key)) {
-      if (next.size <= 1) return;
       next.delete(key);
+      if (next.size === 0) {
+        onChange(null);
+        return;
+      }
     } else {
       if (next.size >= MAX_COLUMNS) return;
       next.add(key);
@@ -112,7 +115,7 @@ export function ColumnPicker({ columns, selected, onChange, sortBy, getLabel }: 
                 <input
                   type="checkbox"
                   checked={isChecked}
-                  disabled={isAtMax || (isChecked && selected.size <= 1)}
+                  disabled={isAtMax}
                   onChange={() => toggleColumn(col.key)}
                   className="w-3.5 h-3.5 rounded text-primary border-gray-300 dark:border-dark-border-soft focus:ring-primary dark:focus:ring-blue-500"
                 />

@@ -133,7 +133,7 @@ export function PlayerStatsTable({ subTab, filters, players, loading }: PlayerSt
                                 >
                                     {(() => {
                                         const headerLabel = isMobile && col.label
-                                            ? col.label
+                                            ? col.label.charAt(0)
                                             : col.labelKey ? t(col.labelKey, { defaultValue: col.label || col.key }) : col.label;
                                         return col.sortable ? (
                                             <button

@@ -22,7 +22,6 @@ import { H2HContentCards } from '@/components/match/H2HContentCards';
 import { MatchEventsList } from '@/components/match/MatchEventsList';
 import { getTournamentBySeasonId, isCupTournament } from '@/config/tournaments';
 import { RefereeCard } from '@/components/match/RefereeCard';
-import { MatchInfoCard } from '@/components/match/MatchInfoCard';
 
 function LoadingSkeleton() {
   return (
@@ -285,8 +284,8 @@ export default function MatchDetailPage() {
                   renderingMode={lineupMode}
                 />
               )}
-              <RefereeCard referees={lineup?.referees} />
-              <MatchInfoCard
+              <RefereeCard
+                referees={lineup?.referees}
                 stadium={match.stadium}
                 visitors={match.visitors}
                 protocolUrl={match.protocol_url}

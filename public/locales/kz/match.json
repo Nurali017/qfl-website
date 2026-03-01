@@ -173,7 +173,14 @@
     "subIn": "Ойынға кірді",
     "assistLabel": "Ассист",
     "openEvent": "{{minute}}' оқиғаны ашу",
-    "eventDetails": "Оқиға мәліметтері"
+    "eventDetails": "Оқиға мәліметтері",
+    "shootout": "ПЕНАЛЬТИ СЕРИЯСЫ",
+    "missedPenalty": "Соқпай кеткен пенальти",
+    "goals": "Голдар",
+    "cards": "Карточкалар",
+    "substitutions": "Алмастырулар",
+    "showMore": "Көбірек көрсету",
+    "showLess": "Жасыру"
   },
   "playerStats": {
     "title": "Ойыншылар статистикасы",

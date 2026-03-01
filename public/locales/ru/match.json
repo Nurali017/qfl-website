@@ -173,7 +173,14 @@
     "subIn": "Вышел",
     "assistLabel": "Ассист",
     "openEvent": "Открыть событие {{minute}}'",
-    "eventDetails": "Детали события"
+    "eventDetails": "Детали события",
+    "shootout": "СЕРИЯ ПЕНАЛЬТИ",
+    "missedPenalty": "Незабитый пенальти",
+    "goals": "Голы",
+    "cards": "Карточки",
+    "substitutions": "Замены",
+    "showMore": "Показать больше",
+    "showLess": "Показать меньше"
   },
   "playerStats": {
     "title": "Статистика игроков",

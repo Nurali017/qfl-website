@@ -1,8 +1,16 @@
 'use client';
 
-import { Printer, Building2 } from 'lucide-react';
+import { Printer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { RefereeInfo, Stadium } from '@/types/match';
+
+function StadiumIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M7 5L3 7V3zm11-2v4l4-2zm-7-1v4l4-2zm-6 8c1.4.5 3.8 1 7 1s5.6-.5 7-1c0-.2-2.8-1-7-1s-7 .9-7 1m10 7H9v4.9c-4.1-.4-7-1.5-7-2.9v-9c0-1.7 4.5-3 10-3s10 1.3 10 3v9c0 1.3-2.9 2.5-7 2.9z" />
+    </svg>
+  );
+}
 
 interface RefereeCardProps {
   referees?: RefereeInfo[];
@@ -48,7 +56,7 @@ export function RefereeCard({ referees, stadium, visitors, protocolUrl }: Refere
         <div className="px-5 pt-4 pb-3 border-b border-gray-100 dark:border-dark-border">
           {hasStadium && (
             <div className="flex items-center gap-1.5 text-sm font-bold text-gray-900 dark:text-white leading-snug">
-              <Building2 className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
+              <StadiumIcon className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
               {stadium!.name}
             </div>
           )}

@@ -272,11 +272,11 @@ export function HomeMatches() {
                         {game.home_score !== null && game.away_score !== null ? (
                           <div className="text-center">
                             <div className="text-sm sm:text-base font-bold text-gray-900 dark:text-slate-100">
-                              {game.home_score} : {game.away_score}
+                              {game.home_score}{game.home_penalty_score != null && game.home_penalty_score > game.away_penalty_score! && <sup className="text-[9px] ml-px">*</sup>} : {game.away_score}{game.away_penalty_score != null && game.away_penalty_score > game.home_penalty_score! && <sup className="text-[9px] ml-px">*</sup>}
                             </div>
                             {game.home_penalty_score != null && game.away_penalty_score != null && (
                               <div className="text-[10px] text-gray-400 dark:text-slate-500 font-medium">
-                                ({game.home_penalty_score} : {game.away_penalty_score} пен.)
+                                пенальти: {game.home_penalty_score} : {game.away_penalty_score}
                               </div>
                             )}
                           </div>

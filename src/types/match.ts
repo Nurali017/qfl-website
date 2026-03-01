@@ -67,9 +67,9 @@ export interface MatchEvent {
 // Расширенное событие матча (из API /live/events/{id})
 export interface EnhancedMatchEvent {
   id: number;
-  half: 1 | 2; // Разделение по таймам
+  half: number; // Разделение по таймам (1, 2 — тайм; ≥3 — серия пенальти)
   minute: number;
-  event_type: 'goal' | 'own_goal' | 'penalty' | 'yellow_card' | 'red_card' | 'substitution';
+  event_type: 'goal' | 'own_goal' | 'penalty' | 'missed_penalty' | 'yellow_card' | 'red_card' | 'substitution';
   team_id: number | null;
   team_name: string;
   player_id: number | null;

@@ -16,6 +16,7 @@ interface MatchTabsProps {
   showLineupsTab?: boolean;
   showStatisticsTab?: boolean;
   showTimelineTab?: boolean;
+  showH2hTab?: boolean;
   showNewsTab?: boolean;
 }
 
@@ -26,6 +27,7 @@ export function MatchTabs({
   showLineupsTab = true,
   showStatisticsTab = true,
   showTimelineTab = true,
+  showH2hTab = true,
   showNewsTab = false,
 }: MatchTabsProps) {
   const { t } = useTranslation('match');
@@ -36,7 +38,7 @@ export function MatchTabs({
     ...(showTimelineTab ? [{ id: 'timeline', labelKey: 'tabs.timeline' } as Tab] : []),
     ...(showLineupsTab ? [{ id: 'lineups', labelKey: 'tabs.lineups' } as Tab] : []),
     ...(showStatisticsTab ? [{ id: 'statistics', labelKey: 'tabs.statistics' } as Tab] : []),
-    { id: 'h2h', labelKey: 'tabs.h2h' },
+    ...(showH2hTab ? [{ id: 'h2h', labelKey: 'tabs.h2h' } as Tab] : []),
     ...(showNewsTab ? [{ id: 'news', labelKey: 'tabs.news' } as Tab] : []),
   ];
 

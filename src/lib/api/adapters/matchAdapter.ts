@@ -88,9 +88,9 @@ export interface BackendLineupResponse {
 
 export interface BackendLiveEvent {
   id: number;
-  half?: 1 | 2 | null;
+  half?: number | null;
   minute: number;
-  event_type: 'goal' | 'own_goal' | 'penalty' | 'yellow_card' | 'red_card' | 'substitution';
+  event_type: 'goal' | 'own_goal' | 'penalty' | 'missed_penalty' | 'yellow_card' | 'red_card' | 'substitution';
   team_id?: number | null;
   team_name?: string | null;
   player_id?: number | null;

@@ -197,6 +197,7 @@ export default function MatchDetailPage() {
         protocolUrl={match.protocol_url}
         showLineupsTab={showLineupsTab}
         showStatisticsTab={false}
+        showH2hTab={false}
         showTimelineTab={!isUpcoming}
         showNewsTab={matchNews.length > 0}
       />
@@ -242,6 +243,8 @@ export default function MatchDetailPage() {
               awayTeam={match.away_team}
               loading={eventsLoading}
               isTechnical={match.is_technical}
+              homePenaltyScore={match.home_penalty_score}
+              awayPenaltyScore={match.away_penalty_score}
             />
           </div>
         )}

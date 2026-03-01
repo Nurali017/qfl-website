@@ -125,9 +125,9 @@ export function SuperCupMatchHeader({
             {hasScore ? (
               <>
                 <div className="text-[34px] sm:text-6xl md:text-[80px] font-black text-white leading-none tracking-tighter flex items-center gap-1.5 sm:gap-4 drop-shadow-2xl">
-                  <span>{match.home_score}</span>
+                  <span>{match.home_score}{match.home_penalty_score != null && match.home_penalty_score > match.away_penalty_score! && <sup className="text-sm sm:text-lg md:text-2xl ml-px">*</sup>}</span>
                   <span className="text-amber-400/30 text-xl sm:text-4xl md:text-6xl align-top">-</span>
-                  <span>{match.away_score}</span>
+                  <span>{match.away_score}{match.away_penalty_score != null && match.away_penalty_score > match.home_penalty_score! && <sup className="text-sm sm:text-lg md:text-2xl ml-px">*</sup>}</span>
                 </div>
 
                 {isLive ? (
@@ -149,7 +149,7 @@ export function SuperCupMatchHeader({
                 )}
                 {match.status === 'finished' && match.home_penalty_score != null && (
                   <div className="mt-1.5 text-[11px] sm:text-xs text-amber-400/90 font-semibold uppercase tracking-wider">
-                    по пен. {match.home_penalty_score}:{match.away_penalty_score}
+                    пенальти: {match.home_penalty_score} : {match.away_penalty_score}
                   </div>
                 )}
               </>

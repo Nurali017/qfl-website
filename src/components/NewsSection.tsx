@@ -6,6 +6,7 @@ import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLatestNews } from '@/hooks';
 import { useTournament } from '@/contexts/TournamentContext';
+import { formatNewsDateLong } from '@/lib/utils/dateFormat';
 
 interface NewsItem {
   id: number;
@@ -14,25 +15,6 @@ interface NewsItem {
   category?: string;
   publish_date: string;
   excerpt?: string;
-}
-
-function formatDate(dateStr: string, format: 'short' | 'long' = 'short', language: string = 'ru') {
-  const date = new Date(dateStr);
-  const locale = language === 'kz' ? 'kk-KZ' : 'ru-RU';
-
-  if (format === 'long') {
-    const options: Intl.DateTimeFormatOptions = {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-    return date.toLocaleDateString(locale, options);
-  }
-  const options: Intl.DateTimeFormatOptions = {
-    day: '2-digit',
-    month: 'short',
-  };
-  return date.toLocaleDateString(locale, options);
 }
 
 // Featured card - large with image background (lighter gradient)
@@ -53,7 +35,7 @@ function FeaturedCard({ news, className, language = 'ru' }: { news: NewsItem; cl
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight mb-2 sm:mb-3 group-hover:text-accent transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             {news.title}
           </h3>
-          <span className="text-white/90 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] inline-block transition-all duration-500 group-hover:translate-x-1">{formatDate(news.publish_date, 'long', language)}</span>
+          <span className="text-white/90 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] inline-block transition-all duration-500 group-hover:translate-x-1">{formatNewsDateLong(news.publish_date, language)}</span>
         </div>
       </div>
     </Link>
@@ -69,7 +51,7 @@ function HorizontalCard({ news, className, language = 'ru' }: { news: NewsItem; 
           <h3 className="font-semibold text-gray-900 dark:text-slate-100 leading-snug group-hover:text-primary-light dark:group-hover:text-blue-400 transition-colors">
             {news.title}
           </h3>
-          <span className="text-gray-400 dark:text-slate-500 text-sm mt-auto pt-2 block transition-all duration-300 group-hover:translate-x-0.5">{formatDate(news.publish_date, 'long', language)}</span>
+          <span className="text-gray-400 dark:text-slate-500 text-sm mt-auto pt-2 block transition-all duration-300 group-hover:translate-x-0.5">{formatNewsDateLong(news.publish_date, language)}</span>
         </div>
         <div className="relative w-20 h-20 rounded-lg overflow-hidden shrink-0 transition-shadow duration-300 group-hover:shadow-md">
           <Image

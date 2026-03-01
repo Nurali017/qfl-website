@@ -72,6 +72,19 @@ export function formatNewsDate(dateStr: string, language: string): string {
   });
 }
 
+export function formatNewsDateLong(dateStr: string, language: string): string {
+  const date = safeParseDate(dateStr);
+  if (isKz(language)) {
+    return formatKzDate(date, { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  const locale = getLocale(language);
+  return date.toLocaleDateString(locale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
 export function formatShortDate(dateStr: string, language: string): string {
   const date = safeParseDate(dateStr);
   if (isKz(language)) return formatKzDate(date, { day: 'numeric', month: 'short' });

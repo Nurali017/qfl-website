@@ -115,7 +115,7 @@ export function MatchCard({
                       )}
                     </div>
                     {match.home_penalty_score != null && (
-                      <span className="text-[10px] text-gray-500 dark:text-slate-400">(пен. {match.home_penalty_score}:{match.away_penalty_score})</span>
+                      <span className="text-[10px] text-gray-500 dark:text-slate-400">пенальти: {match.home_penalty_score} : {match.away_penalty_score}</span>
                     )}
                   </div>
                 ) : isLive ? (
@@ -249,7 +249,7 @@ export function MatchCard({
                       )}
                     </div>
                     {match.home_penalty_score != null && (
-                      <span className="text-[10px] text-gray-500 dark:text-slate-400">(пен. {match.home_penalty_score}:{match.away_penalty_score})</span>
+                      <span className="text-[10px] text-gray-500 dark:text-slate-400">пенальти: {match.home_penalty_score} : {match.away_penalty_score}</span>
                     )}
                   </div>
                 ) : isLive ? (
